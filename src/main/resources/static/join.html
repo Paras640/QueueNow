@@ -162,29 +162,54 @@
     </main>
 
     <script>
-        const form = document.getElementById("joinForm");
-        const message = document.getElementById("message");
+    const form = document.getElementById("joinForm");
+    const message = document.getElementById("message");
 
-        form.addEventListener("submit", function(event) {
-            event.preventDefault();
+    form.addEventListener("submit", async function(event) {
+        event.preventDefault();
 
-            const name = document.getElementById("customerName")
-                .value.trim();
+        const name = document.getElementById("customerName")
+            .value.trim();
 
-            if (!name) {
-                message.style.display = "block";
-                message.style.background = "#fee2e2";
-                message.style.color = "#991b1b";
-                message.textContent = "Please enter your name.";
-                return;
-            }
-
+        if (!name) {
             message.style.display = "block";
-            message.style.background = "#fef3c7";
-            message.style.color = "#92400e";
+            message.textContent = "Please enter your name.";
+            return;
+        }
+
+        message.style.display = "block";
+        message.textContent = "Joining queue...";
+
+        try {
+            const response = await fetch("/api/queue/join", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ name: name })
+            });
+
+            const data = await response.json();
+
+            message.textContent = data.message ||
+                "Request completed.";
+
+            message.style.background = response.ok
+                ? "#d1fae5"
+                : "#fee2e2";
+
+            message.style.color = response.ok
+                ? "#065f46"
+                : "#991b1b";
+
+        } catch (error) {
+            message.style.display = "block";
+            message.style.background = "#fee2e2";
+            message.style.color = "#991b1b";
             message.textContent =
-                "Your form is ready! Backend connection is our next step.";
-        });
-    </script>
+                "Could not connect to the server. Please try again.";
+        }
+    });
+</script>
 </body>
 </html>
