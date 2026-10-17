@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QueueNow | Smart Queue Management</title>
+    <title>QueueNow | Skip the Wait</title>
 
     <style>
         * {
@@ -14,333 +14,186 @@
         }
 
         body {
-            font-family: Arial, sans-serif;
-            background: #f5f7ff;
-            color: #172554;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #080808;
+            color: #fffaf0;
+            min-height: 100vh;
+            background-image: radial-gradient(
+                ellipse at 50% 0%, #332716 0%, transparent 55%
+            );
         }
 
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 22px 8%;
-            background: white;
-            box-shadow: 0 2px 12px #0000000d;
+            padding: 24px 8%;
+            border-bottom: 1px solid #332b20;
+            background: rgba(12, 12, 12, 0.9);
         }
 
         .logo {
-            font-size: 26px;
-            font-weight: bold;
-            color: #315bea;
-            text-decoration: none;
-        }
-
-        nav {
-            display: flex;
-            gap: 28px;
-        }
-
-        nav a {
-            text-decoration: none;
-            color: #334155;
-            font-weight: 600;
-        }
-
-        nav a:hover {
-            color: #315bea;
+            color: #e5c58a;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -1px;
         }
 
         .hero {
-            min-height: 78vh;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 45px;
-            padding: 70px 8%;
-        }
-
-        .hero-content {
-            max-width: 580px;
+            max-width: 1000px;
+            margin: auto;
+            padding: 110px 24px 80px;
+            text-align: center;
         }
 
         .tag {
             display: inline-block;
-            background: #e0e7ff;
-            color: #315bea;
+            color: #e5c58a;
+            background: #292115;
+            border: 1px solid #514127;
+            border-radius: 30px;
             padding: 10px 16px;
-            border-radius: 25px;
-            margin-bottom: 22px;
-            font-size: 14px;
-            font-weight: bold;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 28px;
         }
 
         h1 {
-            font-size: clamp(38px, 5vw, 62px);
+            font-size: clamp(42px, 8vw, 76px);
             line-height: 1.12;
-            margin-bottom: 22px;
+            letter-spacing: -2px;
+            margin-bottom: 24px;
         }
 
         h1 span {
-            color: #315bea;
+            color: #e5c58a;
         }
 
         .description {
-            color: #64748b;
-            font-size: 18px;
-            line-height: 1.7;
-            margin-bottom: 30px;
+            color: #aaa49a;
+            max-width: 580px;
+            margin: 0 auto 38px;
+            font-size: 16px;
+            line-height: 1.9;
         }
 
-        .buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 14px;
-        }
-
-        .btn {
+        .button {
             display: inline-block;
-            padding: 15px 24px;
-            border-radius: 10px;
             text-decoration: none;
-            font-weight: bold;
-            transition: 0.2s;
+            background: linear-gradient(110deg, #e8cf9c, #b58b4e);
+            color: #17110a;
+            padding: 16px 30px;
+            border-radius: 10px;
+            font-weight: 800;
+            transition: transform 0.25s, box-shadow 0.25s;
         }
 
-        .primary {
-            background: #315bea;
-            color: white;
-        }
-
-        .primary:hover {
-            background: #2448c7;
-            transform: translateY(-2px);
-        }
-
-        .secondary {
-            border: 1px solid #cbd5e1;
-            color: #172554;
-            background: white;
-        }
-
-        .secondary:hover {
-            border-color: #315bea;
-            color: #315bea;
-        }
-
-        .queue-card {
-            width: 325px;
-            min-width: 260px;
-            padding: 32px;
-            border-radius: 24px;
-            background: white;
-            box-shadow: 0 20px 60px #315bea1c;
-        }
-
-        .queue-card h2 {
-            font-size: 27px;
-            margin-bottom: 12px;
-        }
-
-        .queue-card p {
-            color: #64748b;
-            line-height: 1.6;
-        }
-
-        .number {
-            font-size: 66px;
-            color: #315bea;
-            font-weight: bold;
-            margin: 22px 0;
-        }
-
-        .status {
-            background: #dcfce7;
-            color: #166534;
-            padding: 12px;
-            border-radius: 9px;
-            text-align: center;
-            font-weight: bold;
+        .button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 28px #c6a56a35;
         }
 
         .features {
-            padding: 55px 8% 75px;
-            text-align: center;
-            background: white;
-        }
-
-        .features h2 {
-            font-size: 32px;
-            margin-bottom: 14px;
-        }
-
-        .features > p {
-            color: #64748b;
-            line-height: 1.6;
-        }
-
-        .feature-grid {
+            max-width: 950px;
+            margin: 0 auto;
+            padding: 0 24px 80px;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 22px;
-            margin-top: 35px;
+            gap: 20px;
         }
 
         .feature {
-            padding: 25px;
-            background: #f5f7ff;
-            border-radius: 15px;
+            background: linear-gradient(145deg, #171614, #0e0e0d);
+            border: 1px solid #493b27;
+            border-radius: 16px;
+            padding: 28px 22px;
+            text-align: center;
         }
 
-        .feature .emoji {
-            font-size: 32px;
-            margin-bottom: 14px;
+        .feature-icon {
+            font-size: 30px;
+            margin-bottom: 16px;
         }
 
-        .feature h3 {
-            margin-bottom: 10px;
+        .feature h2 {
+            font-size: 18px;
+            margin-bottom: 12px;
+            color: #e5c58a;
         }
 
         .feature p {
-            color: #64748b;
-            line-height: 1.6;
+            color: #aaa49a;
+            font-size: 14px;
+            line-height: 1.8;
         }
 
         footer {
             text-align: center;
+            color: #827b70;
+            border-top: 1px solid #332b20;
             padding: 24px;
-            color: #64748b;
+            font-size: 13px;
         }
 
-        @media (max-width: 750px) {
-            header {
-                padding: 20px 5%;
-                flex-wrap: wrap;
-                gap: 18px;
-            }
-
-            nav {
-                gap: 15px;
-            }
-
-            nav a {
-                font-size: 14px;
-            }
-
+        @media (max-width: 650px) {
             .hero {
-                flex-direction: column;
-                align-items: flex-start;
-                padding: 55px 6%;
+                padding-top: 75px;
             }
 
-            .queue-card {
-                width: 100%;
-            }
-
-            .feature-grid {
+            .features {
                 grid-template-columns: 1fr;
+            }
+
+            h1 {
+                letter-spacing: -1px;
             }
         }
     </style>
 </head>
 
 <body>
-
     <header>
-        <a href="/" class="logo">QueueNow.</a>
-
-        <nav>
-            <a href="/">Home</a>
-            <a href="#how-it-works">How It Works</a>
-            <a href="/admin.html">Admin</a>
-        </nav>
+        <div class="logo">QueueNow.</div>
     </header>
 
     <main>
         <section class="hero">
+            <div class="tag">A BETTER WAY TO WAIT</div>
 
-            <div class="hero-content">
-                <div class="tag">SMART QUEUE MANAGEMENT</div>
+            <h1>Your Time.<br>
+                <span>Your Priority.</span>
+            </h1>
 
-                <h1>
-                    Skip the wait.<br>
-                    <span>Not your turn.</span>
-                </h1>
-
-                <p class="description">
-                    Join a queue digitally, track your token status,
-                    and save your valuable time. A simpler way to
-                    manage waiting lines.
-                </p>
-
-                <div class="buttons">
-                    <a href="/join.html" class="btn primary">
-                        Get Started →
-                    </a>
-
-                    <a href="/admin.html" class="btn secondary">
-                        Admin Portal
-                    </a>
-                </div>
-            </div>
-
-            <div class="queue-card">
-                <h2>Your time matters.</h2>
-
-                <p>Smart queues make waiting easier.</p>
-
-                <div class="number">#01</div>
-
-                <div class="status">
-                    ● Digital Queue Experience
-                </div>
-
-                <p style="margin-top: 18px;">
-                    Join digitally and keep track of your turn.
-                </p>
-            </div>
-
-        </section>
-
-        <section class="features" id="how-it-works">
-            <h2>Waiting, made simple.</h2>
-
-            <p>
-                QueueNow makes the queue experience easier for everyone.
+            <p class="description">
+                Say goodbye to long queues and wasted time.
+                Join the queue digitally and enjoy a smarter,
+                smoother waiting experience with QueueNow.
             </p>
 
-            <div class="feature-grid">
+            <a href="/join.html" class="button">Join the Queue →</a>
+        </section>
 
-                <div class="feature">
-                    <div class="emoji">🎟️</div>
-                    <h3>Join the Queue</h3>
-                    <p>
-                        Enter your name to begin the digital queue process.
-                    </p>
-                </div>
+        <section class="features">
+            <div class="feature">
+                <div class="feature-icon">✦</div>
+                <h2>Quick & Easy</h2>
+                <p>Join the queue in just a few simple steps.</p>
+            </div>
 
-                <div class="feature">
-                    <div class="emoji">📱</div>
-                    <h3>Track Your Turn</h3>
-                    <p>
-                        Check your token status without standing in line.
-                    </p>
-                </div>
+            <div class="feature">
+                <div class="feature-icon">◷</div>
+                <h2>Save Your Time</h2>
+                <p>Make waiting simpler and more convenient.</p>
+            </div>
 
-                <div class="feature">
-                    <div class="emoji">⏱️</div>
-                    <h3>Save Your Time</h3>
-                    <p>
-                        Make waiting more organised and convenient.
-                    </p>
-                </div>
-
+            <div class="feature">
+                <div class="feature-icon">◇</div>
+                <h2>Smart Experience</h2>
+                <p>A modern digital approach to queue management.</p>
             </div>
         </section>
     </main>
 
     <footer>
-        © 2026 QueueNow. Smart waiting starts here.
+        © 2026 QueueNow. Designed for a smarter waiting experience.
     </footer>
-
 </body>
 </html>
