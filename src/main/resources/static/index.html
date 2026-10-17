@@ -1,0 +1,246 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QueueNow | Smart Queue Management</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7ff;
+            color: #172554;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 22px 8%;
+            background: white;
+            box-shadow: 0 2px 12px #0000000d;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: bold;
+            color: #315bea;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #334155;
+            margin-left: 24px;
+            font-weight: 600;
+        }
+
+        .hero {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+            padding: 70px 8%;
+        }
+
+        .hero-content {
+            max-width: 580px;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #e0e7ff;
+            color: #315bea;
+            padding: 10px 16px;
+            border-radius: 25px;
+            margin-bottom: 22px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        h1 {
+            font-size: clamp(38px, 5vw, 62px);
+            line-height: 1.1;
+            margin-bottom: 22px;
+        }
+
+        h1 span {
+            color: #315bea;
+        }
+
+        .description {
+            color: #64748b;
+            font-size: 18px;
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 22px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .primary {
+            background: #315bea;
+            color: white;
+        }
+
+        .secondary {
+            border: 1px solid #cbd5e1;
+            color: #172554;
+            background: white;
+        }
+
+        .queue-card {
+            width: 320px;
+            min-width: 260px;
+            padding: 30px;
+            border-radius: 22px;
+            background: white;
+            box-shadow: 0 20px 60px #315bea1c;
+        }
+
+        .queue-card h2 {
+            margin-bottom: 10px;
+        }
+
+        .queue-card p {
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        .number {
+            font-size: 58px;
+            color: #315bea;
+            font-weight: bold;
+            margin: 18px 0;
+        }
+
+        .status {
+            background: #dcfce7;
+            color: #166534;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            padding: 22px;
+            color: #64748b;
+            background: white;
+        }
+
+        @media (max-width: 750px) {
+            header {
+                padding: 20px 5%;
+            }
+
+            nav a {
+                margin-left: 10px;
+                font-size: 14px;
+            }
+
+            .hero {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 55px 6%;
+            }
+
+            .queue-card {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="logo">QueueNow.</div>
+
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="admin.html">Admin</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero" id="home">
+
+            <div class="hero-content">
+                <div class="tag">SMART QUEUE MANAGEMENT</div>
+
+                <h1>
+                    Skip the wait.<br>
+                    <span>Not your turn.</span>
+                </h1>
+
+                <p class="description">
+                    Join a queue digitally, track your token status,
+                    and save your valuable time. A simpler way to
+                    manage waiting lines.
+                </p>
+
+                <div class="buttons">
+                    <a href="#how-it-works" class="btn primary">
+                        Get Started →
+                    </a>
+
+                    <a href="admin.html" class="btn secondary">
+                        Admin Portal
+                    </a>
+                </div>
+            </div>
+
+            <div class="queue-card">
+                <h2>Your time matters.</h2>
+                <p>Smart queues make waiting easier.</p>
+
+                <div class="number">#01</div>
+
+                <div class="status">● Digital Queue Experience</div>
+
+                <p style="margin-top: 18px;">
+                    Join digitally and keep track of your turn.
+                </p>
+            </div>
+
+        </section>
+
+        <section id="how-it-works"
+            style="padding: 45px 8%; text-align: center;">
+
+            <h2>Waiting, made simple.</h2>
+
+            <p style="margin-top: 14px; color: #64748b;">
+                Join the queue, receive your token, and track your status.
+            </p>
+
+        </section>
+    </main>
+
+    <footer>
+        © 2026 QueueNow. Smart waiting starts here.
+    </footer>
+
+</body>
+</html>
