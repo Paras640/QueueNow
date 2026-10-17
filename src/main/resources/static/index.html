@@ -32,21 +32,30 @@
             font-size: 26px;
             font-weight: bold;
             color: #315bea;
+            text-decoration: none;
+        }
+
+        nav {
+            display: flex;
+            gap: 28px;
         }
 
         nav a {
             text-decoration: none;
             color: #334155;
-            margin-left: 24px;
             font-weight: 600;
         }
 
+        nav a:hover {
+            color: #315bea;
+        }
+
         .hero {
-            min-height: 80vh;
+            min-height: 78vh;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 40px;
+            gap: 45px;
             padding: 70px 8%;
         }
 
@@ -67,7 +76,7 @@
 
         h1 {
             font-size: clamp(38px, 5vw, 62px);
-            line-height: 1.1;
+            line-height: 1.12;
             margin-bottom: 22px;
         }
 
@@ -90,15 +99,21 @@
 
         .btn {
             display: inline-block;
-            padding: 14px 22px;
+            padding: 15px 24px;
             border-radius: 10px;
             text-decoration: none;
             font-weight: bold;
+            transition: 0.2s;
         }
 
         .primary {
             background: #315bea;
             color: white;
+        }
+
+        .primary:hover {
+            background: #2448c7;
+            transform: translateY(-2px);
         }
 
         .secondary {
@@ -107,17 +122,23 @@
             background: white;
         }
 
+        .secondary:hover {
+            border-color: #315bea;
+            color: #315bea;
+        }
+
         .queue-card {
-            width: 320px;
+            width: 325px;
             min-width: 260px;
-            padding: 30px;
-            border-radius: 22px;
+            padding: 32px;
+            border-radius: 24px;
             background: white;
             box-shadow: 0 20px 60px #315bea1c;
         }
 
         .queue-card h2 {
-            margin-bottom: 10px;
+            font-size: 27px;
+            margin-bottom: 12px;
         }
 
         .queue-card p {
@@ -126,35 +147,82 @@
         }
 
         .number {
-            font-size: 58px;
+            font-size: 66px;
             color: #315bea;
             font-weight: bold;
-            margin: 18px 0;
+            margin: 22px 0;
         }
 
         .status {
             background: #dcfce7;
             color: #166534;
-            padding: 10px;
-            border-radius: 8px;
+            padding: 12px;
+            border-radius: 9px;
             text-align: center;
             font-weight: bold;
         }
 
+        .features {
+            padding: 55px 8% 75px;
+            text-align: center;
+            background: white;
+        }
+
+        .features h2 {
+            font-size: 32px;
+            margin-bottom: 14px;
+        }
+
+        .features > p {
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+            margin-top: 35px;
+        }
+
+        .feature {
+            padding: 25px;
+            background: #f5f7ff;
+            border-radius: 15px;
+        }
+
+        .feature .emoji {
+            font-size: 32px;
+            margin-bottom: 14px;
+        }
+
+        .feature h3 {
+            margin-bottom: 10px;
+        }
+
+        .feature p {
+            color: #64748b;
+            line-height: 1.6;
+        }
+
         footer {
             text-align: center;
-            padding: 22px;
+            padding: 24px;
             color: #64748b;
-            background: white;
         }
 
         @media (max-width: 750px) {
             header {
                 padding: 20px 5%;
+                flex-wrap: wrap;
+                gap: 18px;
+            }
+
+            nav {
+                gap: 15px;
             }
 
             nav a {
-                margin-left: 10px;
                 font-size: 14px;
             }
 
@@ -167,6 +235,10 @@
             .queue-card {
                 width: 100%;
             }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -174,17 +246,17 @@
 <body>
 
     <header>
-        <div class="logo">QueueNow.</div>
+        <a href="/" class="logo">QueueNow.</a>
 
         <nav>
-            <a href="#home">Home</a>
+            <a href="/">Home</a>
             <a href="#how-it-works">How It Works</a>
-            <a href="admin.html">Admin</a>
+            <a href="/admin.html">Admin</a>
         </nav>
     </header>
 
     <main>
-        <section class="hero" id="home">
+        <section class="hero">
 
             <div class="hero-content">
                 <div class="tag">SMART QUEUE MANAGEMENT</div>
@@ -202,10 +274,10 @@
 
                 <div class="buttons">
                     <a href="/join.html" class="btn primary">
-                 Get Started →
-                 </a>
+                        Get Started →
+                    </a>
 
-                    <a href="admin.html" class="btn secondary">
+                    <a href="/admin.html" class="btn secondary">
                         Admin Portal
                     </a>
                 </div>
@@ -213,11 +285,14 @@
 
             <div class="queue-card">
                 <h2>Your time matters.</h2>
+
                 <p>Smart queues make waiting easier.</p>
 
                 <div class="number">#01</div>
 
-                <div class="status">● Digital Queue Experience</div>
+                <div class="status">
+                    ● Digital Queue Experience
+                </div>
 
                 <p style="margin-top: 18px;">
                     Join digitally and keep track of your turn.
@@ -226,15 +301,40 @@
 
         </section>
 
-        <section id="how-it-works"
-            style="padding: 45px 8%; text-align: center;">
-
+        <section class="features" id="how-it-works">
             <h2>Waiting, made simple.</h2>
 
-            <p style="margin-top: 14px; color: #64748b;">
-                Join the queue, receive your token, and track your status.
+            <p>
+                QueueNow makes the queue experience easier for everyone.
             </p>
 
+            <div class="feature-grid">
+
+                <div class="feature">
+                    <div class="emoji">🎟️</div>
+                    <h3>Join the Queue</h3>
+                    <p>
+                        Enter your name to begin the digital queue process.
+                    </p>
+                </div>
+
+                <div class="feature">
+                    <div class="emoji">📱</div>
+                    <h3>Track Your Turn</h3>
+                    <p>
+                        Check your token status without standing in line.
+                    </p>
+                </div>
+
+                <div class="feature">
+                    <div class="emoji">⏱️</div>
+                    <h3>Save Your Time</h3>
+                    <p>
+                        Make waiting more organised and convenient.
+                    </p>
+                </div>
+
+            </div>
         </section>
     </main>
 
