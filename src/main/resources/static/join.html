@@ -1,0 +1,190 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Queue | QueueNow</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7ff;
+            color: #172554;
+            min-height: 100vh;
+        }
+
+        header {
+            background: white;
+            padding: 22px 8%;
+            box-shadow: 0 2px 12px #0000000d;
+        }
+
+        .logo {
+            color: #315bea;
+            font-size: 26px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        main {
+            max-width: 540px;
+            margin: 65px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 15px 45px #315bea12;
+        }
+
+        .tag {
+            color: #315bea;
+            background: #e0e7ff;
+            padding: 8px 12px;
+            display: inline-block;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .description {
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 28px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 9px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 9px;
+            font-size: 16px;
+            margin-bottom: 18px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #315bea;
+            color: white;
+            border: none;
+            border-radius: 9px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #2448c7;
+        }
+
+        #message {
+            margin-top: 20px;
+            padding: 14px;
+            border-radius: 9px;
+            display: none;
+            line-height: 1.5;
+        }
+
+        .note {
+            text-align: center;
+            margin-top: 22px;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <a class="logo" href="/">QueueNow.</a>
+    </header>
+
+    <main>
+        <section class="card">
+            <span class="tag">CUSTOMER PORTAL</span>
+
+            <h1>Join the queue</h1>
+
+            <p class="description">
+                Enter your name to get started.
+                Track your turn without standing in a long line.
+            </p>
+
+            <form id="joinForm">
+                <label for="customerName">Your full name</label>
+
+                <input
+                    type="text"
+                    id="customerName"
+                    name="customerName"
+                    placeholder="Enter your name"
+                    maxlength="80"
+                    required
+                >
+
+                <button type="submit">Join Queue →</button>
+            </form>
+
+            <div id="message" role="status" aria-live="polite"></div>
+
+            <p class="note">
+                QueueNow · Smart waiting starts here
+            </p>
+        </section>
+    </main>
+
+    <script>
+        const form = document.getElementById("joinForm");
+        const message = document.getElementById("message");
+
+        form.addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById("customerName")
+                .value.trim();
+
+            if (!name) {
+                message.style.display = "block";
+                message.style.background = "#fee2e2";
+                message.style.color = "#991b1b";
+                message.textContent = "Please enter your name.";
+                return;
+            }
+
+            message.style.display = "block";
+            message.style.background = "#fef3c7";
+            message.style.color = "#92400e";
+            message.textContent =
+                "Your form is ready! Backend connection is our next step.";
+        });
+    </script>
+</body>
+</html>
