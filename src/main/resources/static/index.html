@@ -7,6 +7,236 @@
     <title>QueueNow | Skip the Wait</title>
 
     <style>
+
+/* ===== QUEUENOW CINEMATIC EFFECTS ===== */
+
+body {
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Moving golden background glow */
+body::before,
+body::after {
+    content: "";
+    position: fixed;
+    width: 350px;
+    height: 350px;
+    border-radius: 50%;
+    filter: blur(100px);
+    pointer-events: none;
+    z-index: 0;
+}
+
+body::before {
+    top: 15%;
+    left: -180px;
+    background: #c99a4520;
+    animation: auraMove 9s ease-in-out infinite alternate;
+}
+
+body::after {
+    right: -180px;
+    bottom: 5%;
+    background: #e6c78f18;
+    animation: auraMove 12s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes auraMove {
+    from { transform: translate(0, 0) scale(.85); }
+    to { transform: translate(70px, 50px) scale(1.2); }
+}
+
+header, main, footer {
+    position: relative;
+    z-index: 1;
+}
+
+/* Cinematic entrance */
+.hero .tag,
+.hero h1,
+.hero .description,
+.hero .button {
+    opacity: 0;
+    animation: cinematicIn .9s ease forwards;
+}
+
+.hero .tag { animation-delay: .1s; }
+.hero h1 { animation-delay: .35s; }
+.hero .description { animation-delay: .6s; }
+.hero .button { animation-delay: .85s; }
+
+@keyframes cinematicIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+        filter: blur(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
+/* Shimmering headline */
+.hero h1 span {
+    display: inline-block;
+    background: linear-gradient(
+        100deg,
+        #bd9557 10%,
+        #ffe8b0 35%,
+        #fff 50%,
+        #e6c78f 65%,
+        #bd9557 90%
+    );
+    background-size: 250% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: goldShimmer 5s linear infinite;
+}
+
+@keyframes goldShimmer {
+    to { background-position: 250% center; }
+}
+
+/* Moving light beam */
+.hero {
+    position: relative;
+    isolation: isolate;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    top: 15%;
+    left: -120%;
+    width: 80%;
+    height: 1px;
+    background: linear-gradient(
+        90deg, transparent, #e6c78f, #fff, transparent
+    );
+    box-shadow: 0 0 18px #e6c78f;
+    pointer-events: none;
+    animation: lightBeam 7s ease-in-out 1.5s infinite;
+}
+
+@keyframes lightBeam {
+    0%, 15% { left: -120%; opacity: 0; }
+    35% { opacity: .8; }
+    65%, 100% { left: 140%; opacity: 0; }
+}
+
+/* Shining gold CTA */
+.button {
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 0 transparent;
+}
+
+.button::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -90%;
+    width: 45%;
+    height: 200%;
+    background: linear-gradient(
+        90deg, transparent, #ffffffa0, transparent
+    );
+    transform: skewX(-25deg);
+    animation: buttonShine 4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes buttonShine {
+    0%, 65% { left: -90%; }
+    100% { left: 150%; }
+}
+
+/* Feature cards lift on hover */
+.feature {
+    position: relative;
+    overflow: hidden;
+    transition: transform .35s ease,
+                border-color .35s ease,
+                box-shadow .35s ease;
+}
+
+.feature:hover {
+    transform: translateY(-9px);
+    border-color: #c6a56a;
+    box-shadow: 0 12px 35px #c6a56a20;
+}
+
+/* Floating icons */
+.feature-icon {
+    display: inline-block;
+    animation: iconFloat 3s ease-in-out infinite;
+}
+
+.feature:nth-child(2) .feature-icon {
+    animation-delay: .5s;
+}
+
+.feature:nth-child(3) .feature-icon {
+    animation-delay: 1s;
+}
+
+@keyframes iconFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+/* Floating golden particles */
+.gold-particle {
+    position: fixed;
+    bottom: -15px;
+    z-index: 0;
+    border-radius: 50%;
+    background: #f1d49a;
+    box-shadow: 0 0 12px 2px #d9ad5b80;
+    pointer-events: none;
+    animation: particleFlight linear forwards;
+}
+
+@keyframes particleFlight {
+    0% {
+        transform: translate(0, 0) scale(.5);
+        opacity: 0;
+    }
+    15% { opacity: .9; }
+    100% {
+        transform: translate(45px, -110vh) scale(1.4);
+        opacity: 0;
+    }
+}
+
+/* Mobile and reduced-motion support */
+@media (max-width: 650px) {
+    .hero::before {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+    }
+
+    .hero .tag,
+    .hero h1,
+    .hero .description,
+    .hero .button {
+        opacity: 1;
+        transform: none;
+        filter: none;
+    }
+}
+
         
 /* Smooth scrolling */
 html {
@@ -281,5 +511,39 @@ header {
     <footer>
         © 2026 QueueNow. Designed for a smarter waiting experience.
     </footer>
+    
+<script>
+const reducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+).matches;
+
+if (!reducedMotion) {
+    function createParticle() {
+        if (document.querySelectorAll(".gold-particle").length >= 24) {
+            return;
+        }
+
+        const particle = document.createElement("span");
+        particle.className = "gold-particle";
+        particle.style.left = Math.random() * 100 + "vw";
+        particle.style.animationDuration =
+            (7 + Math.random() * 6) + "s";
+
+        const size = 2 + Math.random() * 3;
+        particle.style.width = size + "px";
+        particle.style.height = size + "px";
+
+        document.body.appendChild(particle);
+
+        particle.addEventListener("animationend", () => {
+            particle.remove();
+        });
+    }
+
+    setInterval(createParticle, 400);
+}
+</script>
+
+
 </body>
 </html>
