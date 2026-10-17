@@ -5,8 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Join Queue | QueueNow</title>
+<style>
+    
+button:disabled {
+    cursor: wait;
+    transform: none;
+    box-shadow: none;
+}
 
-    <style>
 * {
     margin: 0;
     padding: 0;
@@ -15,21 +21,23 @@
 
 body {
     font-family: "Segoe UI", Arial, sans-serif;
-    background: #080808;
-    color: #f5f0e8;
+    background:
+        radial-gradient(ellipse at 50% 0%, #302313 0%, transparent 48%),
+        #070707;
+    color: #f8f2e8;
     min-height: 100vh;
-    background-image:
-        radial-gradient(ellipse at 50% 0%, #332716 0%, transparent 55%);
+    display: flex;
+    flex-direction: column;
 }
 
 header {
-    background: rgba(12, 12, 12, 0.9);
-    padding: 24px 8%;
-    border-bottom: 1px solid #332b20;
+    padding: 26px 7%;
+    border-bottom: 1px solid #292116;
+    background: rgba(7, 7, 7, 0.8);
 }
 
 .logo {
-    color: #e5c58a;
+    color: #e6c78f;
     font-size: 27px;
     font-weight: 800;
     letter-spacing: -1px;
@@ -37,131 +45,370 @@ header {
 }
 
 main {
-    max-width: 580px;
-    margin: 75px auto;
-    padding: 0 20px;
+    width: 100%;
+    max-width: 650px;
+    margin: auto;
+    padding: 55px 22px;
 }
 
 .card {
-    background: linear-gradient(145deg, #171614, #0e0e0d);
-    padding: 42px;
-    border: 1px solid #493b27;
-    border-radius: 22px;
-    box-shadow: 0 25px 80px #00000080;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(145deg, #171613, #0d0d0c);
+    padding: 44px;
+    border: 1px solid #5a472b;
+    border-radius: 24px;
+    box-shadow:
+        0 25px 80px #00000080,
+        0 0 35px #c6a56a0a;
+    animation: cardEntrance 0.8s ease both;
+}
+
+/* Elegant gold line */
+.card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 12%;
+    width: 76%;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        #e6c78f,
+        transparent
+    );
 }
 
 .tag {
-    color: #e5c58a;
-    background: #292115;
-    border: 1px solid #514127;
-    padding: 9px 14px;
     display: inline-block;
+    color: #e6c78f;
+    background: #282015;
+    border: 1px solid #5a472b;
     border-radius: 30px;
+    padding: 10px 15px;
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 800;
     letter-spacing: 2px;
-    margin-bottom: 25px;
+    margin-bottom: 26px;
 }
 
 h1 {
-    font-size: clamp(30px, 6vw, 43px);
-    line-height: 1.2;
-    margin-bottom: 16px;
-    letter-spacing: -1.5px;
-    color: #fffaf0;
+    font-size: clamp(34px, 6vw, 48px);
+    line-height: 1.12;
+    letter-spacing: -1.8px;
+    margin-bottom: 18px;
+    color: #fffaf1;
 }
 
 .description {
-    color: #aaa49a;
-    line-height: 1.8;
-    margin-bottom: 32px;
+    color: #aaa398;
+    line-height: 1.9;
     font-size: 15px;
+    margin-bottom: 34px;
 }
 
 label {
     display: block;
-    font-weight: 600;
+    color: #e9dfce;
     font-size: 14px;
-    color: #e8dfd0;
-    margin-bottom: 11px;
+    font-weight: 600;
+    margin-bottom: 12px;
 }
 
 input {
+    display: block;
     width: 100%;
-    padding: 16px;
-    background: #0a0a0a;
-    color: #fffaf0;
-    border: 1px solid #40382c;
-    border-radius: 10px;
-    font-size: 15px;
-    margin-bottom: 20px;
+    padding: 17px 18px;
+    margin-bottom: 22px;
+    background: #0a0a09;
+    color: #fff7e8;
+    border: 1px solid #403728;
+    border-radius: 12px;
+    font-size: 16px;
     outline: none;
-    transition: border-color 0.25s, box-shadow 0.25s;
+    transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 input::placeholder {
-    color: #716b61;
+    color: #756e62;
 }
 
 input:focus {
-    border-color: #c6a56a;
-    box-shadow: 0 0 0 3px #c6a56a18;
+    border-color: #d6b477;
+    box-shadow: 0 0 0 4px #d6b47712;
 }
 
 button {
+    display: block;
     width: 100%;
-    padding: 16px;
-    background: linear-gradient(110deg, #e8cf9c, #b58b4e);
-    color: #17110a;
-    border: none;
-    border-radius: 10px;
+    padding: 17px;
+    border: 1px solid #efd8a8;
+    border-radius: 12px;
+    background: linear-gradient(110deg, #f0d9a8, #bd9557);
+    color: #171109;
     font-size: 15px;
     font-weight: 800;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.4px;
     cursor: pointer;
     transition: transform 0.25s, box-shadow 0.25s;
 }
 
 button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 28px #c6a56a35;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px #d5b47730;
 }
 
 button:active {
-    transform: translateY(0);
+    transform: scale(0.99);
 }
 
 #message {
-    margin-top: 20px;
-    padding: 15px;
-    border-radius: 10px;
     display: none;
-    line-height: 1.6;
+    margin-top: 20px;
+    padding: 16px 18px;
+    border: 1px solid #5a472b;
+    border-radius: 12px;
+    background: #201b12;
+    color: #e6c78f;
     font-size: 14px;
+    line-height: 1.7;
+    animation: messageIn 0.35s ease both;
 }
 
 .note {
     text-align: center;
-    margin-top: 28px;
-    color: #827b70;
+    margin-top: 30px;
+    color: #81796d;
     font-size: 12px;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.6px;
+}
+
+@keyframes cardEntrance {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes messageIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @media (max-width: 480px) {
+    header {
+        padding: 22px 6%;
+    }
+
     main {
-        margin: 40px auto;
+        padding: 35px 18px;
     }
 
     .card {
-        padding: 27px 22px;
+        padding: 30px 23px;
+        border-radius: 19px;
     }
 
-    header {
-        padding: 20px 6%;
+    h1 {
+        font-size: 36px;
     }
 }
-    </style>
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* ===== LUXURY QUEUENOW ANIMATIONS ===== */
+
+body {
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Soft golden ambient glow */
+body::before {
+    content: "";
+    position: fixed;
+    width: 380px;
+    height: 380px;
+    top: 10%;
+    left: -200px;
+    border-radius: 50%;
+    background: #c99a4520;
+    filter: blur(90px);
+    pointer-events: none;
+    z-index: -1;
+    animation: ambientGlow 8s ease-in-out infinite alternate;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    width: 350px;
+    height: 350px;
+    right: -180px;
+    bottom: 5%;
+    border-radius: 50%;
+    background: #e6c78f15;
+    filter: blur(90px);
+    pointer-events: none;
+    z-index: -1;
+    animation: ambientGlow 10s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes ambientGlow {
+    from { transform: translate(0, 0) scale(0.9); }
+    to { transform: translate(40px, 30px) scale(1.2); }
+}
+
+/* Moving golden light around the card */
+.card {
+    isolation: isolate;
+    transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.card:hover {
+    border-color: #a88a53;
+    box-shadow: 0 25px 90px #00000090, 0 0 35px #c6a56a18;
+}
+
+/* Animated gold heading */
+h1 {
+    background: linear-gradient(
+        100deg,
+        #fffaf1 15%,
+        #e6c78f 35%,
+        #fff5d9 50%,
+        #c29a5b 65%,
+        #fffaf1 85%
+    );
+    background-size: 250% auto;
+    color: #e6c78f;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: goldShimmer 6s linear infinite;
+}
+
+@keyframes goldShimmer {
+    to { background-position: 250% center; }
+}
+
+/* Golden shine sweeping across the button */
+button {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+button::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -75%;
+    width: 45%;
+    height: 200%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        #ffffff90,
+        transparent
+    );
+    transform: skewX(-22deg);
+    animation: buttonShine 4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes buttonShine {
+    0%, 65% { left: -75%; }
+    100% { left: 140%; }
+}
+
+/* Focus glow for the input */
+input:focus {
+    border-color: #e6c78f;
+    box-shadow: 0 0 0 3px #e6c78f18, 0 0 24px #c6a56a15;
+}
+
+/* Elegant success message */
+#message {
+    position: relative;
+    overflow: hidden;
+}
+
+#message.success-message {
+    border-color: #7b6337;
+    background: linear-gradient(110deg, #211b10, #12110d);
+    color: #f0d49a;
+}
+
+#message.success-message::before {
+    content: "✦";
+    display: inline-block;
+    margin-right: 10px;
+    animation: successPop 0.5s ease both;
+}
+
+@keyframes successPop {
+    from { transform: scale(0) rotate(-90deg); opacity: 0; }
+    to { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+/* Floating gold particles */
+.gold-particle {
+    position: fixed;
+    bottom: -20px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #e6c78f;
+    box-shadow: 0 0 10px 2px #d9ad5b60;
+    pointer-events: none;
+    z-index: 0;
+    animation: particleRise linear forwards;
+}
+
+@keyframes particleRise {
+    0% {
+        transform: translateY(0) translateX(0);
+        opacity: 0;
+    }
+    15% { opacity: 0.8; }
+    80% { opacity: 0.5; }
+    100% {
+        transform: translateY(-110vh) translateX(45px);
+        opacity: 0;
+    }
+}
+
+/* Keep the form above the background particles */
+header, main, footer {
+    position: relative;
+    z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+</style>
 </head>
 
 <body>
@@ -203,55 +450,97 @@ button:active {
         </section>
     </main>
 
-    <script>
-    const form = document.getElementById("joinForm");
-    const message = document.getElementById("message");
+    
+<script>
+const form = document.getElementById("joinForm");
+const message = document.getElementById("message");
+const button = form.querySelector("button");
 
-    form.addEventListener("submit", async function(event) {
-        event.preventDefault();
+form.addEventListener("submit", async function(event) {
+    event.preventDefault();
 
-        const name = document.getElementById("customerName")
-            .value.trim();
+    const name = document.getElementById("customerName").value.trim();
 
-        if (!name) {
-            message.style.display = "block";
-            message.textContent = "Please enter your name.";
-            return;
+    message.classList.remove("success-message");
+    message.style.display = "block";
+    message.style.background = "#201b12";
+    message.style.color = "#e6c78f";
+    message.style.borderColor = "#5a472b";
+
+    if (!name) {
+        message.textContent = "Please enter your name.";
+        return;
+    }
+
+    message.textContent = "✦ Joining queue...";
+    button.disabled = true;
+    button.style.opacity = "0.7";
+
+    try {
+        const response = await fetch("/api/queue/join", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ name: name })
+        });
+
+        const data = await response.json();
+
+        message.textContent = data.message || "Request completed.";
+
+        if (response.ok) {
+            message.classList.add("success-message");
+            message.style.background =
+                "linear-gradient(110deg, #211b10, #12110d)";
+            message.style.color = "#f0d49a";
+            message.style.borderColor = "#7b6337";
+        } else {
+            message.style.background = "#241313";
+            message.style.color = "#f0a6a6";
+            message.style.borderColor = "#6b3030";
         }
+    } catch (error) {
+        message.textContent =
+            "Could not connect to the server. Please try again.";
+        message.style.background = "#241313";
+        message.style.color = "#f0a6a6";
+        message.style.borderColor = "#6b3030";
+    } finally {
+        button.disabled = false;
+        button.style.opacity = "1";
+    }
+});
 
-        message.style.display = "block";
-        message.textContent = "Joining queue...";
+/* Floating golden particles */
+const reducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+).matches;
 
-        try {
-            const response = await fetch("/api/queue/join", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ name: name })
-            });
+if (!reducedMotion) {
+    function createGoldParticle() {
+        const particle = document.createElement("span");
+        particle.className = "gold-particle";
 
-            const data = await response.json();
+        particle.style.left = Math.random() * 100 + "vw";
+        particle.style.animationDuration =
+            (6 + Math.random() * 6) + "s";
 
-            message.textContent = data.message ||
-                "Request completed.";
+        const size = 2 + Math.random() * 3;
+        particle.style.width = size + "px";
+        particle.style.height = size + "px";
 
-            message.style.background = response.ok
-                ? "#d1fae5"
-                : "#fee2e2";
+        document.body.appendChild(particle);
 
-            message.style.color = response.ok
-                ? "#065f46"
-                : "#991b1b";
+        particle.addEventListener("animationend", function() {
+            particle.remove();
+        });
+    }
 
-        } catch (error) {
-            message.style.display = "block";
-            message.style.background = "#fee2e2";
-            message.style.color = "#991b1b";
-            message.textContent =
-                "Could not connect to the server. Please try again.";
-        }
-    });
+    setInterval(createGoldParticle, 450);
+}
 </script>
 </body>
 </html>
+
+

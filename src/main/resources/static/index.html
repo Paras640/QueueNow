@@ -7,6 +7,92 @@
     <title>QueueNow | Skip the Wait</title>
 
     <style>
+        
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Page entrance animation */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+header {
+    animation: fadeUp 0.7s ease both;
+}
+
+.hero .tag {
+    animation: fadeUp 0.8s ease both;
+}
+
+.hero h1 {
+    animation: fadeUp 1s ease both;
+}
+
+.hero .description {
+    animation: fadeUp 1.2s ease both;
+}
+
+.hero .button {
+    animation: fadeUp 1.4s ease both;
+}
+
+/* Luxury gold button glow */
+.button {
+    box-shadow: 0 0 0 transparent;
+}
+
+.button:hover {
+    box-shadow: 0 0 25px #c6a56a55;
+    transform: translateY(-4px);
+}
+
+/* Feature card hover animation */
+.feature {
+    transition:
+        transform 0.35s ease,
+        border-color 0.35s ease,
+        box-shadow 0.35s ease;
+}
+
+.feature:hover {
+    transform: translateY(-8px);
+    border-color: #c6a56a;
+    box-shadow: 0 12px 35px #c6a56a15;
+}
+
+/* Floating feature icons */
+.feature-icon {
+    display: inline-block;
+    animation: floatIcon 3s ease-in-out infinite;
+}
+
+@keyframes floatIcon {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-6px);
+    }
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+    }
+}
+
         * {
             margin: 0;
             padding: 0;
