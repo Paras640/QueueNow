@@ -32,6 +32,11 @@ public class QueueController {
     public ResponseEntity<?> joinQueue(
             @RequestBody Map<String, String> request) {
 
+        if (request == null) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("message", "Request cannot be empty."));
+        }
+
         String name = request.get("name");
 
         if (name == null || name.trim().isEmpty()) {
@@ -56,10 +61,19 @@ public class QueueController {
     }
 
     @GetMapping(value = "/qr", produces = MediaType.IMAGE_PNG_VALUE)
-    public ResponseEntity<byte[]> getQRCode(
-            @RequestParam String text) throws WriterException, IOException {
+    public ResponseEntity<?> getQRCode(
+            @RequestParam(required = false) String text)
+            throws WriterException, IOException {
 
-        byte[] qrCode = qrCodeService.generate(text);
+        if (text == null || text.trim().isEmpty()) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of(
+                            "message",
+                            "QR code text cannot be empty."
+                    ));
+        }
+
+        byte[] qrCode = qrCodeService.generate(text.trim());
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CACHE_CONTROL, "no-store")
