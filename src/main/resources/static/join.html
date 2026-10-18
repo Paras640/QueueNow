@@ -368,9 +368,20 @@ input:focus {
 
 #message.loading {
     display: block;
-    color: var(--gold-light);
+    color: var(--light-gold);
     background: #d4a6500b;
     border: 1px solid #d4a65055;
+}
+
+#queueQr {
+    display: block;
+    width: 200px;
+    height: 200px;
+    max-width: 100%;
+    margin: 15px auto;
+    padding: 10px;
+    background: #ffffff;
+    border-radius: 12px;
 }
 
 .spinner {
@@ -379,7 +390,7 @@ input:focus {
     height: 13px;
     margin-right: 9px;
     border: 2px solid #e6c78f50;
-    border-top-color: var(--gold-light);
+    border-top-color: var(--light-gold);
     border-radius: 50%;
     animation: spin .7s linear infinite;
     vertical-align: -2px;
@@ -418,6 +429,7 @@ footer {
 
     .intro { text-align: center; }
     .intro p { margin: auto; }
+
     .mini-points {
         display: flex;
         justify-content: center;
@@ -568,7 +580,7 @@ if (!reducedMotion) {
     setInterval(createParticle, 450);
 }
 
-/* Keep the existing backend API connection */
+/* Join Queue and QR code */
 const form = document.getElementById("joinForm");
 const nameInput = document.getElementById("customerName");
 const message = document.getElementById("message");
@@ -605,16 +617,55 @@ form.addEventListener("submit", async function(event) {
 
         const data = await response.json();
 
+
         if (!response.ok) {
             throw new Error(data.message || "Unable to join the queue.");
         }
 
+        /* Display the success message */
         message.className = "success";
-        message.textContent = "✦  " + (
-            data.message || "Your request has been completed."
-        );
+        message.replaceChildren();
 
-        buttonText.textContent = "Request Complete";
+        const successText = document.createElement("p");
+        successText.textContent = "✦ " + (
+            data.message || "You have joined the queue."
+        );
+        message.appendChild(successText);
+
+        /* Display the token number */
+        if (data.tokenNumber !== undefined) {
+            const token = document.createElement("h3");
+            token.textContent = "Your Token Number: #" + data.tokenNumber;
+            token.style.marginTop = "15px";
+            message.appendChild(token);
+        }
+
+        /* QR code heading */
+        const qrHeading = document.createElement("p");
+        qrHeading.textContent = "Your Queue QR Code";
+        qrHeading.style.marginTop = "18px";
+        message.appendChild(qrHeading);
+
+        /* Generate and display QR code */
+        const qrImage = document.createElement("img");
+        qrImage.id = "queueQr";
+        qrImage.alt = "Your QueueNow QR Code";
+
+        qrImage.src = "/api/queue/qr?text=" +
+    encodeURIComponent("http://172.20.10.3:8080/join.html");
+        qrImage.onerror = function() {
+            qrImage.remove();
+
+            const errorText = document.createElement("p");
+            errorText.textContent =
+                "QR code could not load. Please try again.";
+            message.appendChild(errorText);
+        };
+
+        message.appendChild(qrImage);
+
+        buttonText.textContent = "Queue Joined";
+        alert("UPDATED FILE IS RUNNING");
         buttonArrow.textContent = "✓";
 
     } catch (error) {
