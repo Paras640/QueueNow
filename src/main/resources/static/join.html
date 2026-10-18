@@ -1,0 +1,634 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QueueNow | Join the Queue</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --gold: #e6c78f;
+    --light-gold: #fff0c7;
+    --dark-gold: #b58b4e;
+    --black: #080807;
+    --muted: #aaa49a;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+    min-height: 100vh;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: #fffaf0;
+    background:
+        radial-gradient(ellipse at 20% 15%, #49351b55, transparent 42%),
+        radial-gradient(ellipse at 90% 80%, #5c3d172b, transparent 38%),
+        var(--black);
+    overflow-x: hidden;
+}
+
+#particles {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.particle {
+    position: absolute;
+    bottom: -15px;
+    border-radius: 50%;
+    background: var(--light-gold);
+    box-shadow: 0 0 12px 2px #e6c78f80;
+    animation: rise linear forwards;
+}
+
+@keyframes rise {
+    0% { transform: translateY(0); opacity: 0; }
+    15% { opacity: .8; }
+    100% { transform: translateY(-110vh) translateX(45px); opacity: 0; }
+}
+
+/* Header */
+header {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 8%;
+    border-bottom: 1px solid #80602c55;
+    background: #090908d9;
+    animation: topEnter .8s ease both;
+}
+
+.logo {
+    color: var(--gold);
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    text-decoration: none;
+}
+
+.back-link {
+    color: #ded1b8;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color .3s;
+}
+
+.back-link:hover { color: var(--light-gold); }
+
+@keyframes topEnter {
+    from { opacity: 0; transform: translateY(-18px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Main layout */
+main {
+    position: relative;
+    z-index: 1;
+    min-height: calc(100vh - 140px);
+    display: grid;
+    place-items: center;
+    padding: 55px 20px 65px;
+}
+
+.join-layout {
+    width: 100%;
+    max-width: 1050px;
+    display: grid;
+    grid-template-columns: 1fr .9fr;
+    align-items: center;
+    gap: 65px;
+}
+
+/* Left introduction */
+.intro {
+    animation: reveal .9s .15s ease both;
+}
+
+.eyebrow {
+    display: inline-block;
+    color: var(--gold);
+    border: 1px solid #8c6a35;
+    background: #33261580;
+    border-radius: 30px;
+    padding: 10px 15px;
+    margin-bottom: 24px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.intro h1 {
+    font-size: clamp(42px, 5vw, 66px);
+    line-height: 1.08;
+    letter-spacing: -2.5px;
+    margin-bottom: 22px;
+}
+
+.gold-text {
+    display: inline-block;
+    background: linear-gradient(100deg, #bd9557, #fff0c7, #d4a650, #fff0c7);
+    background-size: 250% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 5s linear infinite;
+}
+
+@keyframes shimmer {
+    to { background-position: 250% center; }
+}
+
+.intro p {
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.9;
+    max-width: 420px;
+}
+
+.mini-points {
+    display: grid;
+    gap: 17px;
+    margin-top: 32px;
+}
+
+.mini-point {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    color: #ded3bf;
+    font-size: 14px;
+}
+
+.point-icon {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border: 1px solid #94713b;
+    border-radius: 50%;
+    color: var(--gold);
+    background: #d4a6500c;
+}
+
+/* Form card */
+.card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding: 37px;
+    border: 1px solid #8b6b386b;
+    border-radius: 25px;
+    background: linear-gradient(145deg, #1b1915f5, #0c0c0bf7);
+    box-shadow: 0 25px 90px #0009, 0 0 40px #c99a4510;
+    animation: reveal 1s .3s ease both;
+}
+
+.card::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: -100%;
+    width: 70%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--light-gold), transparent);
+    animation: cardSweep 6s ease-in-out infinite;
+}
+
+@keyframes cardSweep {
+    0%, 15% { left: -100%; }
+    65%, 100% { left: 140%; }
+}
+
+@keyframes reveal {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+        filter: blur(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
+.card-label {
+    color: var(--gold);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+}
+
+.card h2 {
+    font-size: 30px;
+    letter-spacing: -1px;
+    margin-bottom: 12px;
+}
+
+.card-description {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.8;
+    margin-bottom: 30px;
+}
+
+label {
+    display: block;
+    color: #e8dfd0;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.input-wrap {
+    position: relative;
+    margin-bottom: 19px;
+}
+
+.input-wrap span {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gold);
+    font-size: 18px;
+    pointer-events: none;
+}
+
+input {
+    width: 100%;
+    padding: 16px 15px 16px 45px;
+    background: #090908;
+    color: #fffaf0;
+    border: 1px solid #51432f;
+    border-radius: 12px;
+    outline: none;
+    font-size: 15px;
+    transition: border-color .3s, box-shadow .3s;
+}
+
+input::placeholder { color: #716b61; }
+
+input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 4px #c6a56a15;
+}
+
+.button {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border: none;
+    border-radius: 12px;
+    padding: 17px 20px;
+    background: linear-gradient(110deg, #fff0c7, #d4a650, #b58b4e);
+    color: #17110a;
+    font-size: 15px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 0 25px #d6ae5b18;
+    transition: transform .3s, box-shadow .3s;
+}
+
+.button::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -100%;
+    width: 45%;
+    height: 200%;
+    transform: skewX(-25deg);
+    background: linear-gradient(90deg, transparent, #ffffffbb, transparent);
+    animation: buttonShine 4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes buttonShine {
+    0%, 65% { left: -100%; }
+    100% { left: 150%; }
+}
+
+.button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px #c6a56a40;
+}
+
+.button:disabled {
+    opacity: .75;
+    cursor: wait;
+    transform: none;
+}
+
+.button .arrow { font-size: 20px; }
+
+#message {
+    display: none;
+    margin-top: 20px;
+    padding: 17px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+#message.success {
+    display: block;
+    color: #f6e4b8;
+    background: #d4a65012;
+    border: 1px solid #d4a65080;
+    animation: reveal .45s ease both;
+}
+
+#message.error {
+    display: block;
+    color: #ffd2c9;
+    background: #8b30201c;
+    border: 1px solid #b95b4a80;
+}
+
+#message.loading {
+    display: block;
+    color: var(--gold-light);
+    background: #d4a6500b;
+    border: 1px solid #d4a65055;
+}
+
+.spinner {
+    display: inline-block;
+    width: 13px;
+    height: 13px;
+    margin-right: 9px;
+    border: 2px solid #e6c78f50;
+    border-top-color: var(--gold-light);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    vertical-align: -2px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.card-note {
+    text-align: center;
+    margin-top: 22px;
+    color: #827b70;
+    font-size: 11px;
+    letter-spacing: .4px;
+}
+
+/* Footer */
+footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid #6f512b40;
+    padding: 21px;
+    text-align: center;
+    color: #827b70;
+    font-size: 12px;
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+    .join-layout {
+        max-width: 540px;
+        grid-template-columns: 1fr;
+        gap: 35px;
+    }
+
+    .intro { text-align: center; }
+    .intro p { margin: auto; }
+    .mini-points {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .mini-point { font-size: 12px; }
+    main { padding-top: 40px; }
+}
+
+@media (max-width: 480px) {
+    header { padding: 19px 6%; }
+    .logo { font-size: 25px; }
+    main { padding: 35px 15px 45px; }
+    .intro h1 { letter-spacing: -1.5px; }
+    .card { padding: 27px 22px; }
+    .card h2 { font-size: 27px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+    }
+
+    .intro, .card {
+        opacity: 1;
+        transform: none;
+        filter: none;
+    }
+}
+</style>
+</head>
+
+<body>
+<div id="particles" aria-hidden="true"></div>
+
+<header>
+    <a href="/" class="logo">QueueNow.</a>
+    <a href="/" class="back-link">← Back to Home</a>
+</header>
+
+<main>
+    <div class="join-layout">
+
+        <section class="intro">
+            <div class="eyebrow">✦ &nbsp; CUSTOMER PORTAL</div>
+
+            <h1>Your time.<br>
+                <span class="gold-text">Your turn.</span>
+            </h1>
+
+            <p>
+                Skip the physical line and make waiting effortless.
+                Enter your name to get started with a smarter queue
+                experience designed around your time.
+            </p>
+
+            <div class="mini-points">
+                <div class="mini-point">
+                    <span class="point-icon">ϟ</span>
+                    <span>Quick and simple</span>
+                </div>
+
+                <div class="mini-point">
+                    <span class="point-icon">◷</span>
+                    <span>Less time waiting</span>
+                </div>
+
+                <div class="mini-point">
+                    <span class="point-icon">✦</span>
+                    <span>Digital convenience</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="card-label">GET STARTED</div>
+            <h2>Join the queue<span class="gold-text">.</span></h2>
+
+            <p class="card-description">
+                Enter your details below and take the first step
+                towards a better waiting experience.
+            </p>
+
+            <form id="joinForm">
+                <label for="customerName">Your full name</label>
+
+                <div class="input-wrap">
+                    <span>♙</span>
+                    <input
+                        type="text"
+                        id="customerName"
+                        name="customerName"
+                        placeholder="Enter your name"
+                        autocomplete="name"
+                        required
+                        maxlength="100"
+                    >
+                </div>
+
+                <button type="submit" class="button" id="joinButton">
+                    <span id="buttonText">Join Queue</span>
+                    <span class="arrow" id="buttonArrow">→</span>
+                </button>
+            </form>
+
+            <div id="message" role="status" aria-live="polite"></div>
+
+            <p class="card-note">QueueNow · Smart waiting starts here</p>
+        </section>
+
+    </div>
+</main>
+
+<footer>
+    © 2026 QueueNow. Designed for a smarter waiting experience.
+</footer>
+
+<script>
+const reducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+).matches;
+
+/* Floating gold particles */
+if (!reducedMotion) {
+    const particleArea = document.getElementById("particles");
+
+    function createParticle() {
+        if (particleArea.childElementCount >= 22) return;
+
+        const particle = document.createElement("span");
+        particle.className = "particle";
+        particle.style.left = Math.random() * 100 + "%";
+
+        const size = 2 + Math.random() * 3;
+        particle.style.width = size + "px";
+        particle.style.height = size + "px";
+        particle.style.animationDuration =
+            (7 + Math.random() * 6) + "s";
+
+        particleArea.appendChild(particle);
+        particle.addEventListener("animationend", () => particle.remove());
+    }
+
+    setInterval(createParticle, 450);
+}
+
+/* Keep the existing backend API connection */
+const form = document.getElementById("joinForm");
+const nameInput = document.getElementById("customerName");
+const message = document.getElementById("message");
+const button = document.getElementById("joinButton");
+const buttonText = document.getElementById("buttonText");
+const buttonArrow = document.getElementById("buttonArrow");
+
+form.addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const name = nameInput.value.trim();
+
+    if (!name) {
+        message.className = "error";
+        message.textContent = "Please enter your name to continue.";
+        return;
+    }
+
+    button.disabled = true;
+    buttonText.textContent = "Joining your queue...";
+    buttonArrow.innerHTML = '<span class="spinner"></span>';
+
+    message.className = "loading";
+    message.textContent = "Connecting securely to QueueNow...";
+
+    try {
+        const response = await fetch("/api/queue/join", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ name: name })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Unable to join the queue.");
+        }
+
+        message.className = "success";
+        message.textContent = "✦  " + (
+            data.message || "Your request has been completed."
+        );
+
+        buttonText.textContent = "Request Complete";
+        buttonArrow.textContent = "✓";
+
+    } catch (error) {
+        message.className = "error";
+        message.textContent =
+            error.message === "Failed to fetch"
+                ? "Could not connect to the server. Please try again."
+                : (error.message || "Something went wrong. Please try again.");
+
+        button.disabled = false;
+        buttonText.textContent = "Try Again";
+        buttonArrow.textContent = "→";
+    }
+});
+</script>
+</body>
+</html>
