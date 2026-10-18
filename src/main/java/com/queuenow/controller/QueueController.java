@@ -1,6 +1,8 @@
 
 package com.queuenow.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,18 +15,22 @@ import java.util.Map;
 public class QueueController {
 
     @PostMapping("/join")
-    public Map<String, String> joinQueue(
+    public ResponseEntity<Map<String, String>> joinQueue(
             @RequestBody Map<String, String> request) {
 
         String name = request.get("name");
 
         if (name == null || name.trim().isEmpty()) {
-            return Map.of("message", "Please enter your name.");
+            return ResponseEntity
+                    .badRequest()
+                    .body(Map.of("message", "Please enter your name."));
         }
 
-        return Map.of(
-                "message",
-                "Welcome " + name + "! You have joined the queue."
+        return ResponseEntity.ok(
+                Map.of(
+                        "message",
+                        "Welcome " + name.trim() + "! You have joined the queue."
+                )
         );
     }
 }
