@@ -7,10 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="manifest" href="/manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="QueueNow">
 <meta name="theme-color" content="#e6c78f">
 
 <style>
@@ -369,73 +365,7 @@ main {
     color: var(--green);
 }
 
-/* ── WEB PUSH & NOTIFICATIONS CARD ───────────────────────── */
-.notif-card {
-    background: rgba(230, 199, 143, 0.05);
-    border: 1px solid rgba(230, 199, 143, 0.22);
-    border-radius: 16px;
-    padding: 14px 16px;
-    margin-top: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 14px;
-    text-align: left;
-}
 
-.notif-info {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.notif-title {
-    font-size: 13px;
-    font-weight: 700;
-    color: #fffaf0;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.notif-desc {
-    font-size: 11px;
-    color: var(--muted);
-    line-height: 1.4;
-}
-
-.btn-notif-enable {
-    padding: 9px 16px;
-    background: linear-gradient(110deg, #b58b4e, #e6c78f, #99733c);
-    border: none;
-    border-radius: 12px;
-    color: #120e09;
-    font-size: 12px;
-    font-weight: 800;
-    cursor: pointer;
-    white-space: nowrap;
-    box-shadow: 0 4px 12px rgba(230, 199, 143, 0.25);
-    transition: transform 0.15s, box-shadow 0.15s;
-}
-
-.btn-notif-enable:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 18px rgba(230, 199, 143, 0.4);
-}
-
-.notif-badge-active {
-    display: none;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--green);
-    background: var(--green-bg);
-    border: 1px solid rgba(74, 222, 128, 0.3);
-    padding: 6px 12px;
-    border-radius: 12px;
-    white-space: nowrap;
-}
 
 /* ── NO TOKEN LOOKUP CARD ────────────────────────────────── */
 #lookupCard {
@@ -618,7 +548,7 @@ footer {
         </div>
 
         <p id="instruction" class="instruction-text">
-            Keep this window open or enable alerts below. We will ping you when your turn arrives.
+            Keep this window open to track your live queue position in real time.
         </p>
 
         <!-- Progress Steps -->
@@ -656,15 +586,7 @@ footer {
             </div>
         </div>
 
-        <!-- Web Push / Device Notification Card -->
-        <div class="notif-card" id="notifCard">
-            <div class="notif-info">
-                <div class="notif-title">🔔 Turn Alerts</div>
-                <div class="notif-desc" id="notifDesc">Tap to get notified when your turn arrives.</div>
-            </div>
-            <button class="btn-notif-enable" id="notifBtn">Enable Alerts</button>
-            <div class="notif-badge-active" id="notifBadge">✓ Alerts Active</div>
-        </div>
+
 
         <!-- Feedback Form (Shown upon COMPLETED) -->
         <section id="feedbackSection">
@@ -698,7 +620,7 @@ footer {
 </main>
 
 <footer>
-    © 2026 QueueNow · Real-time Turn Tracking & Web Push API
+    © 2026 QueueNow · Real-time Turn Tracking
 </footer>
 
 <script>
@@ -722,7 +644,6 @@ let rating = 5;
 let alertedTurn = false;
 let alertedNext = false;
 let feedbackSubmitted = false;
-let serviceWorkerReg = null;
 
 // ── BOOT INITIALIZATION ─────────────────────────────────────
 if (token > 0) {
@@ -746,131 +667,7 @@ function lookupToken() {
     location.href = `/track.html?token=${val}`;
 }
 
-// ── SERVICE WORKER & WEB PUSH API ───────────────────────────
-async function initServiceWorker() {
-    if ('serviceWorker' in navigator) {
-        try {
-            serviceWorkerReg = await navigator.serviceWorker.register('/sw.js');
-        } catch (e) {
-            console.warn('SW reg failed:', e);
-        }
-    }
-    refreshNotifUI();
 
-    // Auto-prompt: if permission not yet asked, ask after 2 seconds
-    if ("Notification" in window && Notification.permission === "default") {
-        setTimeout(() => {
-            console.log("[QueueNow] Auto-prompting notification permission...");
-            Notification.requestPermission().then(p => {
-                console.log("[QueueNow] Auto-prompt result:", p);
-                refreshNotifUI();
-                if (p === "granted") {
-                    sendSystemAlert({
-                        title: "QueueNow Alerts On! 🔔",
-                        body: `Token #${token}: We'll notify you when it's your turn.`,
-                        tag: "queuenow-welcome"
-                    });
-                }
-            });
-        }, 2000);
-    }
-}
-
-function refreshNotifUI() {
-    const btn = document.getElementById("notifBtn");
-    const badge = document.getElementById("notifBadge");
-    const desc = document.getElementById("notifDesc");
-
-    if (!("Notification" in window)) {
-        // Browser doesn't support notifications at all
-        if (desc) desc.textContent = "Your browser doesn't support notifications. Try Chrome or Firefox.";
-        if (btn) btn.style.display = "none";
-        if (badge) badge.style.display = "none";
-        return;
-    }
-
-    const perm = Notification.permission;
-    console.log("[QueueNow] Notification.permission =", perm);
-
-    if (perm === "granted") {
-        if (btn) btn.style.display = "none";
-        if (badge) { badge.style.display = "inline-flex"; badge.textContent = "✓ Alerts Active"; }
-        if (desc) desc.textContent = "You'll be alerted when it's your turn.";
-    } else if (perm === "denied") {
-        if (btn) btn.style.display = "none";
-        if (badge) {
-            badge.style.display = "inline-flex";
-            badge.style.color = "#f87171";
-            badge.style.borderColor = "#7f1d1d";
-            badge.style.background = "rgba(248,113,113,0.1)";
-            badge.textContent = "⚠ Blocked";
-        }
-        if (desc) desc.textContent = "Notifications blocked. Go to browser Settings → Site Settings → Notifications → Allow for this site.";
-    } else {
-        // "default" — not yet asked
-        if (btn) { btn.style.display = "inline-block"; btn.disabled = false; btn.textContent = "Enable Alerts"; }
-        if (badge) badge.style.display = "none";
-        if (desc) desc.textContent = "Tap to get notified when your turn arrives.";
-    }
-}
-
-// This is called when user taps the button — directly invokes browser permission API
-document.getElementById("notifBtn").addEventListener("click", function() {
-    console.log("[QueueNow] Button clicked — requesting permission...");
-    const btn = this;
-    btn.disabled = true;
-    btn.textContent = "Requesting...";
-
-    // Directly call the browser Notification permission API
-    Notification.requestPermission().then(function(permission) {
-        console.log("[QueueNow] Permission result:", permission);
-        if (permission === "granted") {
-            sendSystemAlert({
-                title: "QueueNow Alerts Activated! 🔔",
-                body: "Token #" + token + ": You will receive alerts when your turn arrives!",
-                tag: "queuenow-welcome"
-            });
-        }
-        refreshNotifUI();
-    }).catch(function(err) {
-        console.error("[QueueNow] Permission error:", err);
-        btn.disabled = false;
-        btn.textContent = "Retry";
-    });
-});
-
-
-function sendSystemAlert({ title, body, tag }) {
-    if (serviceWorkerReg && serviceWorkerReg.showNotification) {
-        serviceWorkerReg.showNotification(title, {
-            body,
-            icon: "/favicon.ico",
-            badge: "/favicon.ico",
-            tag: tag || "queuenow-alert",
-            renotify: true,
-            vibrate: [250, 100, 250, 100, 500],
-            data: { url: location.href }
-        }).catch(() => fallbackClientNotification(title, body, tag));
-        return;
-    }
-    fallbackClientNotification(title, body, tag);
-}
-
-function fallbackClientNotification(title, body, tag) {
-    if ("Notification" in window && Notification.permission === "granted") {
-        try {
-            const notif = new Notification(title, {
-                body,
-                tag: tag || "queuenow-alert",
-                renotify: true
-            });
-            notif.onclick = function() {
-                window.focus();
-                this.close();
-            };
-        } catch (e) {}
-    }
-}
 
 // ── AUDIO CHIME (WEB AUDIO API) ─────────────────────────────
 function playChime() {
@@ -959,11 +756,6 @@ async function pollStatus() {
             if (!alertedTurn) {
                 playChime();
                 if (navigator.vibrate) navigator.vibrate([250, 100, 250, 100, 500]);
-                sendSystemAlert({
-                    title: "🔔 IT'S YOUR TURN! | QueueNow",
-                    body: `Token #${token} (${customerName}): Please step forward to the counter now!`,
-                    tag: "queuenow-turn"
-                });
                 alertedTurn = true;
             }
             return;
@@ -988,18 +780,13 @@ async function pollStatus() {
 
             if (!alertedNext) {
                 playChime();
-                sendSystemAlert({
-                    title: "⏳ You're Up Next! | QueueNow",
-                    body: `Only 1 person ahead of Token #${token}. Please get ready!`,
-                    tag: "queuenow-next"
-                });
                 alertedNext = true;
             }
         } else {
             document.title = `⏳ ${waitingAhead} Ahead (Token #${token}) | QueueNow`;
             banner.className = "status-badge waiting";
             banner.textContent = `⏳ ${waitingAhead} ${waitingAhead === 1 ? "person" : "people"} ahead of you`;
-            instruction.textContent = "Sit back and relax. We'll alert you the moment you are up next.";
+            instruction.textContent = "Sit back and relax. Your status will update here automatically.";
 
             stepsProgress.style.width = "0%";
             step1.className = "step-node active";
@@ -1068,7 +855,6 @@ document.getElementById("submitFeedback").addEventListener("click", async () => 
 });
 
 // ── START RUNTIME ───────────────────────────────────────────
-initServiceWorker();
 if (token > 0) {
     pollStatus();
     setInterval(pollStatus, 2000);

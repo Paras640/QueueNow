@@ -163,22 +163,6 @@ body {
 .auth-message.error { background: #2d1217; border: 1px solid #7f1d1d; color: var(--red); display: block; }
 .auth-message.success { background: #0d2e1f; border: 1px solid #166534; color: #86efac; display: block; }
 
-.auth-hint {
-    margin-top: 20px;
-    text-align: center;
-    font-size: 12px;
-    color: #4a453d;
-    padding-top: 16px;
-    border-top: 1px solid rgba(255,255,255,0.05);
-}
-
-.auth-hint code {
-    font-family: monospace;
-    color: var(--muted);
-    background: #14110d;
-    padding: 2px 6px;
-    border-radius: 4px;
-}
 
 /* ── DASHBOARD ──────────────────────────────────────────── */
 #dashboardSection { display: none; padding: 24px 8%; }
@@ -383,11 +367,11 @@ td { padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-siz
         <form class="auth-form visible" id="signinForm" onsubmit="handleLogin(event)">
             <div class="form-group">
                 <label for="loginUser">Username</label>
-                <input id="loginUser" type="text" placeholder="admin" autocomplete="username" required>
+                <input id="loginUser" type="text" placeholder="Enter username" autocomplete="username" required>
             </div>
             <div class="form-group">
                 <label for="loginPass">Password</label>
-                <input id="loginPass" type="password" placeholder="••••••••" autocomplete="current-password" required>
+                <input id="loginPass" type="password" placeholder="Enter password" autocomplete="current-password" required>
             </div>
             <div id="loginMsg" class="auth-message"></div>
             <button type="submit" class="btn-auth">Sign In →</button>
@@ -397,7 +381,7 @@ td { padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-siz
         <form class="auth-form" id="forgotForm" onsubmit="handleForgot(event)">
             <div class="form-group">
                 <label for="resetUser">Username</label>
-                <input id="resetUser" type="text" placeholder="admin" required>
+                <input id="resetUser" type="text" placeholder="Enter username" required>
             </div>
             <div class="form-group">
                 <label for="resetNewPass">New Password</label>
@@ -410,10 +394,6 @@ td { padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-siz
             <div id="forgotMsg" class="auth-message"></div>
             <button type="submit" class="btn-auth">Reset Password</button>
         </form>
-
-        <div class="auth-hint">
-            Default credentials &nbsp;—&nbsp; user: <code>admin</code> &nbsp; pass: <code>admin123</code>
-        </div>
     </div>
 </div>
 
