@@ -91,7 +91,7 @@ public class QueueService {
      * 1. Marks previous SERVING customer as COMPLETED (triggering their feedback form automatically).
      * 2. Sets next WAITING customer to SERVING (alerting their phone).
      */
-    ```java
+    
 public synchronized int callNextToken() {
     // Do not automatically complete the current customer.
     // Admin must click Finish before calling the next customer.
@@ -114,7 +114,7 @@ public synchronized int callNextToken() {
     currentServingToken = 0;
     return 0;
 }
-```
+
 
     /**
      * Finishes the current customer's service:
