@@ -6,6 +6,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Features | QueueNow</title>
 <style>
+:root {
+    --gold: #e6c78f;
+    --gold-light: #fff0c7;
+    --gold-dark: #b58b4e;
+    --black: #080807;
+    --muted: #aaa49a;
+}
 * { box-sizing: border-box; }
 body {
     margin: 0;
@@ -14,24 +21,67 @@ body {
     color: #fffaf0;
 }
 header {
-    padding: 24px 8%;
-    border-bottom: 1px solid #493b27;
+    min-height: 82px;
+    padding: 20px 8%;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    border-bottom: 1px solid #80602c55;
+    background: #090908ef;
+    position: relative;
+    z-index: 5;
+    animation: navEnter 1s ease both;
+}
+@keyframes navEnter {
+    from { opacity: 0; transform: translateY(-25px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 .logo {
-    color: #e5c58a;
-    font-size: 26px;
-    font-weight: 800;
+    font-size: 29px;
+    font-weight: 900;
+    letter-spacing: -1.5px;
+    color: var(--gold);
     text-decoration: none;
+    flex: 1;
 }
-nav { display: flex; gap: 22px; }
-nav a {
-    color: #d4d0c8;
+.nav-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    flex: 2;
+}
+.nav-center a {
     text-decoration: none;
+    color: #d9d0c0;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color .3s;
 }
-nav a:hover { color: #e5c58a; }
+.nav-center a:hover,
+.nav-center a.active {
+    color: var(--gold-light);
+}
+.nav-right {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex: 1;
+}
+.nav-cta {
+    border: 1px solid var(--gold-dark);
+    padding: 12px 20px;
+    border-radius: 30px;
+    color: var(--gold-light);
+    text-decoration: none;
+    font-size: 14px;
+    transition: all .3s;
+}
+.nav-cta:hover {
+    background: rgba(230, 199, 143, 0.15);
+    border-color: var(--gold);
+}
 main {
     max-width: 1050px;
     margin: auto;
@@ -87,10 +137,16 @@ h2 { color: #e5c58a; font-size: 19px; }
     from { opacity: 0; transform: translateY(25px); }
     to { opacity: 1; transform: translateY(0); }
 }
-@media(max-width:700px) {
+@media(max-width:800px) {
+    header {
+        flex-direction: column;
+        gap: 16px;
+        padding: 16px 6%;
+    }
+    .logo { text-align: center; }
+    .nav-center { gap: 20px; }
+    .nav-right { justify-content: center; width: 100%; }
     .grid { grid-template-columns: 1fr; }
-    header { padding: 20px; }
-    nav { gap: 12px; font-size: 13px; }
 }
 @media(prefers-reduced-motion:reduce) {
     *,*::before,*::after { animation:none!important; transition:none!important; }
@@ -100,11 +156,16 @@ h2 { color: #e5c58a; font-size: 19px; }
 <body>
 <header>
     <a class="logo" href="/">QueueNow.</a>
-    <nav>
+
+    <nav class="nav-center" aria-label="Main navigation">
         <a href="/">Home</a>
-        <a href="/features.html">Features</a>
+        <a href="/features.html" class="active">Features</a>
         <a href="/about.html">About</a>
     </nav>
+
+    <div class="nav-right">
+        <a href="/join.html" class="nav-cta">Join Queue →</a>
+    </div>
 </header>
 <main>
     <div class="tag">BUILT FOR BETTER WAITING</div>
