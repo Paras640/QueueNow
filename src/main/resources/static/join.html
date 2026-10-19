@@ -632,14 +632,6 @@ form.addEventListener("submit", async function(event) {
         );
         message.appendChild(successText);
 
-        /* Display the token number */
-        if (data.tokenNumber !== undefined) {
-            const token = document.createElement("h3");
-            token.textContent = "Your Token Number: #" + data.tokenNumber;
-            token.style.marginTop = "15px";
-            message.appendChild(token);
-        }
-
         /* QR code heading */
         const qrHeading = document.createElement("p");
         qrHeading.textContent = "Your Queue QR Code";
