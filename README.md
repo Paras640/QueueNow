@@ -100,12 +100,6 @@ Cloudflare Tunnel allows QueueNow to be accessed through a public URL without re
 
 QueueNow uses the ZXing library to generate QR codes containing the supplied text, such as customer token details.
 
-## Future Improvements
-
-- Display live queue updates.
-- Add an administrator dashboard.
-- Allow customers to check their current queue position.
-- Deploy the application online using a persistent hosting solution.
 
 ## Author
 

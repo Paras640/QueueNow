@@ -400,10 +400,6 @@ td { padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-siz
                 <input id="resetUser" type="text" placeholder="admin" required>
             </div>
             <div class="form-group">
-                <label for="resetKey">Security Recovery PIN</label>
-                <input id="resetKey" type="password" placeholder="Enter your recovery PIN" required>
-            </div>
-            <div class="form-group">
                 <label for="resetNewPass">New Password</label>
                 <input id="resetNewPass" type="password" placeholder="Enter new password" required minlength="6">
             </div>
@@ -498,6 +494,8 @@ td { padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-siz
 // ── AUTH STATE ──────────────────────────────────────────────
 const SESSION_KEY = "queuenow_admin_auth";
 
+let dashboardInterval = null;
+
 function isLoggedIn() {
     return sessionStorage.getItem(SESSION_KEY) === "true";
 }
@@ -511,11 +509,10 @@ function showDashboard() {
 function showAuth() {
     document.getElementById("authScreen").style.display = "flex";
     document.getElementById("dashboardSection").style.display = "none";
-}
-
-// Boot: check session
-if (isLoggedIn()) {
-    showDashboard();
+    if (dashboardInterval) {
+        clearInterval(dashboardInterval);
+        dashboardInterval = null;
+    }
 }
 
 // ── TAB SWITCH ──────────────────────────────────────────────
@@ -579,7 +576,6 @@ async function handleForgot(e) {
     e.preventDefault();
     const msg     = document.getElementById("forgotMsg");
     const user    = document.getElementById("resetUser").value.trim();
-    const key     = document.getElementById("resetKey").value.trim();
     const newPass = document.getElementById("resetNewPass").value;
     const confirm = document.getElementById("resetConfirm").value;
 
@@ -601,7 +597,7 @@ async function handleForgot(e) {
         const res  = await fetch("/api/admin/forgot-password", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username: user, recoveryKey: key, newPassword: newPass })
+            body: JSON.stringify({ username: user, newPassword: newPass })
         });
         const data = await res.json();
 
@@ -639,7 +635,6 @@ const queueTableBody       = document.getElementById("queueTableBody");
 const totalQueueBadge      = document.getElementById("totalQueueBadge");
 const feedbackListContainer= document.getElementById("feedbackListContainer");
 
-let dashboardInterval = null;
 
 async function refreshDashboard() {
     try {
@@ -731,6 +726,13 @@ resetBtn.addEventListener("click", async () => {
     if (!confirm("Reset the queue? This will clear all tokens and restart numbering from #1.")) return;
     try { await fetch("/api/queue/reset", { method: "POST" }); await refreshDashboard(); } catch(e) {}
 });
+
+// Boot: verify initial session state
+if (isLoggedIn()) {
+    showDashboard();
+} else {
+    showAuth();
+}
 </script>
 </body>
 </html>
