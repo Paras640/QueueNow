@@ -432,155 +432,6 @@ main {
     white-space: nowrap;
 }
 
-/* ── MULTIPLE QR OPTIONS SECTION ─────────────────────────── */
-.share-section {
-    margin-top: 22px;
-    border-top: 1px solid rgba(230, 199, 143, 0.16);
-    padding-top: 20px;
-}
-
-.section-eyebrow {
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 1.8px;
-    color: var(--gold);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-}
-
-.qr-tabs {
-    display: flex;
-    gap: 6px;
-    background: #0d0b09;
-    border: 1px solid rgba(230, 199, 143, 0.2);
-    border-radius: 12px;
-    padding: 4px;
-    margin-bottom: 14px;
-}
-
-.qr-tab {
-    flex: 1;
-    padding: 8px 10px;
-    border: none;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    background: transparent;
-    color: var(--muted);
-    transition: all 0.2s;
-}
-
-.qr-tab.active {
-    background: rgba(230, 199, 143, 0.15);
-    color: var(--gold-light);
-    border: 1px solid rgba(230, 199, 143, 0.3);
-}
-
-.qr-panel {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: #0a0907;
-    border: 1px solid rgba(230, 199, 143, 0.22);
-    border-radius: 18px;
-    padding: 22px 18px;
-    animation: fadeIn 0.3s ease;
-}
-
-.qr-panel img {
-    width: 175px;
-    height: 175px;
-    border-radius: 14px;
-    border: 2px solid var(--gold);
-    background: white;
-    padding: 7px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-}
-
-.qr-title {
-    font-size: 14px;
-    font-weight: 800;
-    color: var(--gold-light);
-    margin-top: 12px;
-}
-
-.qr-desc {
-    font-size: 12px;
-    color: var(--muted);
-    margin-top: 4px;
-    max-width: 320px;
-    line-height: 1.5;
-}
-
-.qr-actions-row {
-    display: flex;
-    gap: 10px;
-    margin-top: 14px;
-    width: 100%;
-    max-width: 310px;
-}
-
-.btn-qr-action {
-    flex: 1;
-    padding: 9px 12px;
-    background: rgba(230, 199, 143, 0.08);
-    border: 1px solid rgba(230, 199, 143, 0.25);
-    border-radius: 10px;
-    color: var(--gold);
-    font-size: 11.5px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.btn-qr-action:hover {
-    background: rgba(230, 199, 143, 0.18);
-    border-color: var(--gold);
-    color: var(--gold-light);
-}
-
-#copyToast {
-    display: none;
-    margin-top: 10px;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--green);
-}
-
-/* ── FULLSCREEN QR MODAL ─────────────────────────────────── */
-#fullscreenQrModal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.88);
-    z-index: 9999;
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(8px);
-}
-
-.fs-modal-card {
-    background: #14110d;
-    border: 1px solid rgba(230, 199, 143, 0.35);
-    border-radius: 24px;
-    padding: 30px 24px;
-    text-align: center;
-    max-width: 360px;
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9);
-}
-
-.fs-modal-card img {
-    width: 230px;
-    height: 230px;
-    background: white;
-    padding: 10px;
-    border-radius: 14px;
-    border: 2px solid var(--gold);
-    display: block;
-    margin: 0 auto 16px;
-}
-
 /* ── NO TOKEN LOOKUP CARD ────────────────────────────────── */
 #lookupCard {
     display: none;
@@ -810,61 +661,6 @@ footer {
             <div class="notif-badge-active" id="notifBadge">✓ Alerts Active</div>
         </div>
 
-        <!-- Multiple QR Code Options Section -->
-        <div class="share-section">
-            <div class="section-eyebrow">QR Code & Sharing Options</div>
-
-            <!-- Tab switcher -->
-            <div class="qr-tabs">
-                <button type="button" class="qr-tab active" id="tabTrackQr" onclick="switchQrOption('track')">
-                    📱 Track My Token
-                </button>
-                <button type="button" class="qr-tab" id="tabJoinQr" onclick="switchQrOption('join')">
-                    👥 New Person Join
-                </button>
-            </div>
-
-            <!-- Panel 1: Track Token QR -->
-            <div class="qr-panel" id="panelTrackQr">
-                <img id="trackQrImg" src="" alt="Direct Tracking QR Code">
-                <div class="qr-title">
-                    Track Token <span id="qrTokenBadge" style="color:var(--gold-light);">#--</span>
-                </div>
-                <p class="qr-desc">
-                    Scan with any phone camera to follow Token #<span id="qrTokenDescNum">--</span> simultaneously on multiple devices.
-                </p>
-                <div class="qr-actions-row">
-                    <button type="button" class="btn-qr-action" onclick="copyTrackLink()">
-                        📋 Copy Tracking Link
-                    </button>
-                    <button type="button" class="btn-qr-action" onclick="openFullscreenQr('track')">
-                        🔍 Enlarge QR
-                    </button>
-                </div>
-            </div>
-
-            <!-- Panel 2: Join Queue QR -->
-            <div class="qr-panel" id="panelJoinQr" style="display:none;">
-                <img id="joinQrImg" src="/api/queue/join-qr" alt="Join Queue QR Code">
-                <div class="qr-title">
-                    Join Queue QR
-                </div>
-                <p class="qr-desc">
-                    For friends or companions standing with you who need to take their own fresh queue number.
-                </p>
-                <div class="qr-actions-row">
-                    <button type="button" class="btn-qr-action" onclick="copyJoinLink()">
-                        📋 Copy Join Link
-                    </button>
-                    <button type="button" class="btn-qr-action" onclick="openFullscreenQr('join')">
-                        🔍 Enlarge QR
-                    </button>
-                </div>
-            </div>
-
-            <div id="copyToast">✓ Link copied to clipboard!</div>
-        </div>
-
         <!-- Feedback Form (Shown upon COMPLETED) -->
         <section id="feedbackSection">
             <h3>Service Completed!</h3>
@@ -895,16 +691,6 @@ footer {
         <a href="/join.html" class="btn-secondary">Don't have a token? Join Queue</a>
     </section>
 </main>
-
-<!-- Fullscreen QR Modal -->
-<div id="fullscreenQrModal" onclick="closeFullscreenQr()">
-    <div class="fs-modal-card" onclick="event.stopPropagation()">
-        <div id="fsModalTitle" style="font-size:18px; font-weight:800; color:var(--gold); margin-bottom:8px;">Scan QR Code</div>
-        <img id="fsModalImg" src="" alt="Full QR">
-        <p id="fsModalSubtitle" style="font-size:12px; color:var(--muted); line-height:1.5; margin-bottom:16px;">Point your phone camera here to scan instantly.</p>
-        <button type="button" onclick="closeFullscreenQr()" style="width:100%; padding:11px; background:rgba(230,199,143,0.12); border:1px solid rgba(230,199,143,0.3); color:var(--gold); border-radius:10px; font-weight:700; cursor:pointer;">Close</button>
-    </div>
-</div>
 
 <footer>
     © 2026 QueueNow · Real-time Turn Tracking & Web Push API
@@ -941,13 +727,6 @@ if (token > 0) {
     nameDisplay.textContent = customerName;
     localStorage.setItem("myTokenNumber", String(token));
     localStorage.setItem("myCustomerName", customerName);
-
-    const badge = document.getElementById("qrTokenBadge");
-    const descNum = document.getElementById("qrTokenDescNum");
-    if (badge) badge.textContent = "#" + token;
-    if (descNum) descNum.textContent = String(token);
-
-    setupTrackingQr(token, customerName);
 } else {
     trackerCard.style.display = "none";
     lookupCard.style.display = "block";
@@ -960,75 +739,6 @@ function lookupToken() {
         return;
     }
     location.href = `/track.html?token=${val}`;
-}
-
-function setupTrackingQr(tok, nm) {
-    const qrImg = document.getElementById("trackQrImg");
-    if (qrImg) {
-        qrImg.src = `/api/queue/track-qr?token=${tok}&name=${encodeURIComponent(nm)}`;
-    }
-}
-
-// ── QR TABS & MODALS ────────────────────────────────────────
-function switchQrOption(type) {
-    const tabTrack = document.getElementById("tabTrackQr");
-    const tabJoin  = document.getElementById("tabJoinQr");
-    const panelTrack = document.getElementById("panelTrackQr");
-    const panelJoin  = document.getElementById("panelJoinQr");
-
-    if (type === 'track') {
-        tabTrack.classList.add("active");
-        tabJoin.classList.remove("active");
-        panelTrack.style.display = "flex";
-        panelJoin.style.display = "none";
-    } else {
-        tabJoin.classList.add("active");
-        tabTrack.classList.remove("active");
-        panelJoin.style.display = "flex";
-        panelTrack.style.display = "none";
-    }
-}
-
-function openFullscreenQr(type) {
-    const modal = document.getElementById("fullscreenQrModal");
-    const title = document.getElementById("fsModalTitle");
-    const img   = document.getElementById("fsModalImg");
-    const subtitle = document.getElementById("fsModalSubtitle");
-
-    if (type === 'track') {
-        title.textContent = `Token #${token} Tracking QR`;
-        img.src = `/api/queue/track-qr?token=${token}&name=${encodeURIComponent(customerName)}`;
-        subtitle.textContent = `Scan with any phone camera to track Token #${token} in real time.`;
-    } else {
-        title.textContent = "Join Queue QR";
-        img.src = `/api/queue/join-qr`;
-        subtitle.textContent = "Scan to open the registration page and take a new number in line.";
-    }
-    modal.style.display = "flex";
-}
-
-function closeFullscreenQr() {
-    document.getElementById("fullscreenQrModal").style.display = "none";
-}
-
-function showCopyToast() {
-    const toast = document.getElementById("copyToast");
-    toast.style.display = "block";
-    setTimeout(() => { toast.style.display = "none"; }, 2500);
-}
-
-function copyTrackLink() {
-    const url = location.href;
-    navigator.clipboard.writeText(url).then(showCopyToast).catch(() => {
-        prompt("Copy this tracking link:", url);
-    });
-}
-
-function copyJoinLink() {
-    const url = location.origin + "/join.html";
-    navigator.clipboard.writeText(url).then(showCopyToast).catch(() => {
-        prompt("Copy this join queue link:", url);
-    });
 }
 
 // ── SERVICE WORKER & WEB PUSH API ───────────────────────────
