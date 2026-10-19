@@ -1,458 +1,163 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QueueNow | Live Turn Tracker</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QueueNow | Live Tracking</title>
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-:root {
-    --gold: #e6c78f;
-    --light-gold: #fff0c7;
-    --dark-gold: #b58b4e;
-    --black: #080807;
-    --card-bg: rgba(20, 17, 13, 0.85);
-    --muted: #aaa49a;
-    --green: #4ade80;
-}
-
-body {
-    min-height: 100vh;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-    color: #fffaf0;
-    background:
-        radial-gradient(ellipse at 50% 10%, #523a1c66, transparent 55%),
-        radial-gradient(ellipse at 80% 90%, #3d281033, transparent 50%),
-        var(--black);
-    padding: 20px 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-}
-
-header {
-    width: 100%;
-    max-width: 460px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 0 24px;
-    border-bottom: 1px solid rgba(230, 199, 143, 0.15);
-}
-
-.logo {
-    font-size: 22px;
-    font-weight: 900;
-    letter-spacing: -1px;
-    color: var(--gold);
-    text-decoration: none;
-}
-
-.live-pill {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: #1c150c;
-    border: 1px solid #70542c;
-    border-radius: 20px;
-    padding: 4px 12px;
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--gold);
-    letter-spacing: 0.5px;
-}
-
-.live-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--green);
-    box-shadow: 0 0 8px var(--green);
-    animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.4; transform: scale(0.85); }
-}
-
-main {
-    width: 100%;
-    max-width: 460px;
-    margin-top: 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.card {
-    background: var(--card-bg);
-    border: 1px solid rgba(230, 199, 143, 0.25);
-    border-radius: 20px;
-    padding: 24px 20px;
-    backdrop-filter: blur(14px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-}
-
-.card-title {
-    font-size: 11px;
-    color: var(--gold);
-    letter-spacing: 2px;
-    font-weight: 800;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-}
-
-.my-token {
-    font-size: 72px;
-    font-weight: 900;
-    color: var(--light-gold);
-    line-height: 1;
-    text-shadow: 0 0 35px rgba(230,199,143,0.5);
-    margin: 8px 0;
-}
-
-.customer-name {
-    font-size: 19px;
-    font-weight: 700;
-    color: #fffaf0;
-    margin-bottom: 4px;
-}
-
-/* Status Banner */
-.status-banner {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 18px;
-    border-radius: 30px;
-    font-size: 13px;
-    font-weight: 700;
-    margin: 12px 0 6px;
-}
-
-.status-waiting {
-    background: #2a2012;
-    border: 1px solid #8c6a35;
-    color: var(--gold);
-}
-
-.status-turn {
-    background: #064e3b;
-    border: 1px solid #10b981;
-    color: #a7f3d0;
-    animation: turnGlow 1s infinite alternate;
-}
-
-@keyframes turnGlow {
-    from { box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
-    to { box-shadow: 0 0 30px rgba(16, 185, 129, 0.85); }
-}
-
-.status-completed {
-    background: #1e1b4b;
-    border: 1px solid #6366f1;
-    color: #c7d2fe;
-}
-
-/* Counter Serving Box */
-.counter-box {
-    background: #0f0d0a;
-    border: 1px solid rgba(230, 199, 143, 0.2);
-    border-radius: 14px;
-    padding: 16px;
-    margin-top: 14px;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-}
-
-.counter-metric-label {
-    font-size: 11px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 4px;
-}
-
-.counter-metric-val {
-    font-size: 28px;
-    font-weight: 800;
-    color: var(--gold);
-}
-
-/* Feedback Section */
-#feedbackSection {
-    display: none;
-    text-align: left;
-    margin-top: 10px;
-    border-top: 1px solid rgba(230, 199, 143, 0.15);
-    padding-top: 20px;
-}
-
-.stars {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    font-size: 32px;
-    cursor: pointer;
-    margin: 12px 0 16px;
-}
-
-.star {
-    color: #4a4439;
-    transition: color 0.15s, transform 0.15s;
-}
-
-.star.active {
-    color: #facc15;
-    transform: scale(1.15);
-}
-
-textarea {
-    width: 100%;
-    background: #0b0a08;
-    border: 1px solid #73552a;
-    border-radius: 10px;
-    color: #fff;
-    padding: 12px;
-    font-family: inherit;
-    font-size: 14px;
-    resize: none;
-    height: 85px;
-    margin-bottom: 12px;
-}
-
-textarea:focus {
-    outline: none;
-    border-color: var(--gold);
-}
-
-button.btn-submit {
-    width: 100%;
-    padding: 14px;
-    background: linear-gradient(110deg, #b58b4e, #e6c78f, #99733c);
-    border: none;
-    border-radius: 10px;
-    color: #120e09;
-    font-weight: 800;
-    font-size: 14px;
-    cursor: pointer;
-    box-shadow: 0 4px 16px rgba(230, 199, 143, 0.3);
-}
-
-footer {
-    margin-top: 32px;
-    font-size: 12px;
-    color: var(--muted);
-    text-align: center;
-}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--gold:#e6c78f;--light:#fff0c7;--muted:#aaa49a;--green:#4ade80}
+body{min-height:100vh;padding:20px 16px;font-family:Arial,sans-serif;color:#fffaf0;background:radial-gradient(ellipse at 50% 10%,#523a1c66,transparent 55%),#080807;display:flex;flex-direction:column;align-items:center}
+header{width:100%;max-width:460px;display:flex;justify-content:space-between;align-items:center;padding:12px 0 20px;border-bottom:1px solid #e6c78f33}
+.logo{font-size:23px;font-weight:900;color:var(--gold);text-decoration:none}
+.pill{color:var(--gold);border:1px solid #70542c;border-radius:20px;padding:7px 10px;font-size:11px}
+main{width:100%;max-width:460px;margin-top:20px}
+.card{background:#14110de8;border:1px solid #e6c78f44;border-radius:20px;padding:25px 20px;text-align:center;box-shadow:0 10px 30px #0007}
+.label{font-size:11px;color:var(--gold);letter-spacing:2px;font-weight:bold}
+.token{font-size:72px;font-weight:900;color:var(--light);margin:12px 0;text-shadow:0 0 30px #e6c78f55}
+.name{font-size:19px;font-weight:bold;margin-bottom:14px}
+.status{display:inline-block;padding:10px 16px;border-radius:30px;background:#2a2012;border:1px solid #8c6a35;color:var(--gold);font-weight:bold;font-size:13px}
+.status.serving{background:#064e3b;border-color:#10b981;color:#a7f3d0}
+.status.done{background:#1e1b4b;border-color:#6366f1;color:#c7d2fe}
+.instruction{font-size:13px;line-height:1.6;color:var(--muted);margin:15px 0}
+.metrics{display:flex;justify-content:space-around;background:#0b0a08;border:1px solid #e6c78f22;border-radius:12px;padding:16px;margin-top:20px}
+.metric-label{font-size:10px;color:var(--muted);letter-spacing:1px}
+.metric-value{font-size:27px;font-weight:bold;color:var(--gold);margin-top:5px}
+#feedbackSection{display:none;text-align:left;border-top:1px solid #e6c78f33;margin-top:22px;padding-top:20px}
+#feedbackSection h3{text-align:center;color:var(--gold);margin-bottom:8px}
+#feedbackSection p{text-align:center;color:var(--muted);font-size:13px;line-height:1.5}
+.stars{display:flex;justify-content:center;gap:8px;margin:18px 0}
+.star{font-size:35px;color:#4a4439;cursor:pointer}
+.star.active{color:#facc15}
+textarea{width:100%;height:85px;padding:12px;background:#0b0a08;color:white;border:1px solid #73552a;border-radius:10px;resize:vertical}
+button{width:100%;padding:14px;margin-top:12px;background:linear-gradient(110deg,#b58b4e,#e6c78f,#99733c);border:0;border-radius:10px;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.5}
+#feedbackMsg{text-align:center;color:var(--gold);font-size:13px;margin-top:12px}
+footer{margin:25px 0;color:var(--muted);font-size:12px}
 </style>
 </head>
 <body>
-
 <header>
-    <a href="/index.html" class="logo">QueueNow<span style="color: #fff0c7;">.</span></a>
-    <div class="live-pill">
-        <span class="live-dot"></span> LIVE TRACKING
-    </div>
+ <a class="logo" href="/index.html">QueueNow.</a>
+ <div class="pill">● LIVE TRACKING</div>
 </header>
-
 <main>
-    <section class="card">
-        <div class="card-title">YOUR ASSIGNED PASS</div>
-        <div class="my-token" id="myTokenDisplay">#--</div>
-        <div class="customer-name" id="myNameDisplay">Loading...</div>
-
-        <div id="statusBanner" class="status-banner status-waiting">
-            <span>⏳</span>
-            <span id="statusText">Checking queue status...</span>
-        </div>
-
-        <p id="turnInstruction" style="font-size: 13px; color: var(--muted); margin-top: 10px; line-height: 1.5;">
-            Keep this screen open on your phone. You will be alerted as soon as your turn arrives.
-        </p>
-
-        <div class="counter-box">
-            <div>
-                <div class="counter-metric-label">NOW SERVING</div>
-                <div class="counter-metric-val" id="currentServingDisplay">#--</div>
-            </div>
-            <div style="border-left: 1px solid rgba(230,199,143,0.15); height: 35px;"></div>
-            <div>
-                <div class="counter-metric-label">AHEAD OF YOU</div>
-                <div class="counter-metric-val" id="aheadCountDisplay">--</div>
-            </div>
-        </div>
-
-        <!-- Feedback Form for finished turn -->
-        <div id="feedbackSection">
-            <h3 style="font-size: 17px; color: var(--gold); text-align: center; margin-bottom: 4px;">Service Completed!</h3>
-            <p style="font-size: 13px; color: var(--muted); text-align: center; margin-bottom: 12px;">
-                Your turn has concluded. Please rate your experience:
-            </p>
-
-            <div class="stars" id="starContainer">
-                <span class="star active" data-val="1">★</span>
-                <span class="star active" data-val="2">★</span>
-                <span class="star active" data-val="3">★</span>
-                <span class="star active" data-val="4">★</span>
-                <span class="star active" data-val="5">★</span>
-            </div>
-
-            <textarea id="feedbackComment" placeholder="Any comments or suggestions for the team? (Optional)"></textarea>
-
-            <button type="button" class="btn-submit" id="submitFeedbackBtn">Submit Feedback</button>
-            <div id="feedbackMsg" style="text-align: center; margin-top: 10px; font-size: 13px; color: var(--gold);"></div>
-        </div>
-    </section>
+<section class="card">
+ <div class="label">YOUR TOKEN</div>
+ <div id="tokenDisplay" class="token">#--</div>
+ <div id="nameDisplay" class="name">Loading...</div>
+ <div id="statusBanner" class="status">Checking queue...</div>
+ <p id="instruction" class="instruction">Keep this page open to follow your turn.</p>
+ <div class="metrics">
+  <div><div class="metric-label">NOW SERVING</div><div id="currentDisplay" class="metric-value">#--</div></div>
+  <div style="border-left:1px solid #e6c78f33"></div>
+  <div><div class="metric-label">PEOPLE AHEAD</div><div id="aheadDisplay" class="metric-value">--</div></div>
+ </div>
+ <section id="feedbackSection">
+  <h3>Service Completed!</h3>
+  <p>Please rate your experience.</p>
+  <div id="stars" class="stars" aria-label="Choose rating">
+   <span class="star" data-rating="1" role="button" tabindex="0">★</span>
+   <span class="star" data-rating="2" role="button" tabindex="0">★</span>
+   <span class="star" data-rating="3" role="button" tabindex="0">★</span>
+   <span class="star" data-rating="4" role="button" tabindex="0">★</span>
+   <span class="star active" data-rating="5" role="button" tabindex="0">★</span>
+  </div>
+  <textarea id="comments" placeholder="Optional comments or suggestions"></textarea>
+  <button id="submitFeedback">Submit Feedback</button>
+  <div id="feedbackMsg" role="status"></div>
+ </section>
+</section>
 </main>
-
-<footer>
-    © 2026 QueueNow · Real-time Turn Dispatch
-</footer>
-
+<footer>© 2026 QueueNow · Real-time Turn Tracking</footer>
 <script>
-const params = new URLSearchParams(window.location.search);
-const myToken = parseInt(params.get("token") || localStorage.getItem("myTokenNumber") || "1");
-const myName = params.get("name") || localStorage.getItem("myCustomerName") || "Customer";
+const params=new URLSearchParams(location.search);
+const token=Number(params.get("token")||localStorage.getItem("myTokenNumber")||0);
+const name=params.get("name")||localStorage.getItem("myCustomerName")||"Customer";
+document.getElementById("tokenDisplay").textContent=token>0?"#"+token:"#--";
+document.getElementById("nameDisplay").textContent=name;
+const banner=document.getElementById("statusBanner");
+const instruction=document.getElementById("instruction");
+const feedback=document.getElementById("feedbackSection");
+let rating=5,alerted=false,submitted=false;
 
-document.getElementById("myTokenDisplay").textContent = `#${myToken}`;
-document.getElementById("myNameDisplay").textContent = myName;
-
-const statusBanner = document.getElementById("statusBanner");
-const statusText = document.getElementById("statusText");
-const turnInstruction = document.getElementById("turnInstruction");
-const currentServingDisplay = document.getElementById("currentServingDisplay");
-const aheadCountDisplay = document.getElementById("aheadCountDisplay");
-const feedbackSection = document.getElementById("feedbackSection");
-
-let selectedRating = 5;
-let alertedMyTurn = false;
-
-// Turn alert chime sound
-function playTurnChime() {
-    try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.15);
-            gain.gain.setValueAtTime(0.3, ctx.currentTime + idx * 0.15);
-            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + idx * 0.15 + 0.4);
-            osc.start(ctx.currentTime + idx * 0.15);
-            osc.stop(ctx.currentTime + idx * 0.15 + 0.4);
-        });
-    } catch(e) {}
+function chime(){
+ try{
+  const ctx=new (window.AudioContext||window.webkitAudioContext)();
+  [523,659,784,1046].forEach((f,i)=>{
+   const osc=ctx.createOscillator(),gain=ctx.createGain();
+   osc.connect(gain);gain.connect(ctx.destination);
+   osc.frequency.value=f;gain.gain.setValueAtTime(.2,ctx.currentTime+i*.12);
+   gain.gain.exponentialRampToValueAtTime(.01,ctx.currentTime+i*.12+.35);
+   osc.start(ctx.currentTime+i*.12);osc.stop(ctx.currentTime+i*.12+.35);
+  });
+ }catch(e){}
 }
+async function pollStatus(){
+ if(!token)return;
+ try{
+  const res=await fetch("/api/queue/status",{cache:"no-store"});
+  if(!res.ok)return;
+  const data=await res.json(),queue=data.queue||[];
+  const entry=queue.find(q=>Number(q.tokenNumber)===token);
+  const current=Number(data.currentServing||0);
+  document.getElementById("currentDisplay").textContent=current?"#"+current:"—";
 
-async function pollStatus() {
-    try {
-        const res = await fetch("/api/queue/status");
-        if (!res.ok) return;
-        const data = await res.json();
+  if(!entry){
+   banner.className="status";
+   banner.textContent="Token not found";
+   instruction.textContent="This token may have been reset. Please join the queue again if needed.";
+   document.getElementById("aheadDisplay").textContent="—";
+   feedback.style.display="none";
+   return;
+  }
 
-        const current = data.currentServing;
-        const queue = data.queue || [];
-        const myEntry = queue.find(q => q.tokenNumber === myToken);
-        const myStatus = myEntry ? myEntry.status : (current === myToken ? "SERVING" : (current > myToken ? "COMPLETED" : "WAITING"));
-
-        currentServingDisplay.textContent = current > 0 ? `#${current}` : "(None)";
-
-        if (myStatus === "COMPLETED") {
-            // Turn completed! Instantly triggers the feedback form
-            aheadCountDisplay.textContent = "✓";
-            statusBanner.className = "status-banner status-completed";
-            statusBanner.innerHTML = `<span>✓</span><span>Service Completed</span>`;
-            turnInstruction.textContent = "Your turn has concluded. Please share your rating & feedback below:";
-            feedbackSection.style.display = "block";
-
-        } else if (myStatus === "SERVING" || (current > 0 && current === myToken)) {
-            // IT IS YOUR TURN!
-            aheadCountDisplay.textContent = "0";
-            statusBanner.className = "status-banner status-turn";
-            statusBanner.innerHTML = `<span>🔔</span><span>IT'S YOUR TURN NOW!</span>`;
-            turnInstruction.innerHTML = `<b style="color: #a7f3d0; font-size: 15px;">Please step forward to Counter 1. The attendant is waiting for you!</b>`;
-            feedbackSection.style.display = "none";
-
-            if (!alertedMyTurn) {
-                playTurnChime();
-                if ("vibrate" in navigator) navigator.vibrate([200, 100, 200, 100, 400]);
-                alertedMyTurn = true;
-            }
-
-        } else {
-            // Waiting in queue
-            const ahead = queue.filter(q => q.status === "WAITING" && q.tokenNumber < myToken).length + (data.isServing ? 1 : 0);
-            aheadCountDisplay.textContent = ahead;
-            statusBanner.className = "status-banner status-waiting";
-            statusBanner.innerHTML = `<span>⏳</span><span>${ahead} ${ahead === 1 ? 'person' : 'people'} ahead</span>`;
-            turnInstruction.textContent = "Please relax. We will alert you immediately when your number is called!";
-            feedbackSection.style.display = "none";
-        }
-    } catch(e) {}
+  if(entry.status==="COMPLETED"){
+   banner.className="status done";banner.textContent="✓ Service Completed";
+   instruction.textContent="Thank you for waiting. Please submit your feedback below.";
+   document.getElementById("aheadDisplay").textContent="✓";
+   feedback.style.display=submitted?"none":"block";
+  }else if(entry.status==="SERVING"||current===token){
+   banner.className="status serving";banner.textContent="🔔 IT'S YOUR TURN!";
+   instruction.textContent="Please proceed to the counter now.";
+   document.getElementById("aheadDisplay").textContent="0";
+   feedback.style.display="none";
+   if(!alerted){chime();if(navigator.vibrate)navigator.vibrate([200,100,200,100,400]);alerted=true}
+  }else{
+   const ahead=queue.filter(q=>q.status==="WAITING"&&Number(q.tokenNumber)<token).length+(data.isServing?1:0);
+   banner.className="status";banner.textContent=`⏳ ${ahead} ${ahead===1?"person":"people"} ahead`;
+   instruction.textContent="Please wait. Keep this page open to see when your turn arrives.";
+   document.getElementById("aheadDisplay").textContent=ahead;
+   feedback.style.display="none";
+   alerted=false;
+  }
+ }catch(e){}
 }
-
-// Initial check and 2s polling interval
-pollStatus();
-setInterval(pollStatus, 2000);
-
-// Star rating interactivity
-const stars = document.querySelectorAll(".star");
-stars.forEach(s => {
-    s.addEventListener("click", () => {
-        selectedRating = parseInt(s.dataset.val);
-        stars.forEach(st => {
-            st.classList.toggle("active", parseInt(st.dataset.val) <= selectedRating);
-        });
-    });
+document.querySelectorAll(".star").forEach(star=>{
+ const selectRating=()=>{
+  rating=Number(star.dataset.rating);
+  document.querySelectorAll(".star").forEach(s=>s.classList.toggle("active",Number(s.dataset.rating)<=rating));
+ };
+ star.addEventListener("click",selectRating);
+ star.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();selectRating()}});
 });
-
-// Submit feedback
-document.getElementById("submitFeedbackBtn").addEventListener("click", async () => {
-    const comment = document.getElementById("feedbackComment").value.trim();
-    const btn = document.getElementById("submitFeedbackBtn");
-    const msg = document.getElementById("feedbackMsg");
-
-    btn.disabled = true;
-    btn.textContent = "Saving...";
-
-    try {
-        const res = await fetch("/api/queue/feedback", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                tokenNumber: myToken,
-                customerName: myName,
-                rating: selectedRating,
-                comments: comment
-            })
-        });
-
-        if (res.ok) {
-            msg.textContent = "✓ Thank you! Your feedback has been submitted successfully.";
-            btn.style.display = "none";
-            document.getElementById("feedbackComment").style.display = "none";
-            document.getElementById("starContainer").style.pointerEvents = "none";
-        } else {
-            msg.textContent = "Feedback received.";
-        }
-    } catch (e) {
-        msg.textContent = "✓ Thank you! Feedback submitted.";
-    }
+document.getElementById("submitFeedback").addEventListener("click",async()=>{
+ const btn=document.getElementById("submitFeedback"),msg=document.getElementById("feedbackMsg");
+ btn.disabled=true;btn.textContent="Submitting...";
+ try{
+  const res=await fetch("/api/queue/feedback",{
+   method:"POST",headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({tokenNumber:token,customerName:name,rating,comments:document.getElementById("comments").value.trim()})
+  });
+  if(!res.ok)throw new Error("Could not save feedback. Please retry.");
+  submitted=true;msg.textContent="✓ Thank you! Your feedback was submitted.";
+  btn.textContent="Feedback Submitted";document.getElementById("comments").disabled=true;
+  document.querySelectorAll(".star").forEach(s=>s.style.pointerEvents="none");
+ }catch(e){msg.textContent=e.message;btn.disabled=false;btn.textContent="Submit Feedback"}
 });
+if(!token){banner.textContent="Missing token";instruction.textContent="Please join the queue from the Join Queue page."}
+pollStatus();setInterval(pollStatus,2000);
 </script>
 </body>
 </html>

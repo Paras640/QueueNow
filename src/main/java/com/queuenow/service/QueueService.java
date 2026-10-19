@@ -91,29 +91,30 @@ public class QueueService {
      * 1. Marks previous SERVING customer as COMPLETED (triggering their feedback form automatically).
      * 2. Sets next WAITING customer to SERVING (alerting their phone).
      */
-    public synchronized int callNextToken() {
-        // Complete current serving customer if any
-        for (QueueEntry entry : queue) {
-            if ("SERVING".equalsIgnoreCase(entry.getStatus())) {
-                entry.setStatus("COMPLETED");
-                updateMongoStatus(entry.getTokenNumber(), "COMPLETED");
-            }
+    ```java
+public synchronized int callNextToken() {
+    // Do not automatically complete the current customer.
+    // Admin must click Finish before calling the next customer.
+    for (QueueEntry entry : queue) {
+        if ("SERVING".equalsIgnoreCase(entry.getStatus())) {
+            return entry.getTokenNumber();
         }
-
-        // Find next waiting customer
-        for (QueueEntry entry : queue) {
-            if ("WAITING".equalsIgnoreCase(entry.getStatus())) {
-                entry.setStatus("SERVING");
-                currentServingToken = entry.getTokenNumber();
-                updateMongoStatus(entry.getTokenNumber(), "SERVING");
-                return currentServingToken;
-            }
-        }
-
-        // No more waiting customers
-        currentServingToken = 0;
-        return 0;
     }
+
+    // Find the first waiting customer.
+    for (QueueEntry entry : queue) {
+        if ("WAITING".equalsIgnoreCase(entry.getStatus())) {
+            entry.setStatus("SERVING");
+            currentServingToken = entry.getTokenNumber();
+            updateMongoStatus(entry.getTokenNumber(), "SERVING");
+            return currentServingToken;
+        }
+    }
+
+    currentServingToken = 0;
+    return 0;
+}
+```
 
     /**
      * Finishes the current customer's service:
