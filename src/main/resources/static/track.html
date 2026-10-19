@@ -659,23 +659,11 @@ footer {
         <!-- Web Push / Device Notification Card -->
         <div class="notif-card" id="notifCard">
             <div class="notif-info">
-                <div class="notif-title">🔔 Web Push Alerts</div>
-                <div class="notif-desc" id="notifDesc">Tap to receive device alerts when your turn arrives.</div>
+                <div class="notif-title">🔔 Turn Alerts</div>
+                <div class="notif-desc" id="notifDesc">Tap to get notified when your turn arrives.</div>
             </div>
-            <button class="btn-notif-enable" id="notifBtn" onclick="requestWebPush()">Enable Alerts</button>
+            <button class="btn-notif-enable" id="notifBtn">Enable Alerts</button>
             <div class="notif-badge-active" id="notifBadge">✓ Alerts Active</div>
-        </div>
-
-        <!-- iOS Install Prompt (hidden by default) -->
-        <div id="iosInstallPrompt" style="display:none; margin-top:12px; background:rgba(129,140,248,0.1); border:1px solid rgba(129,140,248,0.3); border-radius:14px; padding:14px 16px; text-align:left;">
-            <div style="font-size:13px; font-weight:700; color:#c7d2fe; margin-bottom:6px;">📲 Enable Push on iPhone/iPad</div>
-            <div style="font-size:12px; color:var(--muted); line-height:1.6;">
-                iOS requires adding this page to your Home Screen first:<br>
-                1. Tap the <strong style="color:#fffaf0;">Share ↗</strong> button in Safari<br>
-                2. Scroll down and tap <strong style="color:#fffaf0;">Add to Home Screen</strong><br>
-                3. Open the app from your Home Screen<br>
-                4. Tap <strong style="color:var(--gold);">Enable Alerts</strong> again
-            </div>
         </div>
 
         <!-- Feedback Form (Shown upon COMPLETED) -->
@@ -759,127 +747,98 @@ function lookupToken() {
 }
 
 // ── SERVICE WORKER & WEB PUSH API ───────────────────────────
-const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-
 async function initServiceWorker() {
     if ('serviceWorker' in navigator) {
         try {
             serviceWorkerReg = await navigator.serviceWorker.register('/sw.js');
-            // Wait for the SW to be ready
-            await navigator.serviceWorker.ready;
         } catch (e) {
-            console.warn('ServiceWorker registration error:', e);
+            console.warn('SW reg failed:', e);
         }
     }
-    updateNotifUI();
+    refreshNotifUI();
+
+    // Auto-prompt: if permission not yet asked, ask after 2 seconds
+    if ("Notification" in window && Notification.permission === "default") {
+        setTimeout(() => {
+            console.log("[QueueNow] Auto-prompting notification permission...");
+            Notification.requestPermission().then(p => {
+                console.log("[QueueNow] Auto-prompt result:", p);
+                refreshNotifUI();
+                if (p === "granted") {
+                    sendSystemAlert({
+                        title: "QueueNow Alerts On! 🔔",
+                        body: `Token #${token}: We'll notify you when it's your turn.`,
+                        tag: "queuenow-welcome"
+                    });
+                }
+            });
+        }, 2000);
+    }
 }
 
-function updateNotifUI() {
+function refreshNotifUI() {
     const btn = document.getElementById("notifBtn");
     const badge = document.getElementById("notifBadge");
     const desc = document.getElementById("notifDesc");
-    const iosPrompt = document.getElementById("iosInstallPrompt");
 
-    // iOS Safari (not standalone PWA) — no Notification API available
-    if (isIOS && !isStandalone && !("Notification" in window)) {
-        if (desc) desc.textContent = "Tap below to learn how to enable alerts on your iPhone.";
-        if (btn) {
-            btn.textContent = "How to Enable";
-            btn.style.display = "inline-block";
-            btn.onclick = function() {
-                if (iosPrompt) iosPrompt.style.display = iosPrompt.style.display === 'none' ? 'block' : 'none';
-            };
-        }
+    if (!("Notification" in window)) {
+        // Browser doesn't support notifications at all
+        if (desc) desc.textContent = "Your browser doesn't support notifications. Try Chrome or Firefox.";
+        if (btn) btn.style.display = "none";
         if (badge) badge.style.display = "none";
         return;
     }
 
-    // Hide iOS prompt on non-iOS or standalone
-    if (iosPrompt) iosPrompt.style.display = "none";
+    const perm = Notification.permission;
+    console.log("[QueueNow] Notification.permission =", perm);
 
-    if (!("Notification" in window)) {
-        if (desc) desc.textContent = "Notifications are not supported on this browser.";
+    if (perm === "granted") {
         if (btn) btn.style.display = "none";
-        return;
-    }
-
-    if (Notification.permission === "granted") {
-        if (btn) btn.style.display = "none";
-        if (badge) {
-            badge.style.display = "inline-flex";
-            badge.style.color = "var(--green)";
-            badge.style.borderColor = "rgba(74, 222, 128, 0.3)";
-            badge.style.background = "var(--green-bg)";
-            badge.innerHTML = "✓ Alerts Active";
-        }
-        if (desc) desc.textContent = "You'll be alerted when it's your turn, even in background.";
-    } else if (Notification.permission === "denied") {
+        if (badge) { badge.style.display = "inline-flex"; badge.textContent = "✓ Alerts Active"; }
+        if (desc) desc.textContent = "You'll be alerted when it's your turn.";
+    } else if (perm === "denied") {
         if (btn) btn.style.display = "none";
         if (badge) {
             badge.style.display = "inline-flex";
             badge.style.color = "#f87171";
             badge.style.borderColor = "#7f1d1d";
-            badge.style.background = "rgba(248, 113, 113, 0.1)";
-            badge.innerHTML = "✕ Alerts Blocked";
+            badge.style.background = "rgba(248,113,113,0.1)";
+            badge.textContent = "⚠ Blocked";
         }
-        if (desc) desc.textContent = "Notifications blocked. Open browser settings → Site Settings → Notifications → Allow.";
+        if (desc) desc.textContent = "Notifications blocked. Go to browser Settings → Site Settings → Notifications → Allow for this site.";
     } else {
-        // "default" — user hasn't decided yet
-        if (btn) {
-            btn.style.display = "inline-block";
-            btn.textContent = "Enable Alerts";
-            btn.disabled = false;
-            btn.onclick = requestWebPush;
-        }
+        // "default" — not yet asked
+        if (btn) { btn.style.display = "inline-block"; btn.disabled = false; btn.textContent = "Enable Alerts"; }
         if (badge) badge.style.display = "none";
-        if (desc) desc.textContent = "Tap to receive device alerts when your turn arrives.";
+        if (desc) desc.textContent = "Tap to get notified when your turn arrives.";
     }
 }
 
-async function requestWebPush() {
-    const btn = document.getElementById("notifBtn");
+// This is called when user taps the button — directly invokes browser permission API
+document.getElementById("notifBtn").addEventListener("click", function() {
+    console.log("[QueueNow] Button clicked — requesting permission...");
+    const btn = this;
+    btn.disabled = true;
+    btn.textContent = "Requesting...";
 
-    // iOS detection: if not standalone PWA, show install instructions
-    if (isIOS && !isStandalone && !("Notification" in window)) {
-        const iosPrompt = document.getElementById("iosInstallPrompt");
-        if (iosPrompt) iosPrompt.style.display = 'block';
-        return;
-    }
-
-    if (!("Notification" in window)) {
-        alert("This browser does not support web push notifications. Try Chrome, Firefox, Edge, or Samsung Internet.");
-        return;
-    }
-
-    // Show loading state on button
-    if (btn) {
-        btn.disabled = true;
-        btn.textContent = "Requesting...";
-    }
-
-    try {
-        const perm = await Notification.requestPermission();
-        if (perm === "granted") {
-            // Send a confirmation notification
+    // Directly call the browser Notification permission API
+    Notification.requestPermission().then(function(permission) {
+        console.log("[QueueNow] Permission result:", permission);
+        if (permission === "granted") {
             sendSystemAlert({
                 title: "QueueNow Alerts Activated! 🔔",
-                body: `Token #${token}: You will receive high-priority alerts when your turn arrives!`,
+                body: "Token #" + token + ": You will receive alerts when your turn arrives!",
                 tag: "queuenow-welcome"
             });
-        } else if (perm === "denied") {
-            // User explicitly blocked
-            console.warn("User denied notification permission.");
         }
-    } catch (e) {
-        console.error("Notification permission error:", e);
-        if (btn) {
-            btn.disabled = false;
-            btn.textContent = "Retry Enable";
-        }
-    }
-    updateNotifUI();
-}
+        refreshNotifUI();
+    }).catch(function(err) {
+        console.error("[QueueNow] Permission error:", err);
+        btn.disabled = false;
+        btn.textContent = "Retry";
+    });
+});
+
 
 function sendSystemAlert({ title, body, tag }) {
     if (serviceWorkerReg && serviceWorkerReg.showNotification) {
