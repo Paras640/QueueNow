@@ -534,7 +534,7 @@ footer {
                 </div>
 
                 <button type="submit" class="button" id="joinButton">
-                    <span id="buttonText">Join Queue</span>
+                    <span id="buttonText">Generate Token</span>
                     <span class="arrow" id="buttonArrow">→</span>
                 </button>
             </form>
@@ -600,7 +600,7 @@ form.addEventListener("submit", async function(event) {
     }
 
     button.disabled = true;
-    buttonText.textContent = "Joining your queue...";
+    buttonText.textContent = "Generating Token...";
     buttonArrow.innerHTML = '<span class="spinner"></span>';
 
     message.className = "loading";
@@ -656,7 +656,7 @@ form.addEventListener("submit", async function(event) {
 
         message.appendChild(qrImage);
 
-        buttonText.textContent = "Queue Joined";
+        buttonText.textContent = "Token Generated";
         alert("UPDATED FILE IS RUNNING");
         buttonArrow.textContent = "✓";
 
