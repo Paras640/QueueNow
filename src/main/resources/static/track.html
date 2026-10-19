@@ -34,6 +34,8 @@ textarea{width:100%;height:85px;padding:12px;background:#0b0a08;color:white;bord
 button{width:100%;padding:14px;margin-top:12px;background:linear-gradient(110deg,#b58b4e,#e6c78f,#99733c);border:0;border-radius:10px;font-weight:bold;cursor:pointer}
 button:disabled{opacity:.5}
 #feedbackMsg{text-align:center;color:var(--gold);font-size:13px;margin-top:12px}
+.notif-pill{display:inline-flex;align-items:center;justify-content:center;gap:6px;margin:10px auto 0;padding:8px 16px;background:rgba(230,199,143,0.12);border:1px solid rgba(230,199,143,0.35);border-radius:20px;color:var(--light);font-size:12px;font-weight:bold;cursor:pointer;transition:all .2s}
+.notif-pill:hover{background:rgba(230,199,143,0.25);border-color:var(--gold)}
 footer{margin:25px 0;color:var(--muted);font-size:12px}
 </style>
 </head>
@@ -49,6 +51,7 @@ footer{margin:25px 0;color:var(--muted);font-size:12px}
  <div id="nameDisplay" class="name">Loading...</div>
  <div id="statusBanner" class="status">Checking queue...</div>
  <p id="instruction" class="instruction">Keep this page open to follow your turn.</p>
+ <div><button id="notifPromptBtn" class="notif-pill" style="display:none;" onclick="enableNotifications()">🔔 Enable tab/system alerts</button></div>
  <div class="metrics">
   <div><div class="metric-label">NOW SERVING</div><div id="currentDisplay" class="metric-value">#--</div></div>
   <div style="border-left:1px solid #e6c78f33"></div>
@@ -80,7 +83,32 @@ document.getElementById("nameDisplay").textContent=name;
 const banner=document.getElementById("statusBanner");
 const instruction=document.getElementById("instruction");
 const feedback=document.getElementById("feedbackSection");
-let rating=5,alerted=false,submitted=false;
+let rating=5,alerted=false,alertedNext=false,submitted=false;
+
+function checkNotificationPermission(){
+ const btn=document.getElementById("notifPromptBtn");
+ if(!btn)return;
+ if("Notification" in window && Notification.permission==="default"){
+  btn.style.display="inline-flex";
+ }else{
+  btn.style.display="none";
+ }
+}
+
+async function enableNotifications(){
+ if("Notification" in window){
+  try{
+   const perm=await Notification.requestPermission();
+   if(perm==="granted"){
+    new Notification("QueueNow Alerts Active! ✓",{
+     body:`We will alert you here when Token #${token} is called.`,
+     tag:"queuenow-welcome"
+    });
+   }
+  }catch(e){}
+  checkNotificationPermission();
+ }
+}
 
 function chime(){
  try{
@@ -114,22 +142,48 @@ async function pollStatus(){
   }
 
   if(entry.status==="COMPLETED"){
+   document.title="✓ Service Completed | QueueNow";
    banner.className="status done";banner.textContent="✓ Service Completed";
    instruction.textContent="Thank you for waiting. Please submit your feedback below.";
    document.getElementById("aheadDisplay").textContent="✓";
    feedback.style.display=submitted?"none":"block";
   }else if(entry.status==="SERVING"||current===token){
+   document.title="🔔 IT'S YOUR TURN! | QueueNow";
    banner.className="status serving";banner.textContent="🔔 IT'S YOUR TURN!";
    instruction.textContent="Please proceed to the counter now.";
    document.getElementById("aheadDisplay").textContent="0";
    feedback.style.display="none";
-   if(!alerted){chime();if(navigator.vibrate)navigator.vibrate([200,100,200,100,400]);alerted=true}
+   if(!alerted){
+    chime();
+    if(navigator.vibrate)navigator.vibrate([200,100,200,100,400]);
+    if("Notification" in window && Notification.permission==="granted"){
+     try{
+      const n=new Notification("QueueNow: IT'S YOUR TURN! 🔔",{
+       body:`Token #${token} (${name}): Please step forward to the counter now!`,
+       tag:"queuenow-turn",
+       renotify:true
+      });
+      n.onclick=function(){window.focus();this.close();};
+     }catch(e){}
+    }
+    alerted=true;
+   }
   }else{
    const ahead=queue.filter(q=>q.status==="WAITING"&&Number(q.tokenNumber)<token).length+(data.isServing?1:0);
+   document.title=`⏳ ${ahead} Ahead (Token #${token}) | QueueNow`;
    banner.className="status";banner.textContent=`⏳ ${ahead} ${ahead===1?"person":"people"} ahead`;
    instruction.textContent="Please wait. Keep this page open to see when your turn arrives.";
    document.getElementById("aheadDisplay").textContent=ahead;
    feedback.style.display="none";
+   if(ahead===1 && !alertedNext && "Notification" in window && Notification.permission==="granted"){
+    try{
+     new Notification("QueueNow: You're Up Next! ⏳",{
+      body:`Only 1 person ahead of Token #${token}. Please get ready!`,
+      tag:"queuenow-next"
+     });
+     alertedNext=true;
+    }catch(e){}
+   }
    alerted=false;
   }
  }catch(e){}
@@ -157,6 +211,7 @@ document.getElementById("submitFeedback").addEventListener("click",async()=>{
  }catch(e){msg.textContent=e.message;btn.disabled=false;btn.textContent="Submit Feedback"}
 });
 if(!token){banner.textContent="Missing token";instruction.textContent="Please join the queue from the Join Queue page."}
+checkNotificationPermission();
 pollStatus();setInterval(pollStatus,2000);
 </script>
 </body>

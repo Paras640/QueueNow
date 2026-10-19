@@ -416,10 +416,25 @@ joinQr.addEventListener("error", () => {
   qrError.textContent = "QR image couldn't load.";
 });
 
+function resetForm() {
+  btn.disabled = false;
+  btnText.innerHTML = "Join Queue&nbsp; →";
+  message.className = "";
+  message.textContent = "";
+  const nameField = document.getElementById("customerName");
+  if (nameField) nameField.value = "";
+}
+
+// Reset whenever user navigates back (via browser back button or bfcache)
+window.addEventListener("pageshow", function(event) {
+  resetForm();
+});
+
 form.addEventListener("submit", async event => {
   event.preventDefault();
 
-  const name = document.getElementById("customerName").value.trim();
+  const nameInput = document.getElementById("customerName");
+  const name = nameInput.value.trim();
   if (!name) {
     message.className = "error";
     message.textContent = "Please enter your name.";
@@ -450,16 +465,23 @@ form.addEventListener("submit", async event => {
     });
 
     message.textContent = "Token created! Opening your tracker...";
+
+    // Ensure form is fresh if user hits browser Back button
+    setTimeout(() => {
+      resetForm();
+    }, 400);
+
     window.location.href = "/track.html?" + params.toString();
   } catch (error) {
     message.className = "error";
     message.textContent = error.message || "Server error. Please try again.";
     btn.disabled = false;
-    btnText.textContent = "Join Queue →";
+    btnText.innerHTML = "Join Queue&nbsp; →";
   }
 });
 
 loadJoinQr();
+resetForm();
 </script>
 </body>
 </html>
