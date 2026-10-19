@@ -1,0 +1,16 @@
+{
+  "name": "QueueNow",
+  "short_name": "QueueNow",
+  "description": "Real-time queue tracking and web push alerts",
+  "start_url": "/track.html",
+  "display": "standalone",
+  "background_color": "#080807",
+  "theme_color": "#e6c78f",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}
