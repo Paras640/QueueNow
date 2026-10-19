@@ -23,6 +23,33 @@ input{width:100%;padding:14px;background:#0b0a08;color:white;border:1px solid #7
 button{width:100%;padding:15px;margin-top:16px;border:0;border-radius:10px;
  background:linear-gradient(110deg,#b58b4e,#e6c78f,#99733c);font-size:15px;font-weight:bold;cursor:pointer}
 #message{text-align:center;margin-top:14px;color:var(--gold);font-size:14px}
+.qr-section{
+  margin-top:24px;
+  padding-top:20px;
+  border-top:1px solid #e6c78f33;
+  text-align:center;
+}
+.qr-section h3{
+  color:var(--gold);
+  font-size:14px;
+  margin-bottom:10px;
+}
+.qr-section p{
+  margin-bottom:14px;
+}
+.qr-section img{
+  width:190px;
+  height:190px;
+  padding:8px;
+  background:#fff;
+  border-radius:12px;
+  object-fit:contain;
+}
+.qr-error{
+  color:#ff7777;
+  font-size:13px;
+  margin-top:10px;
+}
 </style>
 </head>
 <body>
@@ -36,12 +63,77 @@ button{width:100%;padding:15px;margin-top:16px;border:0;border-radius:10px;
   <button id="joinBtn" type="submit">Join Queue →</button>
  </form>
  <div id="message" role="status"></div>
+ <div class="qr-section">
+  <h3>SCAN TO JOIN QUEUE</h3>
+  <p>Scan this QR code with your phone to open the Join Queue page.</p>
+
+  <img
+    id="joinQr"
+    alt="QueueNow Join Queue QR Code"
+    hidden
+  >
+
+  <div id="qrError" class="qr-error" role="status"></div>
+</div>
 </main>
 <script>
 const form=document.getElementById("joinForm");
 const btn=document.getElementById("joinBtn");
 const message=document.getElementById("message");
+const joinQr = document.getElementById("joinQr");
+const qrError = document.getElementById("qrError");
 
+async function loadJoinQr() {
+  try {
+    const response = await fetch("/api/queue/join-qr");
+
+    if (!response.ok) {
+      throw new Error("QR endpoint returned " + response.status);
+    }
+
+    const contentType = response.headers.get("content-type") || "";
+
+    // Endpoint agar direct image return karta hai
+    if (contentType.startsWith("image/")) {
+      const imageBlob = await response.blob();
+      joinQr.src = URL.createObjectURL(imageBlob);
+      joinQr.hidden = false;
+      return;
+    }
+
+    // Endpoint agar JSON mein QR URL return karta hai
+    const data = await response.json();
+
+    const qrUrl =
+      data.qrUrl ||
+      data.qrCodeUrl ||
+      data.imageUrl ||
+      data.url;
+
+    if (qrUrl) {
+      joinQr.src = qrUrl;
+      joinQr.hidden = false;
+      return;
+    }
+
+    throw new Error("QR response format does not contain an image URL.");
+  } catch (error) {
+    qrError.textContent =
+      "QR load nahi hua. QR controller aur endpoint check karo.";
+    console.error("Join QR error:", error);
+  }
+}
+
+joinQr.addEventListener("load", () => {
+  joinQr.hidden = false;
+});
+
+joinQr.addEventListener("error", () => {
+  joinQr.hidden = true;
+  qrError.textContent = "QR image load nahi ho payi.";
+});
+
+loadJoinQr();
 form.addEventListener("submit",async e=>{
  e.preventDefault();
  const name=document.getElementById("customerName").value.trim();
