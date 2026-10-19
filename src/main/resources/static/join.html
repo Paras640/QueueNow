@@ -1,634 +1,465 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QueueNow | Join the Queue</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QueueNow | Join Queue</title>
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 :root {
-    --gold: #e6c78f;
-    --light-gold: #fff0c7;
-    --dark-gold: #b58b4e;
-    --black: #080807;
-    --muted: #aaa49a;
+  --gold: #e8c47f;
+  --gold-light: #fff0c8;
+  --bg: #080806;
+  --muted: #aaa49a;
+  --panel: rgba(22, 18, 12, .88);
 }
-
-html { scroll-behavior: smooth; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-    min-height: 100vh;
-    font-family: "Segoe UI", Arial, sans-serif;
-    color: #fffaf0;
-    background:
-        radial-gradient(ellipse at 20% 15%, #49351b55, transparent 42%),
-        radial-gradient(ellipse at 90% 80%, #5c3d172b, transparent 38%),
-        var(--black);
-    overflow-x: hidden;
+  min-height: 100vh;
+  padding: 36px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+  color: #fffaf0;
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  background:
+    radial-gradient(ellipse at 10% 15%, #73501c35, transparent 38%),
+    radial-gradient(ellipse at 90% 85%, #a4772920, transparent 35%),
+    var(--bg);
 }
 
-#particles {
-    position: fixed;
-    inset: 0;
-    overflow: hidden;
-    pointer-events: none;
-    z-index: 0;
+body::before, body::after {
+  content: "";
+  position: fixed;
+  width: 420px;
+  height: 420px;
+  border: 1px solid #d5a74d19;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: orbit 18s linear infinite;
+}
+body::before { left: -260px; top: 20%; }
+body::after {
+  right: -300px;
+  bottom: -100px;
+  width: 540px;
+  height: 540px;
+  animation-direction: reverse;
 }
 
+.ambient {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
 .particle {
-    position: absolute;
-    bottom: -15px;
-    border-radius: 50%;
-    background: var(--light-gold);
-    box-shadow: 0 0 12px 2px #e6c78f80;
-    animation: rise linear forwards;
+  position: absolute;
+  bottom: -20px;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--gold-light);
+  box-shadow: 0 0 12px 3px #dcae5540;
+  animation: floatUp linear infinite;
 }
+.particle:nth-child(1) { left: 12%; animation-duration: 13s; }
+.particle:nth-child(2) { left: 27%; animation-duration: 17s; animation-delay: 3s; }
+.particle:nth-child(3) { left: 74%; animation-duration: 15s; animation-delay: 1s; }
+.particle:nth-child(4) { left: 88%; animation-duration: 19s; animation-delay: 5s; }
+.particle:nth-child(5) { left: 53%; animation-duration: 16s; animation-delay: 7s; }
 
-@keyframes rise {
-    0% { transform: translateY(0); opacity: 0; }
-    15% { opacity: .8; }
-    100% { transform: translateY(-110vh) translateX(45px); opacity: 0; }
-}
-
-/* Header */
-header {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 22px 8%;
-    border-bottom: 1px solid #80602c55;
-    background: #090908d9;
-    animation: topEnter .8s ease both;
-}
-
-.logo {
-    color: var(--gold);
-    font-size: 28px;
-    font-weight: 900;
-    letter-spacing: -1px;
-    text-decoration: none;
-}
-
-.back-link {
-    color: #ded1b8;
-    text-decoration: none;
-    font-size: 14px;
-    transition: color .3s;
-}
-
-.back-link:hover { color: var(--light-gold); }
-
-@keyframes topEnter {
-    from { opacity: 0; transform: translateY(-18px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Main layout */
-main {
-    position: relative;
-    z-index: 1;
-    min-height: calc(100vh - 140px);
-    display: grid;
-    place-items: center;
-    padding: 55px 20px 65px;
-}
-
-.join-layout {
-    width: 100%;
-    max-width: 1050px;
-    display: grid;
-    grid-template-columns: 1fr .9fr;
-    align-items: center;
-    gap: 65px;
-}
-
-/* Left introduction */
-.intro {
-    animation: reveal .9s .15s ease both;
-}
-
-.eyebrow {
-    display: inline-block;
-    color: var(--gold);
-    border: 1px solid #8c6a35;
-    background: #33261580;
-    border-radius: 30px;
-    padding: 10px 15px;
-    margin-bottom: 24px;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 2px;
-}
-
-.intro h1 {
-    font-size: clamp(42px, 5vw, 66px);
-    line-height: 1.08;
-    letter-spacing: -2.5px;
-    margin-bottom: 22px;
-}
-
-.gold-text {
-    display: inline-block;
-    background: linear-gradient(100deg, #bd9557, #fff0c7, #d4a650, #fff0c7);
-    background-size: 250% auto;
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: shimmer 5s linear infinite;
-}
-
-@keyframes shimmer {
-    to { background-position: 250% center; }
-}
-
-.intro p {
-    color: var(--muted);
-    font-size: 15px;
-    line-height: 1.9;
-    max-width: 420px;
-}
-
-.mini-points {
-    display: grid;
-    gap: 17px;
-    margin-top: 32px;
-}
-
-.mini-point {
-    display: flex;
-    align-items: center;
-    gap: 13px;
-    color: #ded3bf;
-    font-size: 14px;
-}
-
-.point-icon {
-    width: 34px;
-    height: 34px;
-    flex-shrink: 0;
-    display: grid;
-    place-items: center;
-    border: 1px solid #94713b;
-    border-radius: 50%;
-    color: var(--gold);
-    background: #d4a6500c;
-}
-
-/* Form card */
 .card {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-    padding: 37px;
-    border: 1px solid #8b6b386b;
-    border-radius: 25px;
-    background: linear-gradient(145deg, #1b1915f5, #0c0c0bf7);
-    box-shadow: 0 25px 90px #0009, 0 0 40px #c99a4510;
-    animation: reveal 1s .3s ease both;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 470px;
+  padding: 35px 30px 25px;
+  border: 1px solid #d8ae604e;
+  border-radius: 25px;
+  background: var(--panel);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 25px 90px #0009, 0 0 40px #bd8b2b0b,
+              inset 0 1px #fff1;
+  animation: enter .8s cubic-bezier(.2,.8,.2,1) both;
 }
 
 .card::before {
-    content: "";
-    position: absolute;
-    z-index: -1;
-    top: 0;
-    left: -100%;
-    width: 70%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--light-gold), transparent);
-    animation: cardSweep 6s ease-in-out infinite;
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 18%;
+  right: 18%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #ffe4a0, transparent);
+  box-shadow: 0 0 18px #e7bb68;
 }
 
-@keyframes cardSweep {
-    0%, 15% { left: -100%; }
-    65%, 100% { left: 140%; }
+.logo {
+  text-align: center;
+  font-size: clamp(30px, 7vw, 38px);
+  font-weight: 900;
+  letter-spacing: -1.7px;
+  color: var(--gold);
+  text-shadow: 0 0 28px #e8c47f25;
+}
+.logo span { color: var(--gold-light); }
+
+.tagline {
+  margin-top: 8px;
+  text-align: center;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: #a9a092;
 }
 
-@keyframes reveal {
-    from {
-        opacity: 0;
-        transform: translateY(25px);
-        filter: blur(4px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-        filter: blur(0);
-    }
+h1 {
+  margin-top: 32px;
+  text-align: center;
+  font-size: 25px;
+  letter-spacing: -.5px;
 }
-
-.card-label {
-    color: var(--gold);
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 2px;
-    margin-bottom: 15px;
-}
-
-.card h2 {
-    font-size: 30px;
-    letter-spacing: -1px;
-    margin-bottom: 12px;
-}
-
-.card-description {
-    color: var(--muted);
-    font-size: 14px;
-    line-height: 1.8;
-    margin-bottom: 30px;
+.intro {
+  max-width: 330px;
+  margin: 11px auto 28px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
 }
 
 label {
-    display: block;
-    color: #e8dfd0;
-    font-size: 13px;
-    font-weight: 700;
-    margin-bottom: 10px;
+  display: block;
+  margin-bottom: 10px;
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.8px;
 }
-
-.input-wrap {
-    position: relative;
-    margin-bottom: 19px;
-}
-
+.input-wrap { position: relative; }
 .input-wrap span {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--gold);
-    font-size: 18px;
-    pointer-events: none;
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gold);
+  font-size: 18px;
+  pointer-events: none;
 }
-
 input {
-    width: 100%;
-    padding: 16px 15px 16px 45px;
-    background: #090908;
-    color: #fffaf0;
-    border: 1px solid #51432f;
-    border-radius: 12px;
-    outline: none;
-    font-size: 15px;
-    transition: border-color .3s, box-shadow .3s;
+  width: 100%;
+  padding: 16px 16px 16px 45px;
+  border: 1px solid #a783473f;
+  border-radius: 13px;
+  outline: none;
+  background: #0c0b08;
+  color: white;
+  font-size: 15px;
+  transition: border-color .25s, box-shadow .25s, background .25s;
 }
-
-input::placeholder { color: #716b61; }
-
+input::placeholder { color: #777167; }
 input:focus {
-    border-color: var(--gold);
-    box-shadow: 0 0 0 4px #c6a56a15;
+  border-color: var(--gold);
+  background: #12100b;
+  box-shadow: 0 0 0 4px #e8c47f12, 0 0 25px #d9a84810;
 }
 
-.button {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-    isolation: isolate;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    border: none;
-    border-radius: 12px;
-    padding: 17px 20px;
-    background: linear-gradient(110deg, #fff0c7, #d4a650, #b58b4e);
-    color: #17110a;
-    font-size: 15px;
-    font-weight: 900;
-    cursor: pointer;
-    box-shadow: 0 0 25px #d6ae5b18;
-    transition: transform .3s, box-shadow .3s;
+button {
+  font: inherit;
 }
-
-.button::after {
-    content: "";
-    position: absolute;
-    top: -50%;
-    left: -100%;
-    width: 45%;
-    height: 200%;
-    transform: skewX(-25deg);
-    background: linear-gradient(90deg, transparent, #ffffffbb, transparent);
-    animation: buttonShine 4s ease-in-out infinite;
-    pointer-events: none;
+.join-btn {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  margin-top: 18px;
+  padding: 16px;
+  border: 1px solid #ffe2a0;
+  border-radius: 13px;
+  background: linear-gradient(110deg, #b58b4e, #ffe1a0 48%, #bd914c);
+  color: #171109;
+  font-weight: 800;
+  font-size: 15px;
+  cursor: pointer;
+  box-shadow: 0 8px 25px #c99a4930;
+  transition: transform .25s, box-shadow .25s, filter .25s;
 }
-
-@keyframes buttonShine {
-    0%, 65% { left: -100%; }
-    100% { left: 150%; }
+.join-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  transform: skewX(-22deg);
+  background: linear-gradient(90deg, transparent, #ffffff75, transparent);
+  transition: left .65s;
 }
-
-.button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 30px #c6a56a40;
+.join-btn:hover::before { left: 150%; }
+.join-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px #d5a64d40;
+  filter: brightness(1.05);
 }
-
-.button:disabled {
-    opacity: .75;
-    cursor: wait;
-    transform: none;
-}
-
-.button .arrow { font-size: 20px; }
+.join-btn:active { transform: scale(.985); }
+.join-btn:disabled { opacity: .65; cursor: wait; transform: none; }
 
 #message {
-    display: none;
-    margin-top: 20px;
-    padding: 17px;
-    border-radius: 12px;
-    font-size: 14px;
-    line-height: 1.7;
-    overflow-wrap: anywhere;
+  min-height: 18px;
+  margin-top: 12px;
+  text-align: center;
+  color: var(--gold);
+  font-size: 13px;
+  line-height: 1.5;
 }
+#message.error { color: #ff8585; }
 
-#message.success {
-    display: block;
-    color: #f6e4b8;
-    background: #d4a65012;
-    border: 1px solid #d4a65080;
-    animation: reveal .45s ease both;
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 22px 0;
+  color: #8c8373;
+  font-size: 11px;
+  letter-spacing: 2px;
 }
-
-#message.error {
-    display: block;
-    color: #ffd2c9;
-    background: #8b30201c;
-    border: 1px solid #b95b4a80;
+.divider::before, .divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #92703c75);
 }
+.divider::after { background: linear-gradient(90deg, #92703c75, transparent); }
 
-#message.loading {
-    display: block;
-    color: var(--gold-light);
-    background: #d4a6500b;
-    border: 1px solid #d4a65055;
+.qr-section {
+  padding: 20px 16px;
+  border: 1px solid #b98c3b42;
+  border-radius: 17px;
+  background: linear-gradient(145deg, #ffffff04, #d8a74408);
+  text-align: center;
+  transition: border-color .3s, background .3s;
 }
-
-.spinner {
-    display: inline-block;
-    width: 13px;
-    height: 13px;
-    margin-right: 9px;
-    border: 2px solid #e6c78f50;
-    border-top-color: var(--gold-light);
-    border-radius: 50%;
-    animation: spin .7s linear infinite;
-    vertical-align: -2px;
+.qr-section:hover {
+  border-color: #e8c47f85;
+  background: #d8a7440b;
 }
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
+.qr-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  margin-bottom: 11px;
+  border: 1px solid #e8c47f50;
+  border-radius: 50%;
+  color: var(--gold);
+  background: #e8c47f0c;
+  font-size: 19px;
 }
-
-.card-note {
-    text-align: center;
-    margin-top: 22px;
-    color: #827b70;
-    font-size: 11px;
-    letter-spacing: .4px;
+.qr-section h2 {
+  margin-bottom: 8px;
+  color: var(--gold);
+  font-size: 12px;
+  letter-spacing: 2px;
 }
-
-/* Footer */
-footer {
-    position: relative;
-    z-index: 1;
-    border-top: 1px solid #6f512b40;
-    padding: 21px;
-    text-align: center;
-    color: #827b70;
-    font-size: 12px;
+.qr-section p {
+  max-width: 275px;
+  margin: 0 auto 17px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
 }
-
-/* Responsive */
-@media (max-width: 800px) {
-    .join-layout {
-        max-width: 540px;
-        grid-template-columns: 1fr;
-        gap: 35px;
-    }
-
-    .intro { text-align: center; }
-    .intro p { margin: auto; }
-    .mini-points {
-        display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 12px;
-    }
-
-    .mini-point { font-size: 12px; }
-    main { padding-top: 40px; }
+.qr-frame {
+  display: inline-flex;
+  padding: 8px;
+  border: 1px solid #e8c47f85;
+  border-radius: 13px;
+  background: white;
+  box-shadow: 0 0 0 4px #e8c47f0b, 0 8px 25px #0005;
+  transition: transform .3s, box-shadow .3s;
 }
+.qr-frame:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 0 5px #e8c47f14, 0 12px 35px #d5a64d25;
+}
+.qr-frame img {
+  display: block;
+  width: 132px;
+  height: 132px;
+  object-fit: contain;
+}
+.qr-error { margin-top: 10px; color: #ff8585; font-size: 12px; }
+
+.footer {
+  margin-top: 23px;
+  padding-top: 18px;
+  border-top: 1px solid #ffffff10;
+  color: #777166;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: .3px;
+}
+.footer strong { color: #bca16c; font-weight: 500; }
+
+@keyframes enter {
+  from { opacity: 0; transform: translateY(22px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes floatUp {
+  from { transform: translateY(0); opacity: 0; }
+  15% { opacity: .8; }
+  85% { opacity: .4; }
+  to { transform: translateY(-110vh); opacity: 0; }
+}
+@keyframes orbit { to { transform: rotate(360deg); } }
 
 @media (max-width: 480px) {
-    header { padding: 19px 6%; }
-    .logo { font-size: 25px; }
-    main { padding: 35px 15px 45px; }
-    .intro h1 { letter-spacing: -1.5px; }
-    .card { padding: 27px 22px; }
-    .card h2 { font-size: 27px; }
+  body { padding: 20px 13px; }
+  .card { padding: 29px 21px 22px; border-radius: 21px; }
+  h1 { margin-top: 27px; }
+  .intro { margin-bottom: 24px; }
+  .qr-section { padding: 18px 12px; }
 }
-
 @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-        animation: none !important;
-        transition: none !important;
-        scroll-behavior: auto !important;
-    }
-
-    .intro, .card {
-        opacity: 1;
-        transform: none;
-        filter: none;
-    }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
 }
 </style>
 </head>
-
 <body>
-<div id="particles" aria-hidden="true"></div>
+<div class="ambient" aria-hidden="true">
+  <i class="particle"></i><i class="particle"></i>
+  <i class="particle"></i><i class="particle"></i><i class="particle"></i>
+</div>
 
-<header>
-    <a href="/" class="logo">QueueNow.</a>
-    <a href="/" class="back-link">← Back to Home</a>
-</header>
+<main class="card">
+  <div class="logo">QueueNow<span>.</span></div>
+  <div class="tagline">SMART QUEUE · LESS WAIT · MORE TIME</div>
 
-<main>
-    <div class="join-layout">
+  <h1>Join the Queue</h1>
+  <p class="intro">Enter your name to receive your token and track your turn live.</p>
 
-        <section class="intro">
-            <div class="eyebrow">✦ &nbsp; CUSTOMER PORTAL</div>
-
-            <h1>Your time.<br>
-                <span class="gold-text">Your turn.</span>
-            </h1>
-
-            <p>
-                Skip the physical line and make waiting effortless.
-                Enter your name to get started with a smarter queue
-                experience designed around your time.
-            </p>
-
-            <div class="mini-points">
-                <div class="mini-point">
-                    <span class="point-icon">ϟ</span>
-                    <span>Quick and simple</span>
-                </div>
-
-                <div class="mini-point">
-                    <span class="point-icon">◷</span>
-                    <span>Less time waiting</span>
-                </div>
-
-                <div class="mini-point">
-                    <span class="point-icon">✦</span>
-                    <span>Digital convenience</span>
-                </div>
-            </div>
-        </section>
-
-        <section class="card">
-            <div class="card-label">GET STARTED</div>
-            <h2>Join the queue<span class="gold-text">.</span></h2>
-
-            <p class="card-description">
-                Enter your details below and take the first step
-                towards a better waiting experience.
-            </p>
-
-            <form id="joinForm">
-                <label for="customerName">Your full name</label>
-
-                <div class="input-wrap">
-                    <span>♙</span>
-                    <input
-                        type="text"
-                        id="customerName"
-                        name="customerName"
-                        placeholder="Enter your name"
-                        autocomplete="name"
-                        required
-                        maxlength="100"
-                    >
-                </div>
-
-                <button type="submit" class="button" id="joinButton">
-                    <span id="buttonText">Join Queue</span>
-                    <span class="arrow" id="buttonArrow">→</span>
-                </button>
-            </form>
-
-            <div id="message" role="status" aria-live="polite"></div>
-
-            <p class="card-note">QueueNow · Smart waiting starts here</p>
-        </section>
-
+  <form id="joinForm">
+    <label for="customerName">YOUR NAME</label>
+    <div class="input-wrap">
+      <span aria-hidden="true">♙</span>
+      <input id="customerName" name="name" maxlength="80"
+        placeholder="Enter your name" autocomplete="name" required>
     </div>
+    <button class="join-btn" id="joinBtn" type="submit">
+      <span id="btnText">Join Queue&nbsp; →</span>
+    </button>
+  </form>
+
+  <div id="message" role="status" aria-live="polite"></div>
+
+  <div class="divider">OR</div>
+
+  <section class="qr-section">
+    <div class="qr-icon" aria-hidden="true">▦</div>
+    <h2>SCAN TO JOIN</h2>
+    <p>Open your phone camera, scan the code, and open the QueueNow join page.</p>
+    <div class="qr-frame">
+      <img id="joinQr" alt="QueueNow Join Queue QR Code" hidden>
+    </div>
+    <div id="qrError" class="qr-error" role="status"></div>
+  </section>
+
+  <footer class="footer">
+    <strong>♢ Secure</strong>&nbsp;&nbsp; · &nbsp;&nbsp;Simple&nbsp;&nbsp; · &nbsp;&nbsp;QueueNow
+  </footer>
 </main>
 
-<footer>
-    © 2026 QueueNow. Designed for a smarter waiting experience.
-</footer>
-
 <script>
-const reducedMotion = window.matchMedia(
-    "(prefers-reduced-motion: reduce)"
-).matches;
+const form = document.getElementById("joinForm");
+const btn = document.getElementById("joinBtn");
+const btnText = document.getElementById("btnText");
+const message = document.getElementById("message");
+const joinQr = document.getElementById("joinQr");
+const qrError = document.getElementById("qrError");
 
-/* Floating gold particles */
-if (!reducedMotion) {
-    const particleArea = document.getElementById("particles");
+async function loadJoinQr() {
+  try {
+    const response = await fetch("/api/queue/join-qr");
+    if (!response.ok) throw new Error("QR endpoint returned " + response.status);
 
-    function createParticle() {
-        if (particleArea.childElementCount >= 22) return;
+    const contentType = response.headers.get("content-type") || "";
 
-        const particle = document.createElement("span");
-        particle.className = "particle";
-        particle.style.left = Math.random() * 100 + "%";
-
-        const size = 2 + Math.random() * 3;
-        particle.style.width = size + "px";
-        particle.style.height = size + "px";
-        particle.style.animationDuration =
-            (7 + Math.random() * 6) + "s";
-
-        particleArea.appendChild(particle);
-        particle.addEventListener("animationend", () => particle.remove());
+    if (contentType.startsWith("image/")) {
+      joinQr.src = URL.createObjectURL(await response.blob());
+      joinQr.hidden = false;
+      return;
     }
 
-    setInterval(createParticle, 450);
+    const data = await response.json();
+    const qrUrl = data.qrUrl || data.qrCodeUrl || data.imageUrl || data.url;
+
+    if (!qrUrl) throw new Error("QR image URL missing from response");
+
+    joinQr.src = qrUrl;
+    joinQr.hidden = false;
+  } catch (error) {
+    qrError.textContent = "QR code couldn't load. Please use the form above.";
+    console.error("Join QR error:", error);
+  }
 }
 
-/* Keep the existing backend API connection */
-const form = document.getElementById("joinForm");
-const nameInput = document.getElementById("customerName");
-const message = document.getElementById("message");
-const button = document.getElementById("joinButton");
-const buttonText = document.getElementById("buttonText");
-const buttonArrow = document.getElementById("buttonArrow");
-
-form.addEventListener("submit", async function(event) {
-    event.preventDefault();
-
-    const name = nameInput.value.trim();
-
-    if (!name) {
-        message.className = "error";
-        message.textContent = "Please enter your name to continue.";
-        return;
-    }
-
-    button.disabled = true;
-    buttonText.textContent = "Joining your queue...";
-    buttonArrow.innerHTML = '<span class="spinner"></span>';
-
-    message.className = "loading";
-    message.textContent = "Connecting securely to QueueNow...";
-
-    try {
-        const response = await fetch("/api/queue/join", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ name: name })
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message || "Unable to join the queue.");
-        }
-
-        message.className = "success";
-        message.textContent = "✦  " + (
-            data.message || "Your request has been completed."
-        );
-
-        buttonText.textContent = "Request Complete";
-        buttonArrow.textContent = "✓";
-
-    } catch (error) {
-        message.className = "error";
-        message.textContent =
-            error.message === "Failed to fetch"
-                ? "Could not connect to the server. Please try again."
-                : (error.message || "Something went wrong. Please try again.");
-
-        button.disabled = false;
-        buttonText.textContent = "Try Again";
-        buttonArrow.textContent = "→";
-    }
+joinQr.addEventListener("load", () => {
+  joinQr.hidden = false;
+  qrError.textContent = "";
 });
+joinQr.addEventListener("error", () => {
+  joinQr.hidden = true;
+  qrError.textContent = "QR image couldn't load.";
+});
+
+form.addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const name = document.getElementById("customerName").value.trim();
+  if (!name) {
+    message.className = "error";
+    message.textContent = "Please enter your name.";
+    return;
+  }
+
+  btn.disabled = true;
+  btnText.textContent = "Joining queue...";
+  message.className = "";
+  message.textContent = "";
+
+  try {
+    const response = await fetch("/api/queue/join", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name })
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Unable to join queue.");
+
+    localStorage.setItem("myTokenNumber", String(data.tokenNumber));
+    localStorage.setItem("myCustomerName", data.customerName || name);
+
+    const params = new URLSearchParams({
+      token: String(data.tokenNumber),
+      name: data.customerName || name
+    });
+
+    message.textContent = "Token created! Opening your tracker...";
+    window.location.href = "/track.html?" + params.toString();
+  } catch (error) {
+    message.className = "error";
+    message.textContent = error.message || "Server error. Please try again.";
+    btn.disabled = false;
+    btnText.textContent = "Join Queue →";
+  }
+});
+
+loadJoinQr();
 </script>
 </body>
 </html>

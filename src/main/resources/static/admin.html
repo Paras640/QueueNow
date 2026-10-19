@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QueueNow | Admin Dashboard</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+    --gold: #e6c78f;
+    --light-gold: #fff0c7;
+    --dark-gold: #b58b4e;
+    --black: #080807;
+    --card-bg: rgba(20, 17, 13, 0.9);
+    --muted: #aaa49a;
+    --green: #4ade80;
+    --red: #f87171;
+}
+
+body {
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    color: #fffaf0;
+    background:
+        radial-gradient(ellipse at 20% 10%, #523a1c55, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, #3d281033, transparent 50%),
+        var(--black);
+}
+
+/* ── AUTH SCREEN ─────────────────────────────────────────── */
+#authScreen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--card-bg);
+    border: 1px solid rgba(230, 199, 143, 0.3);
+    border-radius: 22px;
+    padding: 40px 36px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(230,199,143,0.08);
+    animation: fadeUp 0.45s ease both;
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.auth-logo {
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    color: var(--gold);
+    text-align: center;
+    margin-bottom: 4px;
+}
+
+.auth-subtitle {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+}
+
+.auth-tab-group {
+    display: flex;
+    gap: 0;
+    background: #14110d;
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 28px;
+}
+
+.auth-tab {
+    flex: 1;
+    padding: 9px;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    background: transparent;
+    color: var(--muted);
+    transition: all 0.2s;
+}
+
+.auth-tab.active {
+    background: rgba(230, 199, 143, 0.12);
+    color: var(--gold);
+    border: 1px solid rgba(230, 199, 143, 0.2);
+}
+
+.auth-form { display: none; flex-direction: column; gap: 14px; }
+.auth-form.visible { display: flex; }
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.form-group input {
+    background: #0f0d0a;
+    border: 1px solid rgba(230, 199, 143, 0.2);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: #fffaf0;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(230, 199, 143, 0.1);
+}
+
+.form-group input::placeholder { color: #4a453d; }
+
+.btn-auth {
+    padding: 14px;
+    background: linear-gradient(110deg, #b58b4e, #e6c78f, #99733c);
+    border: none;
+    border-radius: 12px;
+    color: #120e09;
+    font-weight: 800;
+    font-size: 15px;
+    cursor: pointer;
+    margin-top: 4px;
+    box-shadow: 0 6px 20px rgba(230, 199, 143, 0.3);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.btn-auth:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(230, 199, 143, 0.45); }
+.btn-auth:active { transform: translateY(0); }
+
+.auth-message {
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    padding: 10px 14px;
+    border-radius: 8px;
+    display: none;
+}
+
+.auth-message.error { background: #2d1217; border: 1px solid #7f1d1d; color: var(--red); display: block; }
+.auth-message.success { background: #0d2e1f; border: 1px solid #166534; color: #86efac; display: block; }
+
+.auth-hint {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 12px;
+    color: #4a453d;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.auth-hint code {
+    font-family: monospace;
+    color: var(--muted);
+    background: #14110d;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* ── DASHBOARD ──────────────────────────────────────────── */
+#dashboardSection { display: none; padding: 24px 8%; }
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(230, 199, 143, 0.15);
+    margin-bottom: 28px;
+}
+
+.logo {
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    color: var(--gold);
+    text-decoration: none;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.btn-logout {
+    padding: 8px 16px;
+    background: transparent;
+    border: 1px solid rgba(230,199,143,0.2);
+    border-radius: 20px;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-logout:hover {
+    border-color: var(--red);
+    color: var(--red);
+    background: rgba(248, 113, 113, 0.08);
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 24px;
+}
+
+@media (max-width: 860px) {
+    .dashboard-grid { grid-template-columns: 1fr; }
+}
+
+.card {
+    background: var(--card-bg);
+    border: 1px solid rgba(230, 199, 143, 0.25);
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+.card-title {
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 2px;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.serving-display {
+    text-align: center;
+    padding: 20px;
+    background: #0f0d0a;
+    border: 1px solid #73552a;
+    border-radius: 14px;
+    margin-bottom: 20px;
+}
+
+.serving-number {
+    font-size: 68px;
+    font-weight: 900;
+    color: var(--light-gold);
+    text-shadow: 0 0 35px rgba(230,199,143,0.4);
+    line-height: 1.1;
+    margin: 6px 0;
+}
+
+.btn-next {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(110deg, #b58b4e, #e6c78f, #99733c);
+    border: none;
+    border-radius: 12px;
+    color: #120e09;
+    font-weight: 800;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(230, 199, 143, 0.35);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.btn-next:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(230, 199, 143, 0.5); }
+
+.btn-finish {
+    width: 100%;
+    padding: 14px;
+    background: #251610;
+    border: 1px solid #9e472a;
+    border-radius: 12px;
+    color: #ffab91;
+    font-weight: 800;
+    font-size: 14px;
+    cursor: pointer;
+    transition: transform 0.15s, opacity 0.2s, background 0.15s;
+}
+
+.btn-finish:hover:not(:disabled) { background: #381f15; transform: translateY(-2px); }
+
+.btn-reset {
+    width: 100%;
+    padding: 12px;
+    background: #141311;
+    border: 1px solid #453c30;
+    border-radius: 12px;
+    color: var(--muted);
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-reset:hover { background: #24201a; border-color: var(--gold); color: var(--gold); transform: translateY(-1px); }
+
+.btn-reset.highlight-reset {
+    border-color: var(--gold);
+    background: #2c2112;
+    color: var(--light-gold);
+    box-shadow: 0 0 20px rgba(230, 199, 143, 0.4);
+    animation: pulseReset 1.5s infinite alternate;
+}
+
+@keyframes pulseReset {
+    from { box-shadow: 0 0 10px rgba(230, 199, 143, 0.25); }
+    to   { box-shadow: 0 0 24px rgba(230, 199, 143, 0.6); }
+}
+
+.btn-next:disabled, .btn-finish:disabled {
+    opacity: 0.35 !important;
+    cursor: not-allowed !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+
+th {
+    text-align: left;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(230, 199, 143, 0.15);
+}
+
+td { padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-size: 14px; }
+
+.badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+.badge-serving  { background: #064e3b; color: #a7f3d0; border: 1px solid #10b981; }
+.badge-waiting  { background: #2a2012; color: var(--gold);   border: 1px solid #8c6a35; }
+.badge-done     { background: #1e1b4b; color: #c7d2fe; border: 1px solid #6366f1; }
+
+.feedback-item {
+    background: #0f0d0a;
+    border: 1px solid rgba(230, 199, 143, 0.15);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+     AUTH SCREEN
+════════════════════════════════════════ -->
+<div id="authScreen">
+    <div class="auth-card">
+        <div class="auth-logo">QueueNow<span style="color:#fff0c7">.</span></div>
+        <div class="auth-subtitle">Admin Access</div>
+
+        <!-- Tab switcher -->
+        <div class="auth-tab-group">
+            <button class="auth-tab active" id="tabSignIn" onclick="switchTab('signin')">Sign In</button>
+            <button class="auth-tab" id="tabForgot"  onclick="switchTab('forgot')">Forgot Password</button>
+        </div>
+
+        <!-- Sign In Form -->
+        <form class="auth-form visible" id="signinForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label for="loginUser">Username</label>
+                <input id="loginUser" type="text" placeholder="admin" autocomplete="username" required>
+            </div>
+            <div class="form-group">
+                <label for="loginPass">Password</label>
+                <input id="loginPass" type="password" placeholder="••••••••" autocomplete="current-password" required>
+            </div>
+            <div id="loginMsg" class="auth-message"></div>
+            <button type="submit" class="btn-auth">Sign In →</button>
+        </form>
+
+        <!-- Forgot / Reset Password Form -->
+        <form class="auth-form" id="forgotForm" onsubmit="handleForgot(event)">
+            <div class="form-group">
+                <label for="resetUser">Username</label>
+                <input id="resetUser" type="text" placeholder="admin" required>
+            </div>
+            <div class="form-group">
+                <label for="resetKey">Security Recovery PIN</label>
+                <input id="resetKey" type="password" placeholder="Enter your recovery PIN" required>
+            </div>
+            <div class="form-group">
+                <label for="resetNewPass">New Password</label>
+                <input id="resetNewPass" type="password" placeholder="Enter new password" required minlength="6">
+            </div>
+            <div class="form-group">
+                <label for="resetConfirm">Confirm New Password</label>
+                <input id="resetConfirm" type="password" placeholder="Re-enter new password" required minlength="6">
+            </div>
+            <div id="forgotMsg" class="auth-message"></div>
+            <button type="submit" class="btn-auth">Reset Password</button>
+        </form>
+
+        <div class="auth-hint">
+            Default credentials &nbsp;—&nbsp; user: <code>admin</code> &nbsp; pass: <code>admin123</code>
+        </div>
+    </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     DASHBOARD (hidden until auth)
+════════════════════════════════════════ -->
+<div id="dashboardSection">
+    <header>
+        <a href="/index.html" class="logo">QueueNow<span style="color:#fff0c7;">.</span>
+            <span style="font-size:14px; color:var(--gold); font-weight:600; letter-spacing:1px;">ADMIN DESK</span>
+        </a>
+        <div class="header-right">
+            <div style="font-size:13px; color:var(--muted);">
+                <span style="color:var(--green);">●</span> Cloud Sync Active
+            </div>
+            <button class="btn-logout" onclick="handleLogout()">Logout</button>
+        </div>
+    </header>
+
+    <div class="dashboard-grid">
+        <!-- Counter Control Card -->
+        <div class="card">
+            <div class="card-title">COUNTER DISPATCH</div>
+
+            <div class="serving-display">
+                <div style="font-size:12px; color:var(--muted); letter-spacing:1px;">CURRENT COUNTER STATE</div>
+                <div class="serving-number" id="adminServingDisplay">#1</div>
+                <div id="servingCustomerName" style="color:var(--gold); font-weight:700; font-size:16px;">Waiting for customers...</div>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:12px;">
+                <button type="button" class="btn-next" id="callNextBtn">📢 Call Next Customer →</button>
+                <button type="button" class="btn-finish" id="finishBtn">✓ Complete Service / Finish Queue</button>
+                <button type="button" class="btn-reset" id="resetBtn">🔄 Reset Queue (Start Fresh)</button>
+            </div>
+
+            <p style="font-size:12px; color:var(--muted); text-align:center; margin-top:14px; line-height:1.5;">
+                <b>Call Next:</b> Automatically opens feedback on the finished phone, alerts next customer.<br>
+                <b>Finish Queue:</b> Concludes the active customer's turn and requests feedback.<br>
+                <b>Reset Queue:</b> Clears all tokens and resets counter back to #1 for a new batch.
+            </p>
+
+            <!-- Feedback Section in Admin -->
+            <div style="margin-top:24px;">
+                <div class="card-title">RECENT CUSTOMER FEEDBACK</div>
+                <div id="feedbackListContainer" style="max-height:260px; overflow-y:auto;">
+                    <p style="font-size:13px; color:var(--muted);">No feedback received yet.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Queue List -->
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <div class="card-title" style="margin-bottom:0;">ALL ISSUED TOKENS</div>
+                <div id="totalQueueBadge" style="font-size:12px; color:var(--gold); font-weight:700;">0 in Queue</div>
+            </div>
+
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Token</th>
+                            <th>Customer Name</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="queueTableBody">
+                        <tr><td colspan="3" style="text-align:center; color:var(--muted); padding:24px;">No tokens issued yet.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ── AUTH STATE ──────────────────────────────────────────────
+const SESSION_KEY = "queuenow_admin_auth";
+
+function isLoggedIn() {
+    return sessionStorage.getItem(SESSION_KEY) === "true";
+}
+
+function showDashboard() {
+    document.getElementById("authScreen").style.display = "none";
+    document.getElementById("dashboardSection").style.display = "block";
+    startDashboard();
+}
+
+function showAuth() {
+    document.getElementById("authScreen").style.display = "flex";
+    document.getElementById("dashboardSection").style.display = "none";
+}
+
+// Boot: check session
+if (isLoggedIn()) {
+    showDashboard();
+}
+
+// ── TAB SWITCH ──────────────────────────────────────────────
+function switchTab(tab) {
+    const signinForm = document.getElementById("signinForm");
+    const forgotForm = document.getElementById("forgotForm");
+    const tabSignIn = document.getElementById("tabSignIn");
+    const tabForgot  = document.getElementById("tabForgot");
+    const loginMsg   = document.getElementById("loginMsg");
+    const forgotMsg  = document.getElementById("forgotMsg");
+
+    loginMsg.className = "auth-message";
+    forgotMsg.className = "auth-message";
+
+    if (tab === "signin") {
+        signinForm.classList.add("visible");
+        forgotForm.classList.remove("visible");
+        tabSignIn.classList.add("active");
+        tabForgot.classList.remove("active");
+    } else {
+        forgotForm.classList.add("visible");
+        signinForm.classList.remove("visible");
+        tabForgot.classList.add("active");
+        tabSignIn.classList.remove("active");
+    }
+}
+
+// ── LOGIN ───────────────────────────────────────────────────
+async function handleLogin(e) {
+    e.preventDefault();
+    const msg  = document.getElementById("loginMsg");
+    const user = document.getElementById("loginUser").value.trim();
+    const pass = document.getElementById("loginPass").value;
+
+    msg.className = "auth-message";
+    msg.textContent = "";
+
+    try {
+        const res  = await fetch("/api/admin/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username: user, password: pass })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            sessionStorage.setItem(SESSION_KEY, "true");
+            showDashboard();
+        } else {
+            msg.textContent = data.message || "Invalid credentials.";
+            msg.className = "auth-message error";
+        }
+    } catch (err) {
+        msg.textContent = "Server not reachable. Make sure the app is running.";
+        msg.className = "auth-message error";
+    }
+}
+
+// ── FORGOT / RESET ──────────────────────────────────────────
+async function handleForgot(e) {
+    e.preventDefault();
+    const msg     = document.getElementById("forgotMsg");
+    const user    = document.getElementById("resetUser").value.trim();
+    const key     = document.getElementById("resetKey").value.trim();
+    const newPass = document.getElementById("resetNewPass").value;
+    const confirm = document.getElementById("resetConfirm").value;
+
+    msg.className = "auth-message";
+    msg.textContent = "";
+
+    if (newPass !== confirm) {
+        msg.textContent = "Passwords do not match.";
+        msg.className = "auth-message error";
+        return;
+    }
+    if (newPass.length < 6) {
+        msg.textContent = "Password must be at least 6 characters.";
+        msg.className = "auth-message error";
+        return;
+    }
+
+    try {
+        const res  = await fetch("/api/admin/forgot-password", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username: user, recoveryKey: key, newPassword: newPass })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            msg.textContent = "✓ Password reset! Sign in with your new password.";
+            msg.className = "auth-message success";
+            // Auto-switch to signin after 2s
+            setTimeout(() => switchTab("signin"), 2000);
+        } else {
+            msg.textContent = data.message || "Reset failed. Check your details.";
+            msg.className = "auth-message error";
+        }
+    } catch (err) {
+        msg.textContent = "Server not reachable.";
+        msg.className = "auth-message error";
+    }
+}
+
+// ── LOGOUT ──────────────────────────────────────────────────
+function handleLogout() {
+    sessionStorage.removeItem(SESSION_KEY);
+    showAuth();
+    // Clear inputs
+    document.getElementById("loginPass").value = "";
+    document.getElementById("loginMsg").className = "auth-message";
+}
+
+// ── DASHBOARD LOGIC ─────────────────────────────────────────
+const adminServingDisplay  = document.getElementById("adminServingDisplay");
+const servingCustomerName  = document.getElementById("servingCustomerName");
+const callNextBtn          = document.getElementById("callNextBtn");
+const finishBtn            = document.getElementById("finishBtn");
+const resetBtn             = document.getElementById("resetBtn");
+const queueTableBody       = document.getElementById("queueTableBody");
+const totalQueueBadge      = document.getElementById("totalQueueBadge");
+const feedbackListContainer= document.getElementById("feedbackListContainer");
+
+let dashboardInterval = null;
+
+async function refreshDashboard() {
+    try {
+        const res = await fetch("/api/queue/status");
+        if (!res.ok) return;
+        const data = await res.json();
+
+        const current    = data.currentServing;
+        const queue      = data.queue || [];
+        const hasWaiting = data.hasWaiting;
+        const isServing  = data.isServing;
+
+        totalQueueBadge.textContent = `${queue.length} Total Issued`;
+        callNextBtn.disabled = !hasWaiting;
+        finishBtn.disabled   = !isServing;
+
+        if (isServing && current > 0) {
+            adminServingDisplay.textContent = `#${current}`;
+            const entry = queue.find(q => q.tokenNumber === current);
+            servingCustomerName.textContent = entry ? `${entry.customerName} (Serving Now)` : "(Serving Now)";
+            resetBtn.classList.remove("highlight-reset");
+            resetBtn.textContent = "🔄 Reset Queue (Start Fresh)";
+        } else if (hasWaiting) {
+            adminServingDisplay.textContent = "READY";
+            servingCustomerName.textContent = "Counter ready. Click 'Call Next Customer' to begin.";
+            resetBtn.classList.remove("highlight-reset");
+            resetBtn.textContent = "🔄 Reset Queue (Start Fresh)";
+        } else if (queue.length > 0) {
+            adminServingDisplay.textContent = "DONE";
+            servingCustomerName.textContent = "✓ Queue completely served! All customers finished.";
+            resetBtn.classList.add("highlight-reset");
+            resetBtn.textContent = "🔄 Queue Complete! Click to Reset";
+        } else {
+            adminServingDisplay.textContent = "EMPTY";
+            servingCustomerName.textContent = "Waiting for customers to join queue...";
+            resetBtn.classList.remove("highlight-reset");
+            resetBtn.textContent = "🔄 Reset Queue (Start Fresh)";
+        }
+
+        queueTableBody.innerHTML = queue.length === 0
+            ? `<tr><td colspan="3" style="text-align:center; color:var(--muted); padding:24px;">No tokens issued yet.</td></tr>`
+            : queue.map(item => {
+                let badge = '';
+                if (item.status === "SERVING")   badge = '<span class="badge badge-serving">CALLING NOW</span>';
+                else if (item.status === "COMPLETED") badge = '<span class="badge badge-done">COMPLETED</span>';
+                else                              badge = '<span class="badge badge-waiting">WAITING</span>';
+                return `<tr>
+                    <td style="font-weight:800; color:var(--light-gold);">#${item.tokenNumber}</td>
+                    <td style="font-weight:600;">${item.customerName}</td>
+                    <td>${badge}</td>
+                </tr>`;
+            }).join("");
+
+        // Fetch feedback
+        const fbRes = await fetch("/api/queue/feedback");
+        if (fbRes.ok) {
+            const fbList = await fbRes.json();
+            if (fbList && fbList.length > 0) {
+                feedbackListContainer.innerHTML = fbList.slice().reverse().map(fb => `
+                    <div class="feedback-item">
+                        <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;">
+                            <span style="font-weight:700; color:var(--gold);">Token #${fb.tokenNumber} · ${fb.customerName}</span>
+                            <span style="color:#facc15;">${'★'.repeat(fb.rating || 5)}</span>
+                        </div>
+                        <div style="font-size:13px; color:#fffaf0;">${fb.comments || '(No written comment)'}</div>
+                    </div>
+                `).join("");
+            }
+        }
+    } catch (e) {}
+}
+
+function startDashboard() {
+    refreshDashboard();
+    if (!dashboardInterval) {
+        dashboardInterval = setInterval(refreshDashboard, 2000);
+    }
+}
+
+callNextBtn.addEventListener("click", async () => {
+    try { await fetch("/api/queue/next", { method: "POST" }); await refreshDashboard(); } catch(e) {}
+});
+
+finishBtn.addEventListener("click", async () => {
+    try { await fetch("/api/queue/finish", { method: "POST" }); await refreshDashboard(); } catch(e) {}
+});
+
+resetBtn.addEventListener("click", async () => {
+    if (!confirm("Reset the queue? This will clear all tokens and restart numbering from #1.")) return;
+    try { await fetch("/api/queue/reset", { method: "POST" }); await refreshDashboard(); } catch(e) {}
+});
+</script>
+</body>
+</html>

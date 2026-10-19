@@ -91,30 +91,49 @@ header {
     letter-spacing: -1.5px;
     color: var(--gold);
     text-decoration: none;
+    flex: 1;
 }
 
-.nav-links {
+.nav-center {
     display: flex;
     align-items: center;
-    gap: 28px;
+    justify-content: center;
+    gap: 32px;
+    flex: 2;
 }
 
-.nav-links a {
+.nav-center a {
     text-decoration: none;
     color: #d9d0c0;
     font-size: 14px;
+    font-weight: 500;
     transition: color .3s;
 }
 
-.nav-links a:hover {
+.nav-center a:hover {
     color: var(--gold-light);
 }
 
-.nav-links .nav-cta {
+.nav-right {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex: 1;
+}
+
+.nav-cta {
     border: 1px solid var(--gold-dark);
     padding: 12px 20px;
     border-radius: 30px;
     color: var(--gold-light);
+    text-decoration: none;
+    font-size: 14px;
+    transition: all .3s;
+}
+
+.nav-cta:hover {
+    background: rgba(230, 199, 143, 0.15);
+    border-color: var(--gold);
 }
 
 /* Hero */
@@ -527,28 +546,33 @@ footer {
         max-width: 520px;
     }
 
-    .nav-links {
-        gap: 14px;
+    .nav-center {
+        gap: 16px;
     }
 }
 
 @media (max-width: 520px) {
     header {
-        padding: 18px 5%;
+        padding: 16px 5%;
         flex-wrap: wrap;
+        gap: 12px;
     }
 
-    .logo { font-size: 25px; }
+    .logo { font-size: 24px; }
 
-    .nav-links {
-        gap: 13px;
-        flex-wrap: wrap;
+    .nav-center {
+        gap: 14px;
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        margin-top: 8px;
     }
 
-    .nav-links a { font-size: 12px; }
+    .nav-center a { font-size: 13px; }
 
-    .nav-links .nav-cta {
-        padding: 9px 12px;
+    .nav-cta {
+        padding: 8px 14px;
+        font-size: 13px;
     }
 
     .hero {
@@ -601,12 +625,15 @@ footer {
 <header>
     <a class="logo" href="/">QueueNow.</a>
 
-    <nav class="nav-links" aria-label="Main navigation">
+    <nav class="nav-center" aria-label="Main navigation">
         <a href="/">Home</a>
-        <a href="#about">About</a>
-        <a href="#features">Features</a>
-        <a href="/join.html" class="nav-cta">Join Queue →</a>
+        <a href="/features.html">Features</a>
+        <a href="/about.html">About</a>
     </nav>
+
+    <div class="nav-right">
+        <a href="/join.html" class="nav-cta">Join Queue →</a>
+    </div>
 </header>
 
 <main>
@@ -638,29 +665,28 @@ footer {
             </div>
         </div>
 
-        <div class="visual" aria-label="Decorative queue status preview">
+        <div class="visual" aria-label="Live Queue Entry Kiosk">
             <div class="orbit"></div>
             <div class="orbit two"></div>
 
-            <div class="phone">
-                <div class="phone-screen">
-                    <div class="phone-brand">QueueNow.</div>
+            <div class="phone" style="min-height: 440px;">
+                <div class="phone-screen" style="min-height: 410px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+                    <div class="phone-brand">QueueNow · Store Kiosk</div>
 
-                    <div class="status-icon">✓</div>
-                    <p class="phone-label">Your Queue Position</p>
+                    <p class="phone-label" style="margin-top: 8px; font-weight: 700; color: var(--gold); letter-spacing: 1.5px; font-size: 12px;">✦ SCAN TO TAKE TOKEN</p>
 
-                    <div class="queue-number">#12</div>
+                    <div style="background: #ffffff; padding: 10px; border-radius: 14px; margin: 12px 0; box-shadow: 0 0 25px rgba(230,199,143,0.35);">
+                        <img id="kioskQr" src="/api/queue/join-qr" alt="Scan QR to Join Queue" style="width: 155px; height: 155px; display: block; border-radius: 6px;" />
+                    </div>
 
-                    <p class="wait-label">
-                        Example preview<br>
-                        Estimated wait time
+                    <p class="wait-label" style="font-size: 11px; line-height: 1.6;">
+                        Point your phone camera here<br>
+                        <span id="kioskNetworkIp" style="color: var(--gold-light); font-weight: 600;">Scan to get your digital token</span>
                     </p>
 
-                    <div class="phone-note">
-                        ✦<br>
-                        You're in line!<br>
-                        A smarter way to wait.
-                    </div>
+                    <a id="kioskDirectLink" href="/join.html" style="margin-top: 12px; font-size: 11px; color: var(--gold-light); text-decoration: underline; opacity: 0.9;">
+                        Or open mobile pass directly →
+                    </a>
                 </div>
             </div>
         </div>
@@ -744,11 +770,20 @@ if (!reducedMotion) {
     } else {
         features.forEach(feature => feature.classList.add("visible"));
     }
-} else {
-    document.querySelectorAll(".feature").forEach(feature => {
-        feature.classList.add("visible");
-    });
 }
+
+// Fetch network IP info to show for mobile users
+fetch("/api/queue/server-info")
+    .then(res => res.json())
+    .then(data => {
+        if (data && data.joinUrl) {
+            const ipLabel = document.getElementById("kioskNetworkIp");
+            if (ipLabel) {
+                ipLabel.textContent = data.joinUrl;
+            }
+        }
+    })
+    .catch(() => {});
 </script>
 </body>
 </html>

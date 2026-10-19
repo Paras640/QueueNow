@@ -1,0 +1,148 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Features | QueueNow</title>
+<style>
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #080808;
+    color: #fffaf0;
+}
+header {
+    padding: 24px 8%;
+    border-bottom: 1px solid #493b27;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.logo {
+    color: #e5c58a;
+    font-size: 26px;
+    font-weight: 800;
+    text-decoration: none;
+}
+nav { display: flex; gap: 22px; }
+nav a {
+    color: #d4d0c8;
+    text-decoration: none;
+}
+nav a:hover { color: #e5c58a; }
+main {
+    max-width: 1050px;
+    margin: auto;
+    padding: 85px 24px;
+    text-align: center;
+    animation: appear .8s ease both;
+}
+.tag {
+    color: #e5c58a;
+    letter-spacing: 3px;
+    font-size: 12px;
+}
+h1 { font-size: clamp(38px, 7vw, 65px); }
+h1 span { color: #e5c58a; }
+.intro {
+    color: #aaa49a;
+    line-height: 1.8;
+    max-width: 650px;
+    margin: 0 auto 45px;
+}
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+.card {
+    text-align: left;
+    padding: 28px;
+    background: linear-gradient(145deg,#191714,#0e0e0d);
+    border: 1px solid #493b27;
+    border-radius: 16px;
+    transition: .3s;
+}
+.card:hover {
+    transform: translateY(-8px);
+    border-color: #e5c58a;
+    box-shadow: 0 12px 35px #c6a56a20;
+}
+.icon { font-size: 32px; }
+h2 { color: #e5c58a; font-size: 19px; }
+.card p { color: #aaa49a; line-height: 1.8; font-size: 14px; }
+.back {
+    display: inline-block;
+    margin-top: 38px;
+    padding: 14px 24px;
+    border-radius: 8px;
+    background: linear-gradient(110deg,#e8cf9c,#b58b4e);
+    color: #17110a;
+    text-decoration: none;
+    font-weight: bold;
+}
+@keyframes appear {
+    from { opacity: 0; transform: translateY(25px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@media(max-width:700px) {
+    .grid { grid-template-columns: 1fr; }
+    header { padding: 20px; }
+    nav { gap: 12px; font-size: 13px; }
+}
+@media(prefers-reduced-motion:reduce) {
+    *,*::before,*::after { animation:none!important; transition:none!important; }
+}
+</style>
+</head>
+<body>
+<header>
+    <a class="logo" href="/">QueueNow.</a>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/features.html">Features</a>
+        <a href="/about.html">About</a>
+    </nav>
+</header>
+<main>
+    <div class="tag">BUILT FOR BETTER WAITING</div>
+    <h1>Powerful Features.<br><span>Simpler Waiting.</span></h1>
+    <p class="intro">QueueNow brings digital queue access and QR-based tokens together to make the waiting experience more convenient.</p>
+    <section class="grid">
+        <article class="card">
+            <div class="icon">✦</div>
+            <h2>Easy Queue Joining</h2>
+            <p>Enter your name through the customer portal to join the queue digitally.</p>
+        </article>
+        <article class="card">
+            <div class="icon">▦</div>
+            <h2>QR Code Generation</h2>
+            <p>Generate a QR code associated with queue information for convenient access.</p>
+        </article>
+        <article class="card">
+            <div class="icon">#</div>
+            <h2>Digital Token</h2>
+            <p>Receive a token number after joining, making your queue position easier to identify.</p>
+        </article>
+        <article class="card">
+            <div class="icon">◷</div>
+            <h2>Less Waiting Hassle</h2>
+            <p>Make queue access more convenient without relying entirely on a physical line.</p>
+        </article>
+        <article class="card">
+            <div class="icon">◇</div>
+            <h2>Simple Interface</h2>
+            <p>A clean, responsive website designed for a straightforward customer experience.</p>
+        </article>
+        <article class="card">
+            <div class="icon">↗</div>
+            <h2>Connected Backend</h2>
+            <p>Spring Boot handles backend requests, with QR generation provided by the integrated service.</p>
+        </article>
+    </section>
+    <a class="back" href="/join.html">Join the Queue →</a>
+</main>
+</body>
+</html>
