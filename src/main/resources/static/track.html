@@ -1,218 +1,1333 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>QueueNow | Live Tracking</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>QueueNow | Live Turn Tracking</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{--gold:#e6c78f;--light:#fff0c7;--muted:#aaa49a;--green:#4ade80}
-body{min-height:100vh;padding:20px 16px;font-family:Arial,sans-serif;color:#fffaf0;background:radial-gradient(ellipse at 50% 10%,#523a1c66,transparent 55%),#080807;display:flex;flex-direction:column;align-items:center}
-header{width:100%;max-width:460px;display:flex;justify-content:space-between;align-items:center;padding:12px 0 20px;border-bottom:1px solid #e6c78f33}
-.logo{font-size:23px;font-weight:900;color:var(--gold);text-decoration:none}
-.pill{color:var(--gold);border:1px solid #70542c;border-radius:20px;padding:7px 10px;font-size:11px}
-main{width:100%;max-width:460px;margin-top:20px}
-.card{background:#14110de8;border:1px solid #e6c78f44;border-radius:20px;padding:25px 20px;text-align:center;box-shadow:0 10px 30px #0007}
-.label{font-size:11px;color:var(--gold);letter-spacing:2px;font-weight:bold}
-.token{font-size:72px;font-weight:900;color:var(--light);margin:12px 0;text-shadow:0 0 30px #e6c78f55}
-.name{font-size:19px;font-weight:bold;margin-bottom:14px}
-.status{display:inline-block;padding:10px 16px;border-radius:30px;background:#2a2012;border:1px solid #8c6a35;color:var(--gold);font-weight:bold;font-size:13px}
-.status.serving{background:#064e3b;border-color:#10b981;color:#a7f3d0}
-.status.done{background:#1e1b4b;border-color:#6366f1;color:#c7d2fe}
-.instruction{font-size:13px;line-height:1.6;color:var(--muted);margin:15px 0}
-.metrics{display:flex;justify-content:space-around;background:#0b0a08;border:1px solid #e6c78f22;border-radius:12px;padding:16px;margin-top:20px}
-.metric-label{font-size:10px;color:var(--muted);letter-spacing:1px}
-.metric-value{font-size:27px;font-weight:bold;color:var(--gold);margin-top:5px}
-#feedbackSection{display:none;text-align:left;border-top:1px solid #e6c78f33;margin-top:22px;padding-top:20px}
-#feedbackSection h3{text-align:center;color:var(--gold);margin-bottom:8px}
-#feedbackSection p{text-align:center;color:var(--muted);font-size:13px;line-height:1.5}
-.stars{display:flex;justify-content:center;gap:8px;margin:18px 0}
-.star{font-size:35px;color:#4a4439;cursor:pointer}
-.star.active{color:#facc15}
-textarea{width:100%;height:85px;padding:12px;background:#0b0a08;color:white;border:1px solid #73552a;border-radius:10px;resize:vertical}
-button{width:100%;padding:14px;margin-top:12px;background:linear-gradient(110deg,#b58b4e,#e6c78f,#99733c);border:0;border-radius:10px;font-weight:bold;cursor:pointer}
-button:disabled{opacity:.5}
-#feedbackMsg{text-align:center;color:var(--gold);font-size:13px;margin-top:12px}
-.notif-pill{display:inline-flex;align-items:center;justify-content:center;gap:6px;margin:10px auto 0;padding:8px 16px;background:rgba(230,199,143,0.12);border:1px solid rgba(230,199,143,0.35);border-radius:20px;color:var(--light);font-size:12px;font-weight:bold;cursor:pointer;transition:all .2s}
-.notif-pill:hover{background:rgba(230,199,143,0.25);border-color:var(--gold)}
-footer{margin:25px 0;color:var(--muted);font-size:12px}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --gold: #e6c78f;
+    --gold-light: #fff0c7;
+    --gold-dark: #b58b4e;
+    --black: #080807;
+    --surface: rgba(20, 17, 13, 0.85);
+    --surface-solid: #120f0b;
+    --muted: #aaa49a;
+    --border: rgba(230, 199, 143, 0.22);
+    --border-bright: rgba(230, 199, 143, 0.45);
+    --green: #4ade80;
+    --green-bg: rgba(74, 222, 128, 0.12);
+    --blue: #818cf8;
+    --glow: 0 0 35px rgba(230, 199, 143, 0.35);
+}
+
+body {
+    min-height: 100vh;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background:
+        radial-gradient(ellipse at 50% 0%, #4a341a 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 80%, #2b1c0b 0%, transparent 50%),
+        var(--black);
+    color: #fffaf0;
+    padding: 20px 16px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+}
+
+/* Background animated subtle glow */
+.ambient-glow {
+    position: fixed;
+    top: -120px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(230, 199, 143, 0.12) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+header {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0 20px;
+    border-bottom: 1px solid rgba(230, 199, 143, 0.18);
+    position: relative;
+    z-index: 1;
+}
+
+.logo {
+    font-family: 'Outfit', sans-serif;
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    color: var(--gold);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.logo span {
+    color: var(--gold-light);
+}
+
+.live-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 14px;
+    background: rgba(230, 199, 143, 0.08);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: var(--gold);
+    text-transform: uppercase;
+}
+
+.live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 10px var(--green);
+    animation: pulseBeacon 1.8s infinite;
+}
+
+@keyframes pulseBeacon {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.3); }
+}
+
+main {
+    width: 100%;
+    max-width: 480px;
+    margin-top: 18px;
+    position: relative;
+    z-index: 1;
+}
+
+/* ── TRACKING CARD ───────────────────────────────────────── */
+.tracker-card {
+    background: var(--surface);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: 26px;
+    padding: 32px 24px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.65), 0 0 0 1px rgba(230, 199, 143, 0.06);
+    position: relative;
+    overflow: hidden;
+}
+
+.tracker-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.token-eyebrow {
+    font-family: 'Outfit', sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2.5px;
+    color: var(--gold);
+    text-transform: uppercase;
+}
+
+.token-hero {
+    font-family: 'Outfit', sans-serif;
+    font-size: 80px;
+    font-weight: 900;
+    line-height: 1.05;
+    color: var(--gold-light);
+    margin: 8px 0;
+    text-shadow: var(--glow);
+    letter-spacing: -2px;
+}
+
+.customer-tag {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fffaf0;
+    margin-bottom: 16px;
+}
+
+/* Status Banner */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 22px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    margin-bottom: 14px;
+    transition: all 0.3s ease;
+}
+
+.status-badge.waiting {
+    background: rgba(230, 199, 143, 0.12);
+    border: 1px solid var(--gold-dark);
+    color: var(--gold-light);
+}
+
+.status-badge.next-up {
+    background: rgba(250, 204, 21, 0.15);
+    border: 1px solid #eab308;
+    color: #fef08a;
+    animation: pulseWarn 1.6s infinite alternate;
+}
+
+.status-badge.serving {
+    background: rgba(74, 222, 128, 0.18);
+    border: 1px solid var(--green);
+    color: #bbf7d0;
+    font-size: 15px;
+    padding: 12px 26px;
+    box-shadow: 0 0 25px rgba(74, 222, 128, 0.4);
+    animation: ringCalling 1.2s infinite alternate;
+}
+
+.status-badge.done {
+    background: rgba(129, 140, 248, 0.18);
+    border: 1px solid var(--blue);
+    color: #c7d2fe;
+}
+
+@keyframes pulseWarn {
+    from { transform: scale(1); box-shadow: 0 0 10px rgba(250, 204, 21, 0.2); }
+    to   { transform: scale(1.03); box-shadow: 0 0 20px rgba(250, 204, 21, 0.45); }
+}
+
+@keyframes ringCalling {
+    from { transform: scale(1); box-shadow: 0 0 15px rgba(74, 222, 128, 0.3); }
+    to   { transform: scale(1.04); box-shadow: 0 0 32px rgba(74, 222, 128, 0.7); }
+}
+
+.instruction-text {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--muted);
+    max-width: 380px;
+    margin: 0 auto 20px;
+}
+
+/* ── PROGRESS STEPPER ────────────────────────────────────── */
+.progress-container {
+    margin: 20px 0 24px;
+    padding: 0 6px;
+}
+
+.steps-bar {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+}
+
+.steps-bar::before {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: 20px;
+    right: 20px;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 0;
+}
+
+.steps-progress {
+    position: absolute;
+    top: 14px;
+    left: 20px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold));
+    z-index: 0;
+    transition: width 0.4s ease;
+    width: 0%;
+}
+
+.step-node {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 70px;
+}
+
+.step-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--surface-solid);
+    border: 2px solid #3d352b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--muted);
+    transition: all 0.3s;
+}
+
+.step-node.active .step-circle {
+    background: var(--gold);
+    border-color: var(--gold-light);
+    color: var(--black);
+    box-shadow: 0 0 14px rgba(230, 199, 143, 0.55);
+}
+
+.step-node.completed .step-circle {
+    background: #143521;
+    border-color: var(--green);
+    color: var(--green);
+}
+
+.step-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+    text-transform: uppercase;
+}
+
+.step-node.active .step-title {
+    color: var(--gold);
+}
+
+/* ── 2 METRICS GRID (Now Serving & People Ahead) ─────────── */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    background: #0d0b09;
+    border: 1px solid rgba(230, 199, 143, 0.16);
+    border-radius: 18px;
+    padding: 18px 16px;
+    margin-top: 14px;
+}
+
+.metric-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.metric-col:first-child {
+    border-right: 1px solid rgba(230, 199, 143, 0.14);
+}
+
+.metric-label {
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.metric-val {
+    font-family: 'Outfit', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--gold-light);
+}
+
+.metric-val.highlight {
+    color: var(--green);
+}
+
+/* ── WEB PUSH & NOTIFICATIONS CARD ───────────────────────── */
+.notif-card {
+    background: rgba(230, 199, 143, 0.05);
+    border: 1px solid rgba(230, 199, 143, 0.22);
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    text-align: left;
+}
+
+.notif-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.notif-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fffaf0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.notif-desc {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.4;
+}
+
+.btn-notif-enable {
+    padding: 9px 16px;
+    background: linear-gradient(110deg, #b58b4e, #e6c78f, #99733c);
+    border: none;
+    border-radius: 12px;
+    color: #120e09;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(230, 199, 143, 0.25);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.btn-notif-enable:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(230, 199, 143, 0.4);
+}
+
+.notif-badge-active {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--green);
+    background: var(--green-bg);
+    border: 1px solid rgba(74, 222, 128, 0.3);
+    padding: 6px 12px;
+    border-radius: 12px;
+    white-space: nowrap;
+}
+
+/* ── MULTIPLE QR OPTIONS SECTION ─────────────────────────── */
+.share-section {
+    margin-top: 22px;
+    border-top: 1px solid rgba(230, 199, 143, 0.16);
+    padding-top: 20px;
+}
+
+.section-eyebrow {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.qr-tabs {
+    display: flex;
+    gap: 6px;
+    background: #0d0b09;
+    border: 1px solid rgba(230, 199, 143, 0.2);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 14px;
+}
+
+.qr-tab {
+    flex: 1;
+    padding: 8px 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    background: transparent;
+    color: var(--muted);
+    transition: all 0.2s;
+}
+
+.qr-tab.active {
+    background: rgba(230, 199, 143, 0.15);
+    color: var(--gold-light);
+    border: 1px solid rgba(230, 199, 143, 0.3);
+}
+
+.qr-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #0a0907;
+    border: 1px solid rgba(230, 199, 143, 0.22);
+    border-radius: 18px;
+    padding: 22px 18px;
+    animation: fadeIn 0.3s ease;
+}
+
+.qr-panel img {
+    width: 175px;
+    height: 175px;
+    border-radius: 14px;
+    border: 2px solid var(--gold);
+    background: white;
+    padding: 7px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+
+.qr-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--gold-light);
+    margin-top: 12px;
+}
+
+.qr-desc {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+    max-width: 320px;
+    line-height: 1.5;
+}
+
+.qr-actions-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+    width: 100%;
+    max-width: 310px;
+}
+
+.btn-qr-action {
+    flex: 1;
+    padding: 9px 12px;
+    background: rgba(230, 199, 143, 0.08);
+    border: 1px solid rgba(230, 199, 143, 0.25);
+    border-radius: 10px;
+    color: var(--gold);
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-qr-action:hover {
+    background: rgba(230, 199, 143, 0.18);
+    border-color: var(--gold);
+    color: var(--gold-light);
+}
+
+#copyToast {
+    display: none;
+    margin-top: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--green);
+}
+
+/* ── FULLSCREEN QR MODAL ─────────────────────────────────── */
+#fullscreenQrModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.88);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+}
+
+.fs-modal-card {
+    background: #14110d;
+    border: 1px solid rgba(230, 199, 143, 0.35);
+    border-radius: 24px;
+    padding: 30px 24px;
+    text-align: center;
+    max-width: 360px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9);
+}
+
+.fs-modal-card img {
+    width: 230px;
+    height: 230px;
+    background: white;
+    padding: 10px;
+    border-radius: 14px;
+    border: 2px solid var(--gold);
+    display: block;
+    margin: 0 auto 16px;
+}
+
+/* ── NO TOKEN LOOKUP CARD ────────────────────────────────── */
+#lookupCard {
+    display: none;
+    background: var(--surface);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: 26px;
+    padding: 36px 26px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.65);
+}
+
+.lookup-input {
+    width: 100%;
+    padding: 14px 16px;
+    background: #0a0907;
+    border: 1px solid rgba(230, 199, 143, 0.3);
+    border-radius: 12px;
+    color: white;
+    font-size: 16px;
+    text-align: center;
+    font-weight: 700;
+    margin: 16px 0 12px;
+    outline: none;
+}
+
+.lookup-input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(230, 199, 143, 0.15);
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(110deg, #b58b4e, #e6c78f, #99733c);
+    border: none;
+    border-radius: 12px;
+    color: #120e09;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(230, 199, 143, 0.3);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(230, 199, 143, 0.45);
+}
+
+.btn-secondary {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: 1px solid rgba(230, 199, 143, 0.25);
+    border-radius: 12px;
+    color: var(--gold);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 10px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+    background: rgba(230, 199, 143, 0.1);
+}
+
+/* ── FEEDBACK SECTION ────────────────────────────────────── */
+#feedbackSection {
+    display: none;
+    margin-top: 24px;
+    border-top: 1px solid rgba(230, 199, 143, 0.2);
+    padding-top: 24px;
+    text-align: left;
+    animation: fadeIn 0.4s ease;
+}
+
+#feedbackSection h3 {
+    text-align: center;
+    font-family: 'Outfit', sans-serif;
+    color: var(--gold);
+    font-size: 20px;
+    margin-bottom: 6px;
+}
+
+#feedbackSection p {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.stars {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 16px 0;
+}
+
+.star {
+    font-size: 36px;
+    color: #4a4439;
+    cursor: pointer;
+    transition: color 0.15s, transform 0.15s;
+    user-select: none;
+}
+
+.star.active {
+    color: #facc15;
+    text-shadow: 0 0 15px rgba(250, 204, 21, 0.4);
+}
+
+.star:hover {
+    transform: scale(1.15);
+}
+
+textarea {
+    width: 100%;
+    height: 85px;
+    padding: 12px 14px;
+    background: #0d0b09;
+    color: #fffaf0;
+    border: 1px solid rgba(230, 199, 143, 0.25);
+    border-radius: 12px;
+    font-size: 13px;
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+textarea:focus {
+    border-color: var(--gold);
+}
+
+#feedbackMsg {
+    text-align: center;
+    color: var(--gold);
+    font-size: 13px;
+    font-weight: 700;
+    margin-top: 12px;
+}
+
+footer {
+    margin: 28px 0 10px;
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
 </style>
 </head>
 <body>
+
+<div class="ambient-glow"></div>
+
 <header>
- <a class="logo" href="/index.html">QueueNow.</a>
- <div class="pill">● LIVE TRACKING</div>
+    <a class="logo" href="/index.html">QueueNow<span>.</span></a>
+    <div class="live-pill">
+        <span class="live-dot"></span> Live Sync
+    </div>
 </header>
+
 <main>
-<section class="card">
- <div class="label">YOUR TOKEN</div>
- <div id="tokenDisplay" class="token">#--</div>
- <div id="nameDisplay" class="name">Loading...</div>
- <div id="statusBanner" class="status">Checking queue...</div>
- <p id="instruction" class="instruction">Keep this page open to follow your turn.</p>
- <div><button id="notifPromptBtn" class="notif-pill" style="display:none;" onclick="enableNotifications()">🔔 Enable tab/system alerts</button></div>
- <div class="metrics">
-  <div><div class="metric-label">NOW SERVING</div><div id="currentDisplay" class="metric-value">#--</div></div>
-  <div style="border-left:1px solid #e6c78f33"></div>
-  <div><div class="metric-label">PEOPLE AHEAD</div><div id="aheadDisplay" class="metric-value">--</div></div>
- </div>
- <section id="feedbackSection">
-  <h3>Service Completed!</h3>
-  <p>Please rate your experience.</p>
-  <div id="stars" class="stars" aria-label="Choose rating">
-   <span class="star" data-rating="1" role="button" tabindex="0">★</span>
-   <span class="star" data-rating="2" role="button" tabindex="0">★</span>
-   <span class="star" data-rating="3" role="button" tabindex="0">★</span>
-   <span class="star" data-rating="4" role="button" tabindex="0">★</span>
-   <span class="star active" data-rating="5" role="button" tabindex="0">★</span>
-  </div>
-  <textarea id="comments" placeholder="Optional comments or suggestions"></textarea>
-  <button id="submitFeedback">Submit Feedback</button>
-  <div id="feedbackMsg" role="status"></div>
- </section>
-</section>
+    <!-- Normal Tracker View -->
+    <section class="tracker-card" id="trackerCard">
+        <div class="token-eyebrow">Your Assigned Token</div>
+        <div id="tokenDisplay" class="token-hero">#--</div>
+        <div id="nameDisplay" class="customer-tag">Loading...</div>
+
+        <div id="statusBanner" class="status-badge waiting">
+            ⏳ Connecting to live queue...
+        </div>
+
+        <p id="instruction" class="instruction-text">
+            Keep this window open or enable alerts below. We will ping you when your turn arrives.
+        </p>
+
+        <!-- Progress Steps -->
+        <div class="progress-container">
+            <div class="steps-bar">
+                <div class="steps-progress" id="stepsProgress"></div>
+                <div class="step-node active" id="step1">
+                    <div class="step-circle">1</div>
+                    <div class="step-title">In Queue</div>
+                </div>
+                <div class="step-node" id="step2">
+                    <div class="step-circle">2</div>
+                    <div class="step-title">Up Next</div>
+                </div>
+                <div class="step-node" id="step3">
+                    <div class="step-circle">3</div>
+                    <div class="step-title">Serving</div>
+                </div>
+                <div class="step-node" id="step4">
+                    <div class="step-circle">✓</div>
+                    <div class="step-title">Done</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2 Metrics Grid: Now Serving & People Ahead (No Estimated Time) -->
+        <div class="metrics-grid">
+            <div class="metric-col">
+                <div class="metric-label">Now Serving</div>
+                <div id="currentDisplay" class="metric-val">#--</div>
+            </div>
+            <div class="metric-col">
+                <div class="metric-label">People Ahead</div>
+                <div id="aheadDisplay" class="metric-val">--</div>
+            </div>
+        </div>
+
+        <!-- Web Push / Device Notification Card -->
+        <div class="notif-card" id="notifCard">
+            <div class="notif-info">
+                <div class="notif-title">🔔 Web Push Alerts</div>
+                <div class="notif-desc" id="notifDesc">Get device alerts when you're next or called.</div>
+            </div>
+            <button class="btn-notif-enable" id="notifBtn" onclick="requestWebPush()">Enable Alerts</button>
+            <div class="notif-badge-active" id="notifBadge">✓ Alerts Active</div>
+        </div>
+
+        <!-- Multiple QR Code Options Section -->
+        <div class="share-section">
+            <div class="section-eyebrow">QR Code & Sharing Options</div>
+
+            <!-- Tab switcher -->
+            <div class="qr-tabs">
+                <button type="button" class="qr-tab active" id="tabTrackQr" onclick="switchQrOption('track')">
+                    📱 Track My Token
+                </button>
+                <button type="button" class="qr-tab" id="tabJoinQr" onclick="switchQrOption('join')">
+                    👥 New Person Join
+                </button>
+            </div>
+
+            <!-- Panel 1: Track Token QR -->
+            <div class="qr-panel" id="panelTrackQr">
+                <img id="trackQrImg" src="" alt="Direct Tracking QR Code">
+                <div class="qr-title">
+                    Track Token <span id="qrTokenBadge" style="color:var(--gold-light);">#--</span>
+                </div>
+                <p class="qr-desc">
+                    Scan with any phone camera to follow Token #<span id="qrTokenDescNum">--</span> simultaneously on multiple devices.
+                </p>
+                <div class="qr-actions-row">
+                    <button type="button" class="btn-qr-action" onclick="copyTrackLink()">
+                        📋 Copy Tracking Link
+                    </button>
+                    <button type="button" class="btn-qr-action" onclick="openFullscreenQr('track')">
+                        🔍 Enlarge QR
+                    </button>
+                </div>
+            </div>
+
+            <!-- Panel 2: Join Queue QR -->
+            <div class="qr-panel" id="panelJoinQr" style="display:none;">
+                <img id="joinQrImg" src="/api/queue/join-qr" alt="Join Queue QR Code">
+                <div class="qr-title">
+                    Join Queue QR
+                </div>
+                <p class="qr-desc">
+                    For friends or companions standing with you who need to take their own fresh queue number.
+                </p>
+                <div class="qr-actions-row">
+                    <button type="button" class="btn-qr-action" onclick="copyJoinLink()">
+                        📋 Copy Join Link
+                    </button>
+                    <button type="button" class="btn-qr-action" onclick="openFullscreenQr('join')">
+                        🔍 Enlarge QR
+                    </button>
+                </div>
+            </div>
+
+            <div id="copyToast">✓ Link copied to clipboard!</div>
+        </div>
+
+        <!-- Feedback Form (Shown upon COMPLETED) -->
+        <section id="feedbackSection">
+            <h3>Service Completed!</h3>
+            <p>Thank you for using QueueNow. How was your experience today?</p>
+            <div id="stars" class="stars" aria-label="Choose rating">
+                <span class="star" data-rating="1" role="button" tabindex="0">★</span>
+                <span class="star" data-rating="2" role="button" tabindex="0">★</span>
+                <span class="star" data-rating="3" role="button" tabindex="0">★</span>
+                <span class="star" data-rating="4" role="button" tabindex="0">★</span>
+                <span class="star active" data-rating="5" role="button" tabindex="0">★</span>
+            </div>
+            <textarea id="comments" placeholder="Optional feedback or compliments..."></textarea>
+            <button class="btn-primary" id="submitFeedback" style="margin-top:14px;">Submit Feedback</button>
+            <div id="feedbackMsg" role="status"></div>
+        </section>
+    </section>
+
+    <!-- Fallback Token Lookup (If opened without ?token=) -->
+    <section id="lookupCard">
+        <div class="token-eyebrow">Queue Tracking</div>
+        <h2 style="font-family:'Outfit',sans-serif; font-size:24px; margin:8px 0; color:var(--gold-light);">Track Your Token</h2>
+        <p style="font-size:13px; color:var(--muted); line-height:1.6;">
+            Enter the token number given to you, or scan the QR code at the desk to follow your place in line.
+        </p>
+
+        <input type="number" id="manualTokenInput" class="lookup-input" placeholder="Enter Token # (e.g. 5)" min="1">
+        <button class="btn-primary" onclick="lookupToken()">Track Token →</button>
+        <a href="/join.html" class="btn-secondary">Don't have a token? Join Queue</a>
+    </section>
 </main>
-<footer>© 2026 QueueNow · Real-time Turn Tracking</footer>
+
+<!-- Fullscreen QR Modal -->
+<div id="fullscreenQrModal" onclick="closeFullscreenQr()">
+    <div class="fs-modal-card" onclick="event.stopPropagation()">
+        <div id="fsModalTitle" style="font-size:18px; font-weight:800; color:var(--gold); margin-bottom:8px;">Scan QR Code</div>
+        <img id="fsModalImg" src="" alt="Full QR">
+        <p id="fsModalSubtitle" style="font-size:12px; color:var(--muted); line-height:1.5; margin-bottom:16px;">Point your phone camera here to scan instantly.</p>
+        <button type="button" onclick="closeFullscreenQr()" style="width:100%; padding:11px; background:rgba(230,199,143,0.12); border:1px solid rgba(230,199,143,0.3); color:var(--gold); border-radius:10px; font-weight:700; cursor:pointer;">Close</button>
+    </div>
+</div>
+
+<footer>
+    © 2026 QueueNow · Real-time Turn Tracking & Web Push API
+</footer>
+
 <script>
-const params=new URLSearchParams(location.search);
-const token=Number(params.get("token")||localStorage.getItem("myTokenNumber")||0);
-const name=params.get("name")||localStorage.getItem("myCustomerName")||"Customer";
-document.getElementById("tokenDisplay").textContent=token>0?"#"+token:"#--";
-document.getElementById("nameDisplay").textContent=name;
-const banner=document.getElementById("statusBanner");
-const instruction=document.getElementById("instruction");
-const feedback=document.getElementById("feedbackSection");
-let rating=5,alerted=false,alertedNext=false,submitted=false;
+// ── PARAMS & INITIAL STATE ──────────────────────────────────
+const params = new URLSearchParams(location.search);
+let token = Number(params.get("token") || localStorage.getItem("myTokenNumber") || 0);
+let customerName = params.get("name") || localStorage.getItem("myCustomerName") || "Customer";
 
-function checkNotificationPermission(){
- const btn=document.getElementById("notifPromptBtn");
- if(!btn)return;
- if("Notification" in window && Notification.permission==="default"){
-  btn.style.display="inline-flex";
- }else{
-  btn.style.display="none";
- }
+const trackerCard = document.getElementById("trackerCard");
+const lookupCard  = document.getElementById("lookupCard");
+const tokenDisplay= document.getElementById("tokenDisplay");
+const nameDisplay = document.getElementById("nameDisplay");
+const banner      = document.getElementById("statusBanner");
+const instruction = document.getElementById("instruction");
+const feedback    = document.getElementById("feedbackSection");
+const currentDisplay = document.getElementById("currentDisplay");
+const aheadDisplay   = document.getElementById("aheadDisplay");
+const stepsProgress  = document.getElementById("stepsProgress");
+
+let rating = 5;
+let alertedTurn = false;
+let alertedNext = false;
+let feedbackSubmitted = false;
+let serviceWorkerReg = null;
+
+// ── BOOT INITIALIZATION ─────────────────────────────────────
+if (token > 0) {
+    trackerCard.style.display = "block";
+    lookupCard.style.display = "none";
+    tokenDisplay.textContent = "#" + token;
+    nameDisplay.textContent = customerName;
+    localStorage.setItem("myTokenNumber", String(token));
+    localStorage.setItem("myCustomerName", customerName);
+
+    const badge = document.getElementById("qrTokenBadge");
+    const descNum = document.getElementById("qrTokenDescNum");
+    if (badge) badge.textContent = "#" + token;
+    if (descNum) descNum.textContent = String(token);
+
+    setupTrackingQr(token, customerName);
+} else {
+    trackerCard.style.display = "none";
+    lookupCard.style.display = "block";
 }
 
-async function enableNotifications(){
- if("Notification" in window){
-  try{
-   const perm=await Notification.requestPermission();
-   if(perm==="granted"){
-    new Notification("QueueNow Alerts Active! ✓",{
-     body:`We will alert you here when Token #${token} is called.`,
-     tag:"queuenow-welcome"
-    });
-   }
-  }catch(e){}
-  checkNotificationPermission();
- }
-}
-
-function chime(){
- try{
-  const ctx=new (window.AudioContext||window.webkitAudioContext)();
-  [523,659,784,1046].forEach((f,i)=>{
-   const osc=ctx.createOscillator(),gain=ctx.createGain();
-   osc.connect(gain);gain.connect(ctx.destination);
-   osc.frequency.value=f;gain.gain.setValueAtTime(.2,ctx.currentTime+i*.12);
-   gain.gain.exponentialRampToValueAtTime(.01,ctx.currentTime+i*.12+.35);
-   osc.start(ctx.currentTime+i*.12);osc.stop(ctx.currentTime+i*.12+.35);
-  });
- }catch(e){}
-}
-async function pollStatus(){
- if(!token)return;
- try{
-  const res=await fetch("/api/queue/status",{cache:"no-store"});
-  if(!res.ok)return;
-  const data=await res.json(),queue=data.queue||[];
-  const entry=queue.find(q=>Number(q.tokenNumber)===token);
-  const current=Number(data.currentServing||0);
-  document.getElementById("currentDisplay").textContent=current?"#"+current:"—";
-
-  if(!entry){
-   banner.className="status";
-   banner.textContent="Token not found";
-   instruction.textContent="This token may have been reset. Please join the queue again if needed.";
-   document.getElementById("aheadDisplay").textContent="—";
-   feedback.style.display="none";
-   return;
-  }
-
-  if(entry.status==="COMPLETED"){
-   document.title="✓ Service Completed | QueueNow";
-   banner.className="status done";banner.textContent="✓ Service Completed";
-   instruction.textContent="Thank you for waiting. Please submit your feedback below.";
-   document.getElementById("aheadDisplay").textContent="✓";
-   feedback.style.display=submitted?"none":"block";
-  }else if(entry.status==="SERVING"||current===token){
-   document.title="🔔 IT'S YOUR TURN! | QueueNow";
-   banner.className="status serving";banner.textContent="🔔 IT'S YOUR TURN!";
-   instruction.textContent="Please proceed to the counter now.";
-   document.getElementById("aheadDisplay").textContent="0";
-   feedback.style.display="none";
-   if(!alerted){
-    chime();
-    if(navigator.vibrate)navigator.vibrate([200,100,200,100,400]);
-    if("Notification" in window && Notification.permission==="granted"){
-     try{
-      const n=new Notification("QueueNow: IT'S YOUR TURN! 🔔",{
-       body:`Token #${token} (${name}): Please step forward to the counter now!`,
-       tag:"queuenow-turn",
-       renotify:true
-      });
-      n.onclick=function(){window.focus();this.close();};
-     }catch(e){}
+function lookupToken() {
+    const val = Number(document.getElementById("manualTokenInput").value);
+    if (!val || val < 1) {
+        alert("Please enter a valid token number.");
+        return;
     }
-    alerted=true;
-   }
-  }else{
-   const ahead=queue.filter(q=>q.status==="WAITING"&&Number(q.tokenNumber)<token).length+(data.isServing?1:0);
-   document.title=`⏳ ${ahead} Ahead (Token #${token}) | QueueNow`;
-   banner.className="status";banner.textContent=`⏳ ${ahead} ${ahead===1?"person":"people"} ahead`;
-   instruction.textContent="Please wait. Keep this page open to see when your turn arrives.";
-   document.getElementById("aheadDisplay").textContent=ahead;
-   feedback.style.display="none";
-   if(ahead===1 && !alertedNext && "Notification" in window && Notification.permission==="granted"){
-    try{
-     new Notification("QueueNow: You're Up Next! ⏳",{
-      body:`Only 1 person ahead of Token #${token}. Please get ready!`,
-      tag:"queuenow-next"
-     });
-     alertedNext=true;
-    }catch(e){}
-   }
-   alerted=false;
-  }
- }catch(e){}
+    location.href = `/track.html?token=${val}`;
 }
-document.querySelectorAll(".star").forEach(star=>{
- const selectRating=()=>{
-  rating=Number(star.dataset.rating);
-  document.querySelectorAll(".star").forEach(s=>s.classList.toggle("active",Number(s.dataset.rating)<=rating));
- };
- star.addEventListener("click",selectRating);
- star.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();selectRating()}});
+
+function setupTrackingQr(tok, nm) {
+    const qrImg = document.getElementById("trackQrImg");
+    if (qrImg) {
+        qrImg.src = `/api/queue/track-qr?token=${tok}&name=${encodeURIComponent(nm)}`;
+    }
+}
+
+// ── QR TABS & MODALS ────────────────────────────────────────
+function switchQrOption(type) {
+    const tabTrack = document.getElementById("tabTrackQr");
+    const tabJoin  = document.getElementById("tabJoinQr");
+    const panelTrack = document.getElementById("panelTrackQr");
+    const panelJoin  = document.getElementById("panelJoinQr");
+
+    if (type === 'track') {
+        tabTrack.classList.add("active");
+        tabJoin.classList.remove("active");
+        panelTrack.style.display = "flex";
+        panelJoin.style.display = "none";
+    } else {
+        tabJoin.classList.add("active");
+        tabTrack.classList.remove("active");
+        panelJoin.style.display = "flex";
+        panelTrack.style.display = "none";
+    }
+}
+
+function openFullscreenQr(type) {
+    const modal = document.getElementById("fullscreenQrModal");
+    const title = document.getElementById("fsModalTitle");
+    const img   = document.getElementById("fsModalImg");
+    const subtitle = document.getElementById("fsModalSubtitle");
+
+    if (type === 'track') {
+        title.textContent = `Token #${token} Tracking QR`;
+        img.src = `/api/queue/track-qr?token=${token}&name=${encodeURIComponent(customerName)}`;
+        subtitle.textContent = `Scan with any phone camera to track Token #${token} in real time.`;
+    } else {
+        title.textContent = "Join Queue QR";
+        img.src = `/api/queue/join-qr`;
+        subtitle.textContent = "Scan to open the registration page and take a new number in line.";
+    }
+    modal.style.display = "flex";
+}
+
+function closeFullscreenQr() {
+    document.getElementById("fullscreenQrModal").style.display = "none";
+}
+
+function showCopyToast() {
+    const toast = document.getElementById("copyToast");
+    toast.style.display = "block";
+    setTimeout(() => { toast.style.display = "none"; }, 2500);
+}
+
+function copyTrackLink() {
+    const url = location.href;
+    navigator.clipboard.writeText(url).then(showCopyToast).catch(() => {
+        prompt("Copy this tracking link:", url);
+    });
+}
+
+function copyJoinLink() {
+    const url = location.origin + "/join.html";
+    navigator.clipboard.writeText(url).then(showCopyToast).catch(() => {
+        prompt("Copy this join queue link:", url);
+    });
+}
+
+// ── SERVICE WORKER & WEB PUSH API ───────────────────────────
+async function initServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        try {
+            serviceWorkerReg = await navigator.serviceWorker.register('/sw.js');
+        } catch (e) {
+            console.warn('ServiceWorker registration error:', e);
+        }
+    }
+    updateNotifUI();
+}
+
+function updateNotifUI() {
+    const btn = document.getElementById("notifBtn");
+    const badge = document.getElementById("notifBadge");
+    const desc = document.getElementById("notifDesc");
+
+    if (!("Notification" in window)) {
+        if (desc) desc.textContent = "Notifications not supported on this browser.";
+        if (btn) btn.style.display = "none";
+        return;
+    }
+
+    if (Notification.permission === "granted") {
+        if (btn) btn.style.display = "none";
+        if (badge) badge.style.display = "inline-flex";
+        if (desc) desc.textContent = "You'll be alerted when it's your turn, even in background.";
+    } else if (Notification.permission === "denied") {
+        if (btn) btn.style.display = "none";
+        if (badge) {
+            badge.style.display = "inline-flex";
+            badge.style.color = "#f87171";
+            badge.style.borderColor = "#7f1d1d";
+            badge.style.background = "rgba(248, 113, 113, 0.1)";
+            badge.textContent = "Alerts Blocked in Browser";
+        }
+        if (desc) desc.textContent = "Please allow notifications in browser site settings.";
+    } else {
+        if (btn) btn.style.display = "inline-block";
+        if (badge) badge.style.display = "none";
+    }
+}
+
+async function requestWebPush() {
+    if (!("Notification" in window)) {
+        alert("This browser does not support web notifications.");
+        return;
+    }
+
+    try {
+        const perm = await Notification.requestPermission();
+        if (perm === "granted") {
+            sendSystemAlert({
+                title: "QueueNow Alerts Activated! 🔔",
+                body: `Token #${token}: You will receive high-priority alerts when your turn arrives!`,
+                tag: "queuenow-welcome"
+            });
+        }
+    } catch (e) {
+        console.error("Notification permission error:", e);
+    }
+    updateNotifUI();
+}
+
+function sendSystemAlert({ title, body, tag }) {
+    if (serviceWorkerReg && serviceWorkerReg.showNotification) {
+        serviceWorkerReg.showNotification(title, {
+            body,
+            icon: "/favicon.ico",
+            badge: "/favicon.ico",
+            tag: tag || "queuenow-alert",
+            renotify: true,
+            vibrate: [250, 100, 250, 100, 500],
+            data: { url: location.href }
+        }).catch(() => fallbackClientNotification(title, body, tag));
+        return;
+    }
+    fallbackClientNotification(title, body, tag);
+}
+
+function fallbackClientNotification(title, body, tag) {
+    if ("Notification" in window && Notification.permission === "granted") {
+        try {
+            const notif = new Notification(title, {
+                body,
+                tag: tag || "queuenow-alert",
+                renotify: true
+            });
+            notif.onclick = function() {
+                window.focus();
+                this.close();
+            };
+        } catch (e) {}
+    }
+}
+
+// ── AUDIO CHIME (WEB AUDIO API) ─────────────────────────────
+function playChime() {
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = "sine";
+            osc.frequency.value = freq;
+            const start = ctx.currentTime + idx * 0.12;
+            gain.gain.setValueAtTime(0.25, start);
+            gain.gain.exponentialRampToValueAtTime(0.001, start + 0.38);
+            osc.start(start);
+            osc.stop(start + 0.38);
+        });
+    } catch (e) {}
+}
+
+// ── LIVE POLLING & PROGRESS ENGINE ──────────────────────────
+async function pollStatus() {
+    if (!token) return;
+
+    try {
+        const res = await fetch("/api/queue/status", { cache: "no-store" });
+        if (!res.ok) return;
+        const data = await res.json();
+        const queue = data.queue || [];
+        const entry = queue.find(q => Number(q.tokenNumber) === token);
+        const current = Number(data.currentServing || 0);
+
+        currentDisplay.textContent = current > 0 ? `#${current}` : "—";
+
+        // Step elements
+        const step1 = document.getElementById("step1");
+        const step2 = document.getElementById("step2");
+        const step3 = document.getElementById("step3");
+        const step4 = document.getElementById("step4");
+
+        if (!entry) {
+            banner.className = "status-badge waiting";
+            banner.textContent = "Token not found";
+            instruction.textContent = "This token may have been reset. Please join the queue again if needed.";
+            aheadDisplay.textContent = "—";
+            feedback.style.display = "none";
+            return;
+        }
+
+        // Customer completed
+        if (entry.status === "COMPLETED") {
+            document.title = "✓ Service Completed | QueueNow";
+            banner.className = "status-badge done";
+            banner.textContent = "✓ Service Completed";
+            instruction.textContent = "Thank you for visiting! Please take a second to rate your experience below.";
+            aheadDisplay.textContent = "✓";
+
+            stepsProgress.style.width = "100%";
+            step1.className = "step-node completed";
+            step2.className = "step-node completed";
+            step3.className = "step-node completed";
+            step4.className = "step-node active";
+
+            feedback.style.display = feedbackSubmitted ? "none" : "block";
+            return;
+        }
+
+        // Customer is actively called
+        if (entry.status === "SERVING" || current === token) {
+            document.title = "🔔 IT'S YOUR TURN! | QueueNow";
+            banner.className = "status-badge serving";
+            banner.textContent = "🔔 IT'S YOUR TURN! PLEASE PROCEED TO COUNTER";
+            instruction.textContent = "Your token is being called right now! Please proceed to the service desk.";
+            aheadDisplay.textContent = "0";
+            aheadDisplay.className = "metric-val highlight";
+
+            stepsProgress.style.width = "66%";
+            step1.className = "step-node completed";
+            step2.className = "step-node completed";
+            step3.className = "step-node active";
+            step4.className = "step-node";
+
+            feedback.style.display = "none";
+
+            if (!alertedTurn) {
+                playChime();
+                if (navigator.vibrate) navigator.vibrate([250, 100, 250, 100, 500]);
+                sendSystemAlert({
+                    title: "🔔 IT'S YOUR TURN! | QueueNow",
+                    body: `Token #${token} (${customerName}): Please step forward to the counter now!`,
+                    tag: "queuenow-turn"
+                });
+                alertedTurn = true;
+            }
+            return;
+        }
+
+        // Customer is waiting
+        const waitingAhead = queue.filter(q => q.status === "WAITING" && Number(q.tokenNumber) < token).length + (data.isServing ? 1 : 0);
+        aheadDisplay.textContent = waitingAhead;
+        aheadDisplay.className = "metric-val";
+
+        if (waitingAhead === 1) {
+            document.title = `⏳ You're Next! (Token #${token}) | QueueNow`;
+            banner.className = "status-badge next-up";
+            banner.textContent = "⏳ YOU'RE UP NEXT! GET READY";
+            instruction.textContent = "Only 1 person ahead of you. Please stay close to the counter.";
+
+            stepsProgress.style.width = "33%";
+            step1.className = "step-node completed";
+            step2.className = "step-node active";
+            step3.className = "step-node";
+            step4.className = "step-node";
+
+            if (!alertedNext) {
+                playChime();
+                sendSystemAlert({
+                    title: "⏳ You're Up Next! | QueueNow",
+                    body: `Only 1 person ahead of Token #${token}. Please get ready!`,
+                    tag: "queuenow-next"
+                });
+                alertedNext = true;
+            }
+        } else {
+            document.title = `⏳ ${waitingAhead} Ahead (Token #${token}) | QueueNow`;
+            banner.className = "status-badge waiting";
+            banner.textContent = `⏳ ${waitingAhead} ${waitingAhead === 1 ? "person" : "people"} ahead of you`;
+            instruction.textContent = "Sit back and relax. We'll alert you the moment you are up next.";
+
+            stepsProgress.style.width = "0%";
+            step1.className = "step-node active";
+            step2.className = "step-node";
+            step3.className = "step-node";
+            step4.className = "step-node";
+            alertedNext = false;
+        }
+
+        feedback.style.display = "none";
+        alertedTurn = false;
+
+    } catch (e) {
+        console.error("Poll error:", e);
+    }
+}
+
+// ── STAR RATING INTERACTION ─────────────────────────────────
+document.querySelectorAll(".star").forEach(star => {
+    const handleStar = () => {
+        rating = Number(star.dataset.rating);
+        document.querySelectorAll(".star").forEach(s => {
+            s.classList.toggle("active", Number(s.dataset.rating) <= rating);
+        });
+    };
+    star.addEventListener("click", handleStar);
+    star.addEventListener("keydown", e => {
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleStar();
+        }
+    });
 });
-document.getElementById("submitFeedback").addEventListener("click",async()=>{
- const btn=document.getElementById("submitFeedback"),msg=document.getElementById("feedbackMsg");
- btn.disabled=true;btn.textContent="Submitting...";
- try{
-  const res=await fetch("/api/queue/feedback",{
-   method:"POST",headers:{"Content-Type":"application/json"},
-   body:JSON.stringify({tokenNumber:token,customerName:name,rating,comments:document.getElementById("comments").value.trim()})
-  });
-  if(!res.ok)throw new Error("Could not save feedback. Please retry.");
-  submitted=true;msg.textContent="✓ Thank you! Your feedback was submitted.";
-  btn.textContent="Feedback Submitted";document.getElementById("comments").disabled=true;
-  document.querySelectorAll(".star").forEach(s=>s.style.pointerEvents="none");
- }catch(e){msg.textContent=e.message;btn.disabled=false;btn.textContent="Submit Feedback"}
+
+// ── SUBMIT FEEDBACK ─────────────────────────────────────────
+document.getElementById("submitFeedback").addEventListener("click", async () => {
+    const btn = document.getElementById("submitFeedback");
+    const msg = document.getElementById("feedbackMsg");
+    btn.disabled = true;
+    btn.textContent = "Submitting...";
+
+    try {
+        const res = await fetch("/api/queue/feedback", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                tokenNumber: token,
+                customerName: customerName,
+                rating,
+                comments: document.getElementById("comments").value.trim()
+            })
+        });
+
+        if (!res.ok) throw new Error("Could not submit feedback.");
+
+        feedbackSubmitted = true;
+        msg.textContent = "✓ Thank you! Your feedback has been recorded.";
+        btn.textContent = "Feedback Submitted ✓";
+        document.getElementById("comments").disabled = true;
+        document.querySelectorAll(".star").forEach(s => s.style.pointerEvents = "none");
+    } catch (e) {
+        msg.textContent = "Could not submit. Please try again.";
+        btn.disabled = false;
+        btn.textContent = "Submit Feedback";
+    }
 });
-if(!token){banner.textContent="Missing token";instruction.textContent="Please join the queue from the Join Queue page."}
-checkNotificationPermission();
-pollStatus();setInterval(pollStatus,2000);
+
+// ── START RUNTIME ───────────────────────────────────────────
+initServiceWorker();
+if (token > 0) {
+    pollStatus();
+    setInterval(pollStatus, 2000);
+}
 </script>
 </body>
 </html>

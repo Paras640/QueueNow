@@ -479,14 +479,25 @@ td { padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-siz
                             <th>Token</th>
                             <th>Customer Name</th>
                             <th>Status</th>
+                            <th>Mobile Track QR</th>
                         </tr>
                     </thead>
                     <tbody id="queueTableBody">
-                        <tr><td colspan="3" style="text-align:center; color:var(--muted); padding:24px;">No tokens issued yet.</td></tr>
+                        <tr><td colspan="4" style="text-align:center; color:var(--muted); padding:24px;">No tokens issued yet.</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- QR Popup Modal for Counter Desk -->
+<div id="qrModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:999; align-items:center; justify-content:center; backdrop-filter:blur(6px);">
+    <div style="background:#14110d; border:1px solid rgba(230,199,143,0.4); border-radius:22px; padding:30px 24px; text-align:center; max-width:340px; box-shadow:0 24px 60px rgba(0,0,0,0.9);">
+        <div id="modalTokenTitle" style="font-size:18px; font-weight:800; color:var(--gold); margin-bottom:6px;">Token #-- Tracking QR</div>
+        <p style="font-size:12px; color:var(--muted); margin-bottom:16px; line-height:1.5;">Customer can scan this QR code with their mobile phone camera to track live.</p>
+        <img id="modalQrImg" src="" alt="Token QR" style="width:200px; height:200px; background:white; padding:8px; border-radius:12px; border:2px solid var(--gold); display:block; margin:0 auto;">
+        <button onclick="closeQrModal()" style="margin-top:18px; width:100%; padding:11px; background:rgba(230,199,143,0.1); border:1px solid rgba(230,199,143,0.3); color:var(--gold); border-radius:10px; font-weight:700; cursor:pointer;">Close</button>
     </div>
 </div>
 
@@ -675,7 +686,7 @@ async function refreshDashboard() {
         }
 
         queueTableBody.innerHTML = queue.length === 0
-            ? `<tr><td colspan="3" style="text-align:center; color:var(--muted); padding:24px;">No tokens issued yet.</td></tr>`
+            ? `<tr><td colspan="4" style="text-align:center; color:var(--muted); padding:24px;">No tokens issued yet.</td></tr>`
             : queue.map(item => {
                 let badge = '';
                 if (item.status === "SERVING")   badge = '<span class="badge badge-serving">CALLING NOW</span>';
@@ -685,6 +696,12 @@ async function refreshDashboard() {
                     <td style="font-weight:800; color:var(--light-gold);">#${item.tokenNumber}</td>
                     <td style="font-weight:600;">${item.customerName}</td>
                     <td>${badge}</td>
+                    <td>
+                        <button onclick="showTokenQr(${item.tokenNumber}, '${encodeURIComponent(item.customerName)}')"
+                                style="padding:5px 12px; background:rgba(230,199,143,0.12); border:1px solid rgba(230,199,143,0.3); border-radius:8px; color:var(--gold); font-size:11px; font-weight:700; cursor:pointer;">
+                            📱 Scan QR
+                        </button>
+                    </td>
                 </tr>`;
             }).join("");
 
@@ -726,6 +743,20 @@ resetBtn.addEventListener("click", async () => {
     if (!confirm("Reset the queue? This will clear all tokens and restart numbering from #1.")) return;
     try { await fetch("/api/queue/reset", { method: "POST" }); await refreshDashboard(); } catch(e) {}
 });
+
+function showTokenQr(tok, encodedName) {
+    const modal = document.getElementById("qrModal");
+    const title = document.getElementById("modalTokenTitle");
+    const img   = document.getElementById("modalQrImg");
+    const name  = decodeURIComponent(encodedName || '');
+    title.textContent = `Token #${tok} · ${name}`;
+    img.src = `/api/queue/track-qr?token=${tok}&name=${encodeURIComponent(name)}`;
+    modal.style.display = "flex";
+}
+
+function closeQrModal() {
+    document.getElementById("qrModal").style.display = "none";
+}
 
 // Boot: verify initial session state
 if (isLoggedIn()) {

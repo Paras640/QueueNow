@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -277,6 +279,31 @@ public class QueueController {
         String joinUrl = base + "/join.html";
 
         byte[] qrCode = qrCodeService.generate(joinUrl);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CACHE_CONTROL, "no-store")
+                .contentType(MediaType.IMAGE_PNG)
+                .body(qrCode);
+    }
+
+    /**
+     * Generates a QR code image specifically encoded with the customer's direct tracking URL.
+     * When scanned by any mobile camera, it opens /track.html with their token number and live queue position.
+     *
+     * <p>Endpoint: {@code GET /api/queue/track-qr?token=...&name=...}</p>
+     */
+    @GetMapping(value = "/track-qr", produces = MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<?> getTrackQRCode(
+            @RequestParam int token,
+            @RequestParam(required = false) String name,
+            HttpServletRequest request) throws WriterException, IOException {
+        String base = resolveBaseUrl(request);
+        String trackUrl = base + "/track.html?token=" + token;
+        if (name != null && !name.trim().isEmpty()) {
+            trackUrl += "&name=" + URLEncoder.encode(name.trim(), StandardCharsets.UTF_8);
+        }
+
+        byte[] qrCode = qrCodeService.generate(trackUrl);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CACHE_CONTROL, "no-store")
