@@ -91,30 +91,49 @@ header {
     letter-spacing: -1.5px;
     color: var(--gold);
     text-decoration: none;
+    flex: 1;
 }
 
-.nav-links {
+.nav-center {
     display: flex;
     align-items: center;
-    gap: 28px;
+    justify-content: center;
+    gap: 32px;
+    flex: 2;
 }
 
-.nav-links a {
+.nav-center a {
     text-decoration: none;
     color: #d9d0c0;
     font-size: 14px;
+    font-weight: 500;
     transition: color .3s;
 }
 
-.nav-links a:hover {
+.nav-center a:hover {
     color: var(--gold-light);
 }
 
-.nav-links .nav-cta {
+.nav-right {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex: 1;
+}
+
+.nav-cta {
     border: 1px solid var(--gold-dark);
     padding: 12px 20px;
     border-radius: 30px;
     color: var(--gold-light);
+    text-decoration: none;
+    font-size: 14px;
+    transition: all .3s;
+}
+
+.nav-cta:hover {
+    background: rgba(230, 199, 143, 0.15);
+    border-color: var(--gold);
 }
 
 /* Hero */
@@ -527,28 +546,33 @@ footer {
         max-width: 520px;
     }
 
-    .nav-links {
-        gap: 14px;
+    .nav-center {
+        gap: 16px;
     }
 }
 
 @media (max-width: 520px) {
     header {
-        padding: 18px 5%;
+        padding: 16px 5%;
         flex-wrap: wrap;
+        gap: 12px;
     }
 
-    .logo { font-size: 25px; }
+    .logo { font-size: 24px; }
 
-    .nav-links {
-        gap: 13px;
-        flex-wrap: wrap;
+    .nav-center {
+        gap: 14px;
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        margin-top: 8px;
     }
 
-    .nav-links a { font-size: 12px; }
+    .nav-center a { font-size: 13px; }
 
-    .nav-links .nav-cta {
-        padding: 9px 12px;
+    .nav-cta {
+        padding: 8px 14px;
+        font-size: 13px;
     }
 
     .hero {
@@ -601,12 +625,15 @@ footer {
 <header>
     <a class="logo" href="/">QueueNow.</a>
 
-    <nav class="nav-links" aria-label="Main navigation">
+    <nav class="nav-center" aria-label="Main navigation">
         <a href="/">Home</a>
-        <a href="#about">About</a>
         <a href="#features">Features</a>
-        <a href="/join.html" class="nav-cta">Join Queue →</a>
+        <a href="#about">About</a>
     </nav>
+
+    <div class="nav-right">
+        <a href="/join.html" class="nav-cta">Join Queue →</a>
+    </div>
 </header>
 
 <main>
