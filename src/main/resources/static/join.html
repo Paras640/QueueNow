@@ -5,6 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QueueNow | Join the Queue</title>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
 <style>
 * {
@@ -513,13 +514,11 @@ footer {
             <h2>Join the queue<span class="gold-text">.</span></h2>
 
             <p class="card-description">
-                Enter your details below and take the first step
-                towards a better waiting experience.
+                Enter your name, then scan the store QR code to receive your digital queue token.
             </p>
 
-            <form id="joinForm">
+            <div id="nameSection">
                 <label for="customerName">Your full name</label>
-
                 <div class="input-wrap">
                     <span>♙</span>
                     <input
@@ -528,20 +527,41 @@ footer {
                         name="customerName"
                         placeholder="Enter your name"
                         autocomplete="name"
-                        required
                         maxlength="100"
                     >
                 </div>
 
-                <button type="submit" class="button" id="joinButton">
-                    <span id="buttonText">Join Queue</span>
-                    <span class="arrow" id="buttonArrow">→</span>
+                <button type="button" class="button" id="generateTokenBtn">
+                    <span id="generateBtnText">Generate Token</span>
+                    <span class="arrow" id="generateBtnArrow">→</span>
                 </button>
-            </form>
+            </div>
+
+            <div id="tokenResultSection" style="display: none; text-align: center; animation: fadeIn 0.4s ease forwards;">
+                <div id="customerNameDisplay" style="font-size: 22px; font-weight: 800; color: #fffaf0; margin-bottom: 12px;">Welcome!</div>
+
+                <div style="background: #14110d; border: 1px solid #8c6a35; border-radius: 16px; padding: 22px 14px; margin: 10px 0 18px;">
+                    <img id="tokenQrImage" src="" alt="Token QR Code" style="width: 220px; height: 220px; border-radius: 12px; background: white; padding: 10px; display: inline-block; box-shadow: 0 0 30px rgba(230,199,143,0.25);">
+                    <p style="font-size: 15px; color: var(--gold); font-weight: 700; margin-top: 14px;">📱 Scan with Phone Camera</p>
+                    <p style="font-size: 12px; color: var(--muted); margin-top: 6px; line-height: 1.5; max-width: 320px; margin-left: auto; margin-right: auto;">
+                        Scan this QR code from your phone to claim your token number and track your live turn in real time.
+                    </p>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 18px;">
+                    <a id="trackLink" href="#" class="button" style="text-decoration: none; text-align: center; flex: 1; padding: 12px;">
+                        <span>Track on this Device</span>
+                        <span class="arrow">→</span>
+                    </a>
+                    <button type="button" id="nextCustomerBtn" style="flex: 1; background: transparent; border: 1px solid #51432f; color: var(--muted); padding: 12px; border-radius: 10px; font-size: 13px; cursor: pointer;">
+                        Next Customer
+                    </button>
+                </div>
+            </div>
 
             <div id="message" role="status" aria-live="polite"></div>
 
-            <p class="card-note">QueueNow · Smart waiting starts here</p>
+            <p class="card-note">QueueNow · Instant Token &amp; Live Tracking</p>
         </section>
 
     </div>
@@ -580,105 +600,133 @@ if (!reducedMotion) {
     setInterval(createParticle, 450);
 }
 
-/* Join Queue and QR code */
-const form = document.getElementById("joinForm");
+/* QueueNow: Enter Name → Click Generate Token → Display Token & QR Code for Phone Scanning */
+const nameSection = document.getElementById("nameSection");
+const tokenResultSection = document.getElementById("tokenResultSection");
+const customerNameDisplay = document.getElementById("customerNameDisplay");
+const tokenQrImage = document.getElementById("tokenQrImage");
+const trackLink = document.getElementById("trackLink");
+const nextCustomerBtn = document.getElementById("nextCustomerBtn");
+const generateTokenBtn = document.getElementById("generateTokenBtn");
+const generateBtnText = document.getElementById("generateBtnText");
+const generateBtnArrow = document.getElementById("generateBtnArrow");
 const nameInput = document.getElementById("customerName");
 const message = document.getElementById("message");
-const button = document.getElementById("joinButton");
-const buttonText = document.getElementById("buttonText");
-const buttonArrow = document.getElementById("buttonArrow");
 
-form.addEventListener("submit", async function(event) {
-    event.preventDefault();
+// Sound Chime on successful token generation
+function playChime() {
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+        osc.frequency.setValueAtTime(880, ctx.currentTime + 0.12);
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.35);
+    } catch (e) {}
+}
 
+async function handleGenerateToken() {
     const name = nameInput.value.trim();
-
     if (!name) {
         message.className = "error";
-        message.textContent = "Please enter your name to continue.";
+        message.textContent = "Please enter your name first.";
+        nameInput.focus();
         return;
     }
 
-    button.disabled = true;
-    buttonText.textContent = "Joining your queue...";
-    buttonArrow.innerHTML = '<span class="spinner"></span>';
-
-    message.className = "loading";
-    message.textContent = "Connecting securely to QueueNow...";
+    message.className = "";
+    message.textContent = "";
+    generateTokenBtn.disabled = true;
+    generateBtnText.textContent = "Generating...";
+    generateBtnArrow.textContent = "⌛";
 
     try {
-        const response = await fetch("/api/queue/join", {
+        // 1. Join queue in backend
+        const joinResponse = await fetch("/api/queue/join", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name: name })
         });
+        const joinData = await joinResponse.json();
+        if (!joinResponse.ok) throw new Error(joinData.message || "Failed to generate token.");
 
-        const data = await response.json();
+        const tokenNum = joinData.tokenNumber;
+        const custName = joinData.customerName || name;
 
-
-        if (!response.ok) {
-            throw new Error(data.message || "Unable to join the queue.");
+        // 2. Resolve public / network URL for mobile scanning (works on 4G/5G mobile net)
+        let baseUrl = window.location.origin;
+        if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+            try {
+                const serverInfoRes = await fetch("/api/queue/server-info");
+                if (serverInfoRes.ok) {
+                    const info = await serverInfoRes.json();
+                    if (info.publicUrl && !info.publicUrl.includes("localhost") && !info.publicUrl.includes("127.0.0.1")) {
+                        baseUrl = info.publicUrl;
+                    } else if (info.ip && info.ip !== "localhost") {
+                        baseUrl = `http://${info.ip}:${info.port}`;
+                    }
+                }
+            } catch (e) {}
         }
+        let trackUrl = `${baseUrl}/track.html?token=${tokenNum}&name=${encodeURIComponent(custName)}`;
 
-        /* Display the success message */
-        message.className = "success";
-        message.replaceChildren();
+        playChime();
 
-        const successText = document.createElement("p");
-        successText.textContent = "✦ " + (
-            data.message || "You have joined the queue."
-        );
-        message.appendChild(successText);
+        // 3. Update QR Display (token number is hidden here, revealed when scanned on mobile)
+        customerNameDisplay.textContent = `Welcome, ${custName}!`;
+        tokenQrImage.src = `/api/queue/qr?text=${encodeURIComponent(trackUrl)}`;
+        trackLink.href = trackUrl;
 
-        /* Display the token number */
-        if (data.tokenNumber !== undefined) {
-            const token = document.createElement("h3");
-            token.textContent = "Your Token Number: #" + data.tokenNumber;
-            token.style.marginTop = "15px";
-            message.appendChild(token);
-        }
+        // Store locally
+        localStorage.setItem("myTokenNumber", tokenNum);
+        localStorage.setItem("myCustomerName", custName);
 
-        /* QR code heading */
-        const qrHeading = document.createElement("p");
-        qrHeading.textContent = "Your Queue QR Code";
-        qrHeading.style.marginTop = "18px";
-        message.appendChild(qrHeading);
+        // Transition UI: Hide input form, show QR scanning card
+        nameSection.style.display = "none";
+        document.querySelector(".card-description").style.display = "none";
+        document.querySelector(".card-label").textContent = "✦ SCAN WITH PHONE";
+        document.querySelector(".card h2").innerHTML = 'Claim Your Token<span class="gold-text">.</span>';
+        tokenResultSection.style.display = "block";
 
-        /* Generate and display QR code */
-        const qrImage = document.createElement("img");
-        qrImage.id = "queueQr";
-        qrImage.alt = "Your QueueNow QR Code";
-
-        qrImage.src = "/api/queue/qr?text=" +
-    encodeURIComponent("http://172.20.10.3:8080/join.html");
-        qrImage.onerror = function() {
-            qrImage.remove();
-
-            const errorText = document.createElement("p");
-            errorText.textContent =
-                "QR code could not load. Please try again.";
-            message.appendChild(errorText);
-        };
-
-        message.appendChild(qrImage);
-
-        buttonText.textContent = "Queue Joined";
-        alert("UPDATED FILE IS RUNNING");
-        buttonArrow.textContent = "✓";
-
-    } catch (error) {
+    } catch (err) {
         message.className = "error";
-        message.textContent =
-            error.message === "Failed to fetch"
-                ? "Could not connect to the server. Please try again."
-                : (error.message || "Something went wrong. Please try again.");
-
-        button.disabled = false;
-        buttonText.textContent = "Try Again";
-        buttonArrow.textContent = "→";
+        message.textContent = err.message || "Could not generate token. Please try again.";
+        generateTokenBtn.disabled = false;
+        generateBtnText.textContent = "Generate Token";
+        generateBtnArrow.textContent = "→";
     }
+}
+
+// Generate Token Button Click
+generateTokenBtn.addEventListener("click", handleGenerateToken);
+
+// Enter key in input
+nameInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        handleGenerateToken();
+    }
+});
+
+// Next customer reset
+nextCustomerBtn.addEventListener("click", () => {
+    tokenResultSection.style.display = "none";
+    nameSection.style.display = "block";
+    document.querySelector(".card-description").style.display = "";
+    document.querySelector(".card-label").textContent = "GET STARTED";
+    document.querySelector(".card h2").innerHTML = 'Join the queue<span class="gold-text">.</span>';
+    nameInput.value = "";
+    generateTokenBtn.disabled = false;
+    generateBtnText.textContent = "Generate Token";
+    generateBtnArrow.textContent = "→";
+    message.className = "";
+    message.textContent = "";
+    nameInput.focus();
 });
 </script>
 </body>

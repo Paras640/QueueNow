@@ -2,9 +2,6 @@ package com.queuenow.model;
 
 /**
  * Data model representing an individual customer's entry in the queue.
- *
- * <p>Encapsulates customer details such as their sequential queue token number
- * and customer name.</p>
  */
 public class QueueEntry {
 
@@ -14,32 +11,32 @@ public class QueueEntry {
     /** Name of the customer who joined the queue. */
     private String customerName;
 
+    /** Status of the customer in queue: WAITING, SERVING, or COMPLETED. */
+    private String status = "WAITING";
+
     /**
      * Constructs a new QueueEntry with the specified token number and customer name.
-     *
-     * @param tokenNumber  the unique sequential token assigned to this customer
-     * @param customerName the name of the customer
      */
     public QueueEntry(int tokenNumber, String customerName) {
         this.tokenNumber = tokenNumber;
         this.customerName = customerName;
+        this.status = "WAITING";
     }
 
-    /**
-     * Retrieves the sequential token number for this queue entry.
-     *
-     * @return the token number
-     */
     public int getTokenNumber() {
         return tokenNumber;
     }
 
-    /**
-     * Retrieves the name of the customer for this queue entry.
-     *
-     * @return the customer name
-     */
     public String getCustomerName() {
         return customerName;
     }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }
+
