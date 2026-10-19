@@ -23,32 +23,52 @@ input{width:100%;padding:14px;background:#0b0a08;color:white;border:1px solid #7
 button{width:100%;padding:15px;margin-top:16px;border:0;border-radius:10px;
  background:linear-gradient(110deg,#b58b4e,#e6c78f,#99733c);font-size:15px;font-weight:bold;cursor:pointer}
 #message{text-align:center;margin-top:14px;color:var(--gold);font-size:14px}
-.qr-section{
-  margin-top:24px;
-  padding-top:20px;
-  border-top:1px solid #e6c78f33;
-  text-align:center;
+.qr-section {
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid #e6c78f25;
+  text-align: center;
 }
-.qr-section h3{
-  color:var(--gold);
-  font-size:14px;
-  margin-bottom:10px;
+
+.qr-section h3 {
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  margin-bottom: 8px;
 }
-.qr-section p{
-  margin-bottom:14px;
+
+.qr-section p {
+  max-width: 290px;
+  margin: 0 auto 16px;
+  color: #aaa49a;
+  font-size: 13px;
+  line-height: 1.5;
 }
-.qr-section img{
-  width:190px;
-  height:190px;
-  padding:8px;
-  background:#fff;
-  border-radius:12px;
-  object-fit:contain;
+
+.qr-frame {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid #e6c78f55;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px #0005;
 }
-.qr-error{
-  color:#ff7777;
-  font-size:13px;
-  margin-top:10px;
+
+.qr-section img {
+  display: block;
+  width: 148px;
+  height: 148px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.qr-error {
+  color: #ff7777;
+  font-size: 12px;
+  margin-top: 10px;
 }
 </style>
 </head>
@@ -64,14 +84,16 @@ button{width:100%;padding:15px;margin-top:16px;border:0;border-radius:10px;
  </form>
  <div id="message" role="status"></div>
  <div class="qr-section">
-  <h3>SCAN TO JOIN QUEUE</h3>
-  <p>Scan this QR code with your phone to open the Join Queue page.</p>
+  <h3>SCAN TO JOIN</h3>
+  <p>Scan with your phone to join the queue instantly.</p>
 
-  <img
-    id="joinQr"
-    alt="QueueNow Join Queue QR Code"
-    hidden
-  >
+  <div class="qr-frame">
+    <img
+      id="joinQr"
+      alt="QueueNow Join Queue QR Code"
+      hidden
+    >
+  </div>
 
   <div id="qrError" class="qr-error" role="status"></div>
 </div>
