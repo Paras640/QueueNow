@@ -1,0 +1,410 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | QueueNow</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #080808;
+            color: #f5f5f5;
+            font-family: Arial, Helvetica, sans-serif;
+            min-height: 100vh;
+        }
+
+        header {
+            width: 100%;
+            padding: 22px 8%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            background: rgba(8, 8, 8, 0.95);
+            position: relative;
+            z-index: 10;
+        }
+
+        .logo {
+            color: #d4af37;
+            text-decoration: none;
+            font-size: 27px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .nav-center {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-center a {
+            text-decoration: none;
+            color: #c5c5c5;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-center a:hover,
+        .nav-center a.active {
+            color: #d4af37;
+        }
+
+        .nav-cta {
+            text-decoration: none;
+            color: #080808;
+            background: #d4af37;
+            padding: 12px 20px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            transition: 0.3s ease;
+        }
+
+        .nav-cta:hover {
+            background: #f0d778;
+            transform: translateY(-2px);
+        }
+
+        .hero {
+            min-height: 65vh;
+            padding: 100px 8% 75px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background:
+                radial-gradient(
+                    ellipse at top,
+                    rgba(212, 175, 55, 0.13),
+                    transparent 65%
+                );
+            animation: fadeIn 1s ease both;
+        }
+
+        .eyebrow {
+            color: #d4af37;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+
+        .hero h1 {
+            font-size: clamp(42px, 7vw, 76px);
+            line-height: 1.1;
+            max-width: 900px;
+            margin-bottom: 25px;
+            letter-spacing: -2px;
+        }
+
+        .hero h1 span {
+            color: #d4af37;
+        }
+
+        .hero p {
+            max-width: 680px;
+            color: #aaa;
+            font-size: 17px;
+            line-height: 1.9;
+        }
+
+        .section {
+            padding: 75px 8%;
+        }
+
+        .section-heading {
+            text-align: center;
+            margin-bottom: 45px;
+        }
+
+        .section-heading h2 {
+            font-size: clamp(30px, 4vw, 43px);
+            margin-bottom: 15px;
+        }
+
+        .section-heading h2 span {
+            color: #d4af37;
+        }
+
+        .section-heading p {
+            color: #999;
+            line-height: 1.8;
+        }
+
+        .story {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .story-card {
+            padding: 32px;
+            border: 1px solid rgba(212, 175, 55, 0.22);
+            border-radius: 12px;
+            background: linear-gradient(
+                145deg,
+                #151515,
+                #0c0c0c
+            );
+            transition: transform 0.3s ease,
+                        border-color 0.3s ease;
+        }
+
+        .story-card:hover {
+            transform: translateY(-6px);
+            border-color: #d4af37;
+        }
+
+        .story-card .number {
+            color: #d4af37;
+            font-size: 13px;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+
+        .story-card h3 {
+            font-size: 23px;
+            margin-bottom: 15px;
+        }
+
+        .story-card p {
+            color: #aaa;
+            line-height: 1.9;
+            font-size: 15px;
+        }
+
+        .highlight {
+            text-align: center;
+            margin: 40px 8% 80px;
+            padding: 55px 25px;
+            border-radius: 14px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            background: linear-gradient(
+                135deg,
+                rgba(212, 175, 55, 0.1),
+                rgba(212, 175, 55, 0.02)
+            );
+        }
+
+        .highlight h2 {
+            font-size: clamp(28px, 4vw, 42px);
+            margin-bottom: 18px;
+        }
+
+        .highlight h2 span {
+            color: #d4af37;
+        }
+
+        .highlight p {
+            color: #aaa;
+            line-height: 1.8;
+            max-width: 650px;
+            margin: 0 auto 28px;
+        }
+
+        .gold-button {
+            display: inline-block;
+            text-decoration: none;
+            color: #080808;
+            background: #d4af37;
+            padding: 14px 25px;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: 0.3s ease;
+        }
+
+        .gold-button:hover {
+            background: #f0d778;
+            transform: translateY(-2px);
+        }
+
+        footer {
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 25px 8%;
+            text-align: center;
+            color: #777;
+            font-size: 13px;
+        }
+
+        footer span {
+            color: #d4af37;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 700px) {
+            header {
+                padding: 18px 5%;
+                flex-wrap: wrap;
+                gap: 18px;
+            }
+
+            .nav-center {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+                gap: 24px;
+            }
+
+            .logo {
+                font-size: 24px;
+            }
+
+            .nav-cta {
+                padding: 10px 13px;
+                font-size: 12px;
+            }
+
+            .hero {
+                padding: 75px 6%;
+            }
+
+            .hero p {
+                font-size: 15px;
+            }
+
+            .section {
+                padding: 55px 6%;
+            }
+
+            .story {
+                grid-template-columns: 1fr;
+            }
+
+            .highlight {
+                margin: 20px 6% 55px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <a class="logo" href="/">QueueNow.</a>
+
+        <nav class="nav-center" aria-label="Main navigation">
+            <a href="/">Home</a>
+            <a href="/features.html">Features</a>
+            <a href="/about.html" class="active">About</a>
+        </nav>
+
+        <div class="nav-right">
+            <a href="/join.html" class="nav-cta">Join Queue →</a>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="eyebrow">Get to know QueueNow</div>
+
+            <h1>
+                Less Waiting.<br>
+                <span>More Living.</span>
+            </h1>
+
+            <p>
+                QueueNow is designed to make queue management simpler
+                and more convenient. Our goal is to help people join a
+                queue digitally, get their token, and spend less time
+                dealing with unnecessary waiting.
+            </p>
+        </section>
+
+        <section class="section">
+            <div class="section-heading">
+                <h2>Who <span>We Are</span></h2>
+                <p>A simpler approach to everyday queue management.</p>
+            </div>
+
+            <div class="story">
+                <article class="story-card">
+                    <div class="number">01 / OUR MISSION</div>
+                    <h3>Make Waiting Easier</h3>
+                    <p>
+                        QueueNow aims to provide a straightforward digital
+                        way to join queues and manage tokens. We want to
+                        make the process easier to understand and more
+                        convenient for users.
+                    </p>
+                </article>
+
+                <article class="story-card">
+                    <div class="number">02 / OUR APPROACH</div>
+                    <h3>Simple by Design</h3>
+                    <p>
+                        From joining a queue to receiving a token,
+                        QueueNow focuses on a clean interface and a
+                        simple user experience, without making the
+                        process unnecessarily complicated.
+                    </p>
+                </article>
+
+                <article class="story-card">
+                    <div class="number">03 / OUR TECHNOLOGY</div>
+                    <h3>Digital Queue Experience</h3>
+                    <p>
+                        QueueNow uses a web-based interface and a
+                        backend service to handle queue-related actions.
+                        Its design can support features such as digital
+                        tokens and QR-code generation.
+                    </p>
+                </article>
+
+                <article class="story-card">
+                    <div class="number">04 / OUR VISION</div>
+                    <h3>A More Convenient Future</h3>
+                    <p>
+                        We envision a smoother queue experience for
+                        everyday services, where people can manage
+                        joining a queue more easily and use their time
+                        more effectively.
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <section class="highlight">
+            <h2>Ready to experience <span>QueueNow?</span></h2>
+            <p>
+                Take the next step and explore a simpler way to join
+                a queue and receive your token.
+            </p>
+            <a href="/join.html" class="gold-button">
+                Join Queue →
+            </a>
+        </section>
+    </main>
+
+    <footer>
+        © 2026 <span>QueueNow.</span> Making queues simpler.
+    </footer>
+
+</body>
+</html>
+```
