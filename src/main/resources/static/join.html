@@ -184,42 +184,8 @@ button {
   line-height: 1.5;
 }
 
-.qr-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  width: 100%;
-  padding: 18px;
-  margin-top: 30px;
-  border: 1px solid #73552a;
-  border-radius: 15px;
-  color: var(--gold-light);
-  background: rgba(230, 199, 143, .06);
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all .25s ease;
-}
-
-.qr-toggle:hover {
-  background: rgba(230, 199, 143, .15);
-  border-color: var(--gold);
-  transform: translateY(-2px);
-}
-
-.qr-icon {
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  border: 1px solid #e8c47f55;
-  border-radius: 10px;
-  font-size: 19px;
-}
-
 .qr-panel {
-  margin-top: 18px;
+  margin-top: 24px;
   padding: 25px 16px;
   text-align: center;
   border: 1px solid var(--border);
@@ -336,7 +302,7 @@ button {
   }
 
   .logo {
-    font-size: 31px;
+    font-size: 29px;
   }
 
   h1 {
@@ -389,27 +355,13 @@ button {
 
   <div id="message" role="status" aria-live="polite"></div>
 
-  <!-- Only one QR button -->
-  <button
-    class="qr-toggle"
-    id="qrToggle"
-    type="button"
-    aria-expanded="false"
-    aria-controls="qrPanel"
-  >
-    <span class="qr-icon" aria-hidden="true">▦</span>
-    <span id="qrToggleText">Show QR Code</span>
-    <span aria-hidden="true">↗</span>
-  </button>
-
-  <!-- Hidden until the QR button is clicked -->
   <section id="qrPanel" class="qr-panel" hidden>
-    <h3>SCAN TO JOIN</h3>
-    <p>Scan this QR code with your phone camera to open QueueNow.</p>
+    <h3 id="qrTitle">YOUR TRACKING QR</h3>
+    <p>Scan this QR code with your phone camera to track your turn.</p>
 
     <div class="qr-frame">
       <span id="qrLoading">Generating QR code...</span>
-      <img id="qrImage" alt="QueueNow Join QR Code" hidden>
+      <img id="qrImage" alt="QueueNow token tracking QR code" hidden>
     </div>
 
     <p id="qrError" role="alert" hidden></p>
@@ -427,64 +379,31 @@ const joinBtn = document.getElementById("joinBtn");
 const message = document.getElementById("message");
 const nameInput = document.getElementById("customerName");
 
-const qrToggle = document.getElementById("qrToggle");
-const qrToggleText = document.getElementById("qrToggleText");
 const qrPanel = document.getElementById("qrPanel");
 const qrImage = document.getElementById("qrImage");
 const qrLoading = document.getElementById("qrLoading");
 const qrError = document.getElementById("qrError");
 
-let qrLoaded = false;
-let qrLoadingNow = false;
-
-/* Show QR panel and generate the image only when clicked. */
-qrToggle.addEventListener("click", async () => {
-  const shouldShow = qrPanel.hidden;
-
-  if (!shouldShow) {
-    qrPanel.hidden = true;
-    qrToggle.setAttribute("aria-expanded", "false");
-    qrToggleText.textContent = "Show QR Code";
-    return;
-  }
-
-  qrPanel.hidden = false;
-  qrToggle.setAttribute("aria-expanded", "true");
-  qrToggleText.textContent = "Hide QR Code";
-
-  if (!qrLoaded && !qrLoadingNow) {
-    await loadQrCode();
-  }
-});
-
-async function loadQrCode() {
-  qrLoadingNow = true;
+async function loadQrCode(token, customerName) {
   qrLoading.hidden = false;
   qrImage.hidden = true;
   qrError.hidden = true;
   qrError.textContent = "";
 
   try {
-    /*
-     * Localhost works only on this computer.
-     * To scan from a phone, use your computer's LAN IP in the QR URL.
-     */
-    const joinUrl = new URL("/join.html", window.location.origin).href;
-    const qrUrl = "/api/qr?text=" + encodeURIComponent(joinUrl);
-
+    const qrUrl = `/api/queue/track-qr?token=${encodeURIComponent(token)}&name=${encodeURIComponent(customerName)}`;
     const response = await fetch(qrUrl, { cache: "no-store" });
 
     if (!response.ok) {
       throw new Error(
-        "QR endpoint returned HTTP " + response.status +
-        ". Check that the Spring Boot server is running."
+        "QR endpoint returned HTTP " + response.status + "."
       );
     }
 
     const imageBlob = await response.blob();
 
     if (!imageBlob.type.startsWith("image/")) {
-      throw new Error("The /api/qr endpoint did not return an image.");
+      throw new Error("The tracking QR endpoint did not return an image.");
     }
 
     const objectUrl = URL.createObjectURL(imageBlob);
@@ -495,20 +414,16 @@ async function loadQrCode() {
       qrImage.src = objectUrl;
     });
 
-    qrLoaded = true;
     qrImage.hidden = false;
     qrLoading.hidden = true;
+    qrPanel.scrollIntoView({ behavior: "smooth", block: "center" });
 
   } catch (error) {
     console.error("QR loading failed:", error);
     qrLoading.hidden = true;
     qrError.textContent =
-      (error.message || "QR code could not be generated.") +
-      " Check that GET /api/qr?text=... works in your browser.";
+      error.message || "Tracking QR code could not be generated.";
     qrError.hidden = false;
-
-  } finally {
-    qrLoadingNow = false;
   }
 }
 
@@ -558,16 +473,14 @@ form.addEventListener("submit", async (event) => {
     localStorage.setItem("myTokenNumber", String(data.tokenNumber));
     localStorage.setItem("myCustomerName", customerName);
 
-    const params = new URLSearchParams({
-      token: String(data.tokenNumber),
-      name: customerName
-    });
-
-    window.location.href = "/track.html?" + params.toString();
+    message.textContent = "Scan the QR code below to get your token number.";
+    qrPanel.hidden = false;
+    await loadQrCode(data.tokenNumber, customerName);
 
   } catch (error) {
     message.textContent = error.message || "Server error. Please try again.";
 
+  } finally {
     joinBtn.disabled = false;
     joinBtn.innerHTML = 'Generate Token <span aria-hidden="true">→</span>';
   }

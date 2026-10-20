@@ -322,13 +322,7 @@ public class QueueController {
     }
 
     private String resolveBaseUrl(HttpServletRequest request) {
-        // Check PUBLIC_URL environment variable (set during deployment or tunnel)
-        String envPublic = System.getenv("PUBLIC_URL");
-        if (envPublic != null && !envPublic.trim().isEmpty()) {
-            return envPublic.trim().replaceAll("/+$", "");
-        }
-
-        // Check standard reverse proxy headers (Cloudflare, Render, Railway, ngrok)
+        // Use the active public host supplied by the reverse proxy.
         String forwardedHost = request.getHeader("X-Forwarded-Host");
         if (forwardedHost != null && !forwardedHost.trim().isEmpty()) {
             String proto = request.getHeader("X-Forwarded-Proto");
@@ -338,17 +332,18 @@ public class QueueController {
             return proto + "://" + forwardedHost.split(",")[0].trim();
         }
 
-        // Check Host header if it is not localhost
+        // Use the request host directly when the app is reached through a public domain.
         String host = request.getHeader("Host");
         if (host != null && !host.startsWith("localhost") && !host.startsWith("127.0.0.1")) {
             String proto = request.getHeader("X-Forwarded-Proto");
             if (proto == null || proto.trim().isEmpty()) {
-                proto = (host.contains("trycloudflare.com") || host.contains("ngrok") || request.isSecure()) ? "https" : "http";
+                proto = request.isSecure() ? "https" : "http";
             }
             return proto + "://" + host;
         }
 
-        // Default to local Wi-Fi IP address
+        // For local access, encode the machine's LAN address so another device on the same
+        // network can open the join or tracking page.
         String ip = getLocalIpAddress();
         int port = request.getServerPort();
         return "http://" + ip + ":" + port;

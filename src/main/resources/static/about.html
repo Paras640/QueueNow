@@ -112,6 +112,7 @@ header {
 
 .nav-right {
     display: flex;
+    gap: 16px;
     justify-content: flex-end;
     align-items: center;
     flex: 1;
@@ -130,6 +131,28 @@ header {
 .nav-cta:hover {
     background: #e6c78f26;
     border-color: var(--gold);
+}
+
+.nav-admin {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    border: 1px solid #ffffff30;
+    border-radius: 30px;
+    color: #d9d0c0;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: all .3s;
+}
+
+.nav-admin:hover {
+    color: var(--gold-light);
+    border-color: var(--gold);
+    background: rgba(230, 199, 143, 0.08);
 }
 
 /* Shared golden shimmer */
@@ -457,7 +480,14 @@ footer {
     .nav-center a { font-size: 13px; }
 
     .nav-cta {
+        min-height: 44px;
         padding: 8px 14px;
+        font-size: 13px;
+    }
+
+    .nav-admin {
+        min-height: 44px;
+        padding: 8px 12px;
         font-size: 13px;
     }
 
@@ -516,6 +546,7 @@ footer {
     </nav>
 
     <div class="nav-right">
+        <a href="/admin.html" class="nav-admin">Admin Login</a>
         <a href="/join.html" class="nav-cta">Join Queue →</a>
     </div>
 </header>

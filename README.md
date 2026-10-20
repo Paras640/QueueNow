@@ -80,10 +80,9 @@ The frontend is served by the Spring Boot application from `src/main/resources/s
 
    ```dotenv
    MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>/<database>?retryWrites=true&w=majority
-   PUBLIC_URL=https://your-deployed-domain.example
    ```
 
-   `PUBLIC_URL` is optional for local use. Set it to the deployed HTTPS base URL so generated QR codes point to the public site.
+   Generated QR codes use the current public host from the hosting proxy, or the machine's LAN address when running locally. No public URL variable is needed.
 2. Start the app from the project root:
 
    ```bash
