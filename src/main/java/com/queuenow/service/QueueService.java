@@ -31,8 +31,15 @@ public class QueueService {
     /** List of customer feedback submissions. */
     private final List<Map<String, Object>> feedbackList = new ArrayList<>();
 
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(QueueService.class);
+
     public QueueService(@Autowired(required = false) MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
+        if (mongoTemplate != null) {
+            log.info(">>> [MongoDB] Connected successfully! MongoTemplate initialized: db='{}'", mongoTemplate.getDb().getName());
+        } else {
+            log.error(">>> [MongoDB] WARNING: MongoTemplate is NULL! Check Spring Boot MongoDB starter & configuration.");
+        }
     }
 
     /**
@@ -47,7 +54,7 @@ public class QueueService {
         queue.add(entry);
         nextTokenNumber++;
 
-        // Asynchronously or safely persist to MongoDB Atlas if connected
+        // Persist to MongoDB Atlas if connected
         if (mongoTemplate != null) {
             try {
                 Map<String, Object> doc = new HashMap<>();
@@ -56,9 +63,12 @@ public class QueueService {
                 doc.put("status", "WAITING");
                 doc.put("createdAt", new Date());
                 mongoTemplate.save(doc, "tokens");
-            } catch (Exception ignored) {
-                // Keep operating gracefully in-memory even if cloud database latency occurs
+                log.info(">>> [MongoDB] Saved token #{} for '{}' to collection 'tokens' in DB '{}'", entry.getTokenNumber(), entry.getCustomerName(), mongoTemplate.getDb().getName());
+            } catch (Exception e) {
+                log.error(">>> [MongoDB] FAILED to save token #{} for '{}' to MongoDB: {}", entry.getTokenNumber(), entry.getCustomerName(), e.getMessage(), e);
             }
+        } else {
+            log.warn(">>> [MongoDB] Cannot persist token #{} - mongoTemplate is NULL!", entry.getTokenNumber());
         }
 
         return entry;
@@ -144,7 +154,10 @@ public synchronized int callNextToken() {
                 org.springframework.data.mongodb.core.query.Update update =
                         new org.springframework.data.mongodb.core.query.Update().set("status", status);
                 mongoTemplate.updateFirst(query, update, "tokens");
-            } catch (Exception ignored) {}
+                log.info(">>> [MongoDB] Updated status to '{}' for token #{} in DB '{}'", status, tokenNumber, mongoTemplate.getDb().getName());
+            } catch (Exception e) {
+                log.error(">>> [MongoDB] FAILED to update status for token #{}: {}", tokenNumber, e.getMessage(), e);
+            }
         }
     }
 
@@ -164,7 +177,9 @@ public synchronized int callNextToken() {
         if (mongoTemplate != null) {
             try {
                 mongoTemplate.save(fb, "feedback");
-            } catch (Exception ignored) {
+                log.info(">>> [MongoDB] Saved feedback for token #{} to collection 'feedback'", tokenNumber);
+            } catch (Exception e) {
+                log.error(">>> [MongoDB] FAILED to save feedback for token #{}: {}", tokenNumber, e.getMessage(), e);
             }
         }
         return fb;
@@ -172,6 +187,33 @@ public synchronized int callNextToken() {
 
     public List<Map<String, Object>> getFeedbackList() {
         return new ArrayList<>(feedbackList);
+    }
+
+    /**
+     * Inspects live MongoDB Atlas connection and fetches documents directly from collections.
+     */
+    public Map<String, Object> getMongoStatus() {
+        Map<String, Object> result = new HashMap<>();
+        if (mongoTemplate == null) {
+            result.put("connected", false);
+            result.put("message", "MongoTemplate bean is NULL");
+            return result;
+        }
+        try {
+            result.put("connected", true);
+            result.put("database", mongoTemplate.getDb().getName());
+            List<Map> tokens = mongoTemplate.findAll(Map.class, "tokens");
+            List<Map> feedback = mongoTemplate.findAll(Map.class, "feedback");
+            result.put("tokensCount", tokens.size());
+            result.put("feedbackCount", feedback.size());
+            result.put("tokens", tokens);
+            result.put("feedback", feedback);
+            return result;
+        } catch (Exception e) {
+            result.put("connected", false);
+            result.put("error", e.getMessage());
+            return result;
+        }
     }
 
     /**

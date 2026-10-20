@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -208,6 +210,16 @@ public class QueueController {
     }
 
     /**
+     * Inspects live MongoDB status and returns collections contents.
+     *
+     * <p>Endpoint: {@code GET /api/queue/mongo-status}</p>
+     */
+    @GetMapping("/mongo-status")
+    public Map<String, Object> getMongoStatus() {
+        return queueService.getMongoStatus();
+    }
+
+    /**
      * Generates a QR code image specifically for queue interaction.
      *
      * <p>Endpoint: {@code GET /api/queue/qr?text=...}</p>
@@ -284,7 +296,40 @@ public class QueueController {
                 .body(qrCode);
     }
 
+    /**
+     * Generates a QR code image specifically encoded with the customer's direct tracking URL.
+     * When scanned by any mobile camera, it opens /track.html with their token number and live queue position.
+     *
+     * <p>Endpoint: {@code GET /api/queue/track-qr?token=...&name=...}</p>
+     */
+    @GetMapping(value = "/track-qr", produces = MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<?> getTrackQRCode(
+            @RequestParam int token,
+            @RequestParam(required = false) String name,
+            HttpServletRequest request) throws WriterException, IOException {
+        String base = resolveBaseUrl(request);
+        String trackUrl = base + "/track.html?token=" + token;
+        if (name != null && !name.trim().isEmpty()) {
+            trackUrl += "&name=" + URLEncoder.encode(name.trim(), StandardCharsets.UTF_8);
+        }
+
+        byte[] qrCode = qrCodeService.generate(trackUrl);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CACHE_CONTROL, "no-store")
+                .contentType(MediaType.IMAGE_PNG)
+                .body(qrCode);
+    }
+
+    @org.springframework.beans.factory.annotation.Value("${public.url:}")
+    private String configuredPublicUrl;
+
     private String resolveBaseUrl(HttpServletRequest request) {
+        // 0. Check configured public.url from application.properties or system property
+        if (configuredPublicUrl != null && !configuredPublicUrl.trim().isEmpty()) {
+            return configuredPublicUrl.trim().replaceAll("/+$", "");
+        }
+
         // 1. Check PUBLIC_URL environment variable (set during deployment or tunnel)
         String envPublic = System.getenv("PUBLIC_URL");
         if (envPublic != null && !envPublic.trim().isEmpty()) {
@@ -304,7 +349,10 @@ public class QueueController {
         // 3. Check Host header if it is not localhost
         String host = request.getHeader("Host");
         if (host != null && !host.startsWith("localhost") && !host.startsWith("127.0.0.1")) {
-            String proto = request.isSecure() ? "https" : "http";
+            String proto = request.getHeader("X-Forwarded-Proto");
+            if (proto == null || proto.trim().isEmpty()) {
+                proto = (host.contains("trycloudflare.com") || host.contains("ngrok") || request.isSecure()) ? "https" : "http";
+            }
             return proto + "://" + host;
         }
 

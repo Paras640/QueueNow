@@ -37,3 +37,4 @@ public class QRCodeController {
                 .body(qrImage);
     }
 }
+
