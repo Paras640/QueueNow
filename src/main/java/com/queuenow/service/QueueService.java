@@ -58,6 +58,7 @@ public class QueueService {
         if (mongoTemplate != null) {
             try {
                 Map<String, Object> doc = new HashMap<>();
+                doc.put("_id", entry.persistenceId());
                 doc.put("tokenNumber", entry.getTokenNumber());
                 doc.put("customerName", entry.getCustomerName());
                 doc.put("status", "WAITING");
@@ -116,7 +117,7 @@ public synchronized int callNextToken() {
         if ("WAITING".equalsIgnoreCase(entry.getStatus())) {
             entry.setStatus("SERVING");
             currentServingToken = entry.getTokenNumber();
-            updateMongoStatus(entry.getTokenNumber(), "SERVING");
+            updateMongoStatus(entry, "SERVING");
             return currentServingToken;
         }
     }
@@ -136,7 +137,7 @@ public synchronized int callNextToken() {
         for (QueueEntry entry : queue) {
             if ("SERVING".equalsIgnoreCase(entry.getStatus())) {
                 entry.setStatus("COMPLETED");
-                updateMongoStatus(entry.getTokenNumber(), "COMPLETED");
+                updateMongoStatus(entry, "COMPLETED");
                 completedAny = true;
             }
         }
@@ -144,19 +145,23 @@ public synchronized int callNextToken() {
         return completedAny;
     }
 
-    private void updateMongoStatus(int tokenNumber, String status) {
+    private void updateMongoStatus(QueueEntry entry, String status) {
         if (mongoTemplate != null) {
             try {
                 org.springframework.data.mongodb.core.query.Query query =
                         new org.springframework.data.mongodb.core.query.Query(
-                                org.springframework.data.mongodb.core.query.Criteria.where("tokenNumber").is(tokenNumber)
+                                org.springframework.data.mongodb.core.query.Criteria.where("_id").is(entry.persistenceId())
                         );
                 org.springframework.data.mongodb.core.query.Update update =
                         new org.springframework.data.mongodb.core.query.Update().set("status", status);
-                mongoTemplate.updateFirst(query, update, "tokens");
-                log.info(">>> [MongoDB] Updated status to '{}' for token #{} in DB '{}'", status, tokenNumber, mongoTemplate.getDb().getName());
+                var result = mongoTemplate.updateFirst(query, update, "tokens");
+                if (result.getMatchedCount() == 0) {
+                    log.error(">>> [MongoDB] No document found to update status for token #{}", entry.getTokenNumber());
+                    return;
+                }
+                log.info(">>> [MongoDB] Updated status to '{}' for token #{} in DB '{}'", status, entry.getTokenNumber(), mongoTemplate.getDb().getName());
             } catch (Exception e) {
-                log.error(">>> [MongoDB] FAILED to update status for token #{}: {}", tokenNumber, e.getMessage(), e);
+                log.error(">>> [MongoDB] FAILED to update status for token #{}: {}", entry.getTokenNumber(), e.getMessage(), e);
             }
         }
     }
@@ -225,4 +230,3 @@ public synchronized int callNextToken() {
         currentServingToken = 0;
     }
 }
-

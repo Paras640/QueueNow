@@ -1,9 +1,13 @@
 package com.queuenow.model;
 
+import java.util.UUID;
+
 /**
  * Data model representing an individual customer's entry in the queue.
  */
 public class QueueEntry {
+
+    private final String persistenceId = UUID.randomUUID().toString();
 
     /** Sequential token number assigned to the customer upon joining the queue. */
     private int tokenNumber;
@@ -31,6 +35,10 @@ public class QueueEntry {
         return customerName;
     }
 
+    public String persistenceId() {
+        return persistenceId;
+    }
+
     public String getStatus() {
         return status;
     }
@@ -39,4 +47,3 @@ public class QueueEntry {
         this.status = status;
     }
 }
-
