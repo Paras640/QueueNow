@@ -8,6 +8,7 @@ import com.queuenow.service.QRCodeService;
 import com.queuenow.service.QueueService;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.imageio.ImageIO;
 import java.io.ByteArrayInputStream;
@@ -37,6 +38,26 @@ class QueueControllerQrTest {
         byte[] image = (byte[]) controller.getTrackQRCode(12, "Alex Doe", request).getBody();
 
         assertEquals("https://queuenow.example/track.html?token=12&name=Alex+Doe", decodeQr(image));
+    }
+
+    @Test
+    void joinQrUsesConfiguredLocalTunnelWhenNoProxyHostIsPresent() throws Exception {
+        ReflectionTestUtils.setField(controller, "localPublicUrl", "https://local-tunnel.example/");
+        MockHttpServletRequest request = new MockHttpServletRequest();
+
+        byte[] image = (byte[]) controller.getJoinQRCode(request).getBody();
+
+        assertEquals("https://local-tunnel.example/join.html", decodeQr(image));
+    }
+
+    @Test
+    void forwardedHostTakesPrecedenceOverConfiguredLocalTunnel() throws Exception {
+        ReflectionTestUtils.setField(controller, "localPublicUrl", "https://local-tunnel.example");
+        MockHttpServletRequest request = forwardedRequest();
+
+        byte[] image = (byte[]) controller.getJoinQRCode(request).getBody();
+
+        assertEquals("https://queuenow.example/join.html", decodeQr(image));
     }
 
     private MockHttpServletRequest forwardedRequest() {

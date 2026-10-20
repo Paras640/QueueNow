@@ -762,53 +762,22 @@ function lookupToken() {
     location.href = `/track.html?token=${val}`;
 }
 
-// ── WEB PUSH: NOTIFY ME ─────────────────────────────────────
+// ── NOTIFICATION PERMISSION ─────────────────────────────────
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-const pushSupported = "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
+const notificationSupported = "Notification" in window;
 
-function urlBase64ToUint8Array(base64String) {
-    const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-    const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
-    const raw = atob(base64);
-    return Uint8Array.from([...raw].map(c => c.charCodeAt(0)));
-}
-
-function showNotifyOn() {
-    notifyBtn.textContent = "✓ You'll be notified";
+function showNotificationPermissionGranted() {
+    notifyBtn.textContent = "✓ Notifications Allowed";
     notifyBtn.classList.add("on");
     notifyBtn.disabled = true;
-    notifyMsg.textContent = "";
-}
-
-async function subscribeAndSend() {
-    const reg = await navigator.serviceWorker.register("/sw.js");
-    await navigator.serviceWorker.ready;
-
-    const keyRes = await fetch("/api/push/public-key");
-    if (!keyRes.ok) throw new Error("Could not get push key");
-    const { publicKey } = await keyRes.json();
-
-    let sub = await reg.pushManager.getSubscription();
-    if (!sub) {
-        sub = await reg.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array(publicKey)
-        });
-    }
-
-    const res = await fetch("/api/push/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: String(token), subscription: sub })
-    });
-    if (!res.ok) throw new Error("Could not save subscription");
+    notifyMsg.textContent = "Notifications are allowed in this browser.";
 }
 
 async function enableNotifications() {
-    if (!pushSupported) {
+    if (!notificationSupported) {
         notifyMsg.textContent = isIOS
-            ? "On iPhone: tap Share, then Add to Home Screen, and open QueueNow from the home screen to enable alerts."
-            : "This browser doesn't support push notifications. Try Chrome on Android.";
+            ? "Notifications are not supported in this browser. Try adding QueueNow to your Home Screen."
+            : "This browser doesn't support notifications.";
         return;
     }
     if (!window.isSecureContext) {
@@ -816,45 +785,43 @@ async function enableNotifications() {
         return;
     }
 
+    if (Notification.permission === "granted") {
+        showNotificationPermissionGranted();
+        return;
+    }
+    if (Notification.permission === "denied") {
+        notifyMsg.textContent = "Notifications are blocked. Allow them in your browser's site settings.";
+        return;
+    }
+
     notifyBtn.disabled = true;
-    notifyBtn.textContent = "Enabling...";
+    notifyBtn.textContent = "Checking...";
 
     try {
         const permission = await Notification.requestPermission();
-        if (permission !== "granted") {
-            notifyBtn.disabled = false;
-            notifyBtn.textContent = "🔔 Notify Me";
-            notifyMsg.textContent = permission === "denied"
-                ? "Notifications are blocked. Allow them in your browser's site settings, then try again."
-                : "Permission was dismissed. Tap the button again and choose Allow.";
+        if (permission === "granted") {
+            showNotificationPermissionGranted();
             return;
         }
-        await subscribeAndSend();
-        showNotifyOn();
-    } catch (e) {
-        console.error("Push setup failed:", e);
         notifyBtn.disabled = false;
         notifyBtn.textContent = "🔔 Notify Me";
-        notifyMsg.textContent = "Couldn't turn on notifications. Please try again.";
+        notifyMsg.textContent = permission === "denied"
+            ? "Notifications are blocked. Allow them in your browser's site settings, then try again."
+            : "Permission was dismissed. Tap the button again and choose Allow.";
+    } catch (error) {
+        console.error("Notification permission request failed:", error);
+        notifyBtn.disabled = false;
+        notifyBtn.textContent = "🔔 Notify Me";
+        notifyMsg.textContent = "Couldn't check notification permission. Please try again.";
     }
 }
 
 notifyBtn.addEventListener("click", enableNotifications);
 
-// If already allowed earlier, quietly re-sync the subscription with this token
-if (token > 0 && pushSupported && Notification.permission === "granted") {
-    subscribeAndSend().then(showNotifyOn).catch(e => console.error("Push resync failed:", e));
-} else if (token > 0 && pushSupported && Notification.permission === "denied") {
+if (token > 0 && notificationSupported && Notification.permission === "granted") {
+    showNotificationPermissionGranted();
+} else if (token > 0 && notificationSupported && Notification.permission === "denied") {
     notifyMsg.textContent = "Notifications are blocked for this site. Allow them in your browser's site settings.";
-}
-
-// Browser rotated the subscription: send the new one
-if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.addEventListener("message", e => {
-        if (e.data && e.data.type === "RESUBSCRIBE" && token > 0) {
-            subscribeAndSend().catch(console.error);
-        }
-    });
 }
 
 // ── AUDIO CHIME (WEB AUDIO API) ─────────────────────────────

@@ -41,6 +41,9 @@ public class QueueController {
     /** Service handling QR code barcode generation. */
     private final QRCodeService qrCodeService;
 
+    @org.springframework.beans.factory.annotation.Value("${queuenow.local-public-url:}")
+    private String localPublicUrl;
+
     /**
      * Constructs a new QueueController injecting queue and QR services.
      *
@@ -330,6 +333,11 @@ public class QueueController {
                 proto = "https";
             }
             return proto + "://" + forwardedHost.split(",")[0].trim();
+        }
+
+        // Optional local tunnel address for emergency access from outside the LAN.
+        if (localPublicUrl != null && !localPublicUrl.trim().isEmpty()) {
+            return localPublicUrl.trim().replaceAll("/+$", "");
         }
 
         // Use the request host directly when the app is reached through a public domain.

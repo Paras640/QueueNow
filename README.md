@@ -82,7 +82,7 @@ The frontend is served by the Spring Boot application from `src/main/resources/s
    MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>/<database>?retryWrites=true&w=majority
    ```
 
-   Generated QR codes use the current public host from the hosting proxy, or the machine's LAN address when running locally. No public URL variable is needed.
+   Generated QR codes use the current public host from the hosting proxy, or the machine's LAN address when running locally. For emergency access from mobile data through a local Cloudflare Quick Tunnel, optionally add `LOCAL_PUBLIC_URL` with the current tunnel URL. Proxy headers take precedence, so Render continues using its own public domain.
 2. Start the app from the project root:
 
    ```bash
@@ -106,13 +106,20 @@ Cloudflare Tunnel allows QueueNow to be accessed through a public URL without re
    cloudflared tunnel --url http://localhost:8080
    ```
 
-4. Wait for Cloudflare to generate a public `trycloudflare.com` URL.
+4. Copy the generated `trycloudflare.com` URL. To embed it in locally generated QR codes for customers on mobile data, stop and restart the app with `LOCAL_PUBLIC_URL` set:
+
+   ```powershell
+   $env:LOCAL_PUBLIC_URL = "https://your-current-tunnel.trycloudflare.com"
+   .\mvnw.cmd spring-boot:run
+   ```
+
 5. Open the generated URL to access QueueNow from another internet connection.
 
 ### Important Notes
 
 - The Spring Boot application and Cloudflare Tunnel must remain running on the host computer.
 - Quick Tunnel URLs are temporary and may change when the tunnel is restarted.
+- `LOCAL_PUBLIC_URL` is optional and intended for local emergency access; do not set it on the Render service.
 - Public access should be tested from another network to confirm that customers can join the queue.
 - Cloudflare provides public connectivity; it does not itself manage queue data or make the application permanently hosted.
 

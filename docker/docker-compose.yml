@@ -8,4 +8,5 @@ services:
     environment:
       PORT: "8080"
       MONGODB_URI: "${MONGODB_URI:?Set MONGODB_URI in the environment or project .env file}"
+      LOCAL_PUBLIC_URL: "${LOCAL_PUBLIC_URL:-}"
     restart: unless-stopped
