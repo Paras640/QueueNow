@@ -67,10 +67,31 @@ Send a POST request to `/api/queue/join` with JSON:
 
 1. Install Java 17 or a compatible version.
 2. Install Git and Maven, or use the Maven Wrapper if included.
-3. Configure the MongoDB connection in the application configuration.
+3. Set the `MONGODB_URI` environment variable to your MongoDB Atlas connection string.
 4. Keep database credentials in environment variables; do not commit secrets.
 5. Run the Spring Boot application from your IDE or using Maven.
 6. Open `http://localhost:8080/join.html` in your browser.
+
+## Run with Docker Compose
+
+The frontend is served by the Spring Boot application from `src/main/resources/static`, so the project runs as a single container.
+
+1. Create a `.env` file in the project root with:
+
+   ```dotenv
+   MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>/<database>?retryWrites=true&w=majority
+   PUBLIC_URL=https://your-deployed-domain.example
+   ```
+
+   `PUBLIC_URL` is optional for local use. Set it to the deployed HTTPS base URL so generated QR codes point to the public site.
+2. Start the app from the project root:
+
+   ```bash
+   docker compose --env-file .env -f docker/docker-compose.yml up --build
+   ```
+3. Open `http://localhost:8080`.
+
+The root `.dockerignore` excludes local environment files and build output. Do not commit `.env`.
 
 ## Public Access Using Cloudflare Tunnel
 
