@@ -662,5 +662,64 @@ form.addEventListener("submit", async (event) => {
   }
 });
 </script>
+<script>
+(() => {
+  const toggleBtn = document.getElementById("qrToggleBtn");
+  const panel = document.getElementById("qrPanel");
+  const qrImage = document.getElementById("qrImage");
+  const loading = document.getElementById("qrLoading");
+  const error = document.getElementById("qrError");
+
+  let qrLoaded = false;
+  let loadingQr = false;
+
+  toggleBtn.addEventListener("click", async () => {
+    // Hide the QR when clicked again
+    if (!panel.hidden) {
+      panel.hidden = true;
+      toggleBtn.innerHTML = "▦ &nbsp; Show QR Code ↗";
+      return;
+    }
+
+    panel.hidden = false;
+    toggleBtn.innerHTML = "▦ &nbsp; Hide QR Code ↗";
+
+    if (qrLoaded || loadingQr) return;
+
+    loadingQr = true;
+    loading.hidden = false;
+    qrImage.hidden = true;
+    error.hidden = true;
+    error.textContent = "";
+
+    try {
+      // This URL must be reachable from the phone scanning the QR.
+      const joinUrl = new URL("/join.html", window.location.origin).href;
+
+      // Your existing QRCodeController returns a PNG from this endpoint.
+      const qrUrl = "/api/qr?text=" + encodeURIComponent(joinUrl);
+
+      await new Promise((resolve, reject) => {
+        qrImage.onload = resolve;
+        qrImage.onerror = () => reject(
+          new Error("QR image load nahi hui. Backend endpoint check karo.")
+        );
+        qrImage.src = qrUrl;
+      });
+
+      qrLoaded = true;
+      qrImage.hidden = false;
+      loading.hidden = true;
+    } catch (err) {
+      loading.hidden = true;
+      error.textContent =
+        err.message || "QR generate nahi hua. Server check karke retry karo.";
+      error.hidden = false;
+    } finally {
+      loadingQr = false;
+    }
+  });
+})();
+</script>
 </body>
 </html>
