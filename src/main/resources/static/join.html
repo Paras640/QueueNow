@@ -494,24 +494,23 @@ button {
     <span aria-hidden="true">↗</span>
   </button>
 
-  <section
-    class="qr-section"
-    id="qrSection"
-    aria-label="Join queue QR code"
-  >
-    <div class="qr-title">SCAN TO JOIN</div>
+ <button type="button" id="qrToggleBtn" class="qr-toggle">
+  ▦ &nbsp; Show QR Code ↗
+</button>
 
-    <p class="qr-description">
-      Scan this code with your phone camera to open the QueueNow join page.
-    </p>
+<!-- QR section: hidden until clicked -->
+<section id="qrPanel" class="qr-panel" hidden>
+  <h3>SCAN TO JOIN</h3>
+  <p>Scan this QR code with your phone camera to open QueueNow.</p>
 
-    <div class="qr-frame">
-      <span class="qr-loading" id="qrLoading">Generating QR...</span>
-      <img id="qrImage" alt="QR code to open the QueueNow join page">
-    </div>
 
-    <div class="qr-error" id="qrError" role="status"></div>
-  </section>
+     <div class="qr-frame">
+    <div id="qrLoading">Generating QR code...</div>
+    <img id="qrImage" alt="QueueNow Join QR Code" hidden>
+  </div>
+
+  <p id="qrError" class="qr-error" hidden></p>
+</section>
 
   <footer class="footer">
     © 2026 <strong>QueueNow</strong> · Smart Queue Management
