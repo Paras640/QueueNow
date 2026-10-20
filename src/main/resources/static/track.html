@@ -7,7 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<meta name="theme-color" content="#e6c78f">
+<meta name="theme-color" content="#080807">
+<link rel="manifest" href="/manifest.json">
 
 <style>
 * {
@@ -374,7 +375,53 @@ main {
     color: var(--green);
 }
 
+/* ── NOTIFY ME ───────────────────────────────────────────── */
+.notify-wrap {
+    margin-top: 16px;
+}
 
+.btn-notify {
+    width: 100%;
+    min-height: 50px;
+    padding: 13px 16px;
+    background: rgba(230, 199, 143, 0.1);
+    border: 1px solid var(--border-bright);
+    border-radius: 14px;
+    color: var(--gold-light);
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+}
+
+.btn-notify:hover {
+    background: rgba(230, 199, 143, 0.18);
+    border-color: var(--gold);
+}
+
+.btn-notify:active {
+    transform: scale(0.98);
+}
+
+.btn-notify:disabled {
+    cursor: default;
+    opacity: 0.85;
+}
+
+.btn-notify.on {
+    background: var(--green-bg);
+    border-color: var(--green);
+    color: #bbf7d0;
+}
+
+.notify-msg {
+    min-height: 18px;
+    margin-top: 8px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--muted);
+}
 
 /* ── NO TOKEN LOOKUP CARD ────────────────────────────────── */
 #lookupCard {
@@ -627,7 +674,11 @@ footer {
             </div>
         </div>
 
-
+        <!-- Notify Me (web push) -->
+        <div class="notify-wrap" id="notifyWrap">
+            <button class="btn-notify" id="notifyBtn" type="button">🔔 Notify Me</button>
+            <div class="notify-msg" id="notifyMsg" role="status"></div>
+        </div>
 
         <!-- Feedback Form (Shown upon COMPLETED) -->
         <section id="feedbackSection">
@@ -680,6 +731,9 @@ const feedback    = document.getElementById("feedbackSection");
 const currentDisplay = document.getElementById("currentDisplay");
 const aheadDisplay   = document.getElementById("aheadDisplay");
 const stepsProgress  = document.getElementById("stepsProgress");
+const notifyWrap = document.getElementById("notifyWrap");
+const notifyBtn  = document.getElementById("notifyBtn");
+const notifyMsg  = document.getElementById("notifyMsg");
 
 let rating = 5;
 let alertedTurn = false;
@@ -708,7 +762,100 @@ function lookupToken() {
     location.href = `/track.html?token=${val}`;
 }
 
+// ── WEB PUSH: NOTIFY ME ─────────────────────────────────────
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+const pushSupported = "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
 
+function urlBase64ToUint8Array(base64String) {
+    const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+    const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+    const raw = atob(base64);
+    return Uint8Array.from([...raw].map(c => c.charCodeAt(0)));
+}
+
+function showNotifyOn() {
+    notifyBtn.textContent = "✓ You'll be notified";
+    notifyBtn.classList.add("on");
+    notifyBtn.disabled = true;
+    notifyMsg.textContent = "";
+}
+
+async function subscribeAndSend() {
+    const reg = await navigator.serviceWorker.register("/sw.js");
+    await navigator.serviceWorker.ready;
+
+    const keyRes = await fetch("/api/push/public-key");
+    if (!keyRes.ok) throw new Error("Could not get push key");
+    const { publicKey } = await keyRes.json();
+
+    let sub = await reg.pushManager.getSubscription();
+    if (!sub) {
+        sub = await reg.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(publicKey)
+        });
+    }
+
+    const res = await fetch("/api/push/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: String(token), subscription: sub })
+    });
+    if (!res.ok) throw new Error("Could not save subscription");
+}
+
+async function enableNotifications() {
+    if (!pushSupported) {
+        notifyMsg.textContent = isIOS
+            ? "On iPhone: tap Share, then Add to Home Screen, and open QueueNow from the home screen to enable alerts."
+            : "This browser doesn't support push notifications. Try Chrome on Android.";
+        return;
+    }
+    if (!window.isSecureContext) {
+        notifyMsg.textContent = "Notifications need a secure (https) link.";
+        return;
+    }
+
+    notifyBtn.disabled = true;
+    notifyBtn.textContent = "Enabling...";
+
+    try {
+        const permission = await Notification.requestPermission();
+        if (permission !== "granted") {
+            notifyBtn.disabled = false;
+            notifyBtn.textContent = "🔔 Notify Me";
+            notifyMsg.textContent = permission === "denied"
+                ? "Notifications are blocked. Allow them in your browser's site settings, then try again."
+                : "Permission was dismissed. Tap the button again and choose Allow.";
+            return;
+        }
+        await subscribeAndSend();
+        showNotifyOn();
+    } catch (e) {
+        console.error("Push setup failed:", e);
+        notifyBtn.disabled = false;
+        notifyBtn.textContent = "🔔 Notify Me";
+        notifyMsg.textContent = "Couldn't turn on notifications. Please try again.";
+    }
+}
+
+notifyBtn.addEventListener("click", enableNotifications);
+
+// If already allowed earlier, quietly re-sync the subscription with this token
+if (token > 0 && pushSupported && Notification.permission === "granted") {
+    subscribeAndSend().then(showNotifyOn).catch(e => console.error("Push resync failed:", e));
+} else if (token > 0 && pushSupported && Notification.permission === "denied") {
+    notifyMsg.textContent = "Notifications are blocked for this site. Allow them in your browser's site settings.";
+}
+
+// Browser rotated the subscription: send the new one
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.addEventListener("message", e => {
+        if (e.data && e.data.type === "RESUBSCRIBE" && token > 0) {
+            subscribeAndSend().catch(console.error);
+        }
+    });
+}
 
 // ── AUDIO CHIME (WEB AUDIO API) ─────────────────────────────
 function playChime() {
@@ -766,6 +913,7 @@ async function pollStatus() {
             banner.textContent = "✓ Service Completed";
             instruction.textContent = "Thank you for visiting! Please take a second to rate your experience below.";
             aheadDisplay.textContent = "✓";
+            notifyWrap.style.display = "none";
 
             stepsProgress.style.width = "100%";
             step1.className = "step-node completed";
