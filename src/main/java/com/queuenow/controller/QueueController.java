@@ -321,22 +321,14 @@ public class QueueController {
                 .body(qrCode);
     }
 
-    @org.springframework.beans.factory.annotation.Value("${public.url:}")
-    private String configuredPublicUrl;
-
     private String resolveBaseUrl(HttpServletRequest request) {
-        // 0. Check configured public.url from application.properties or system property
-        if (configuredPublicUrl != null && !configuredPublicUrl.trim().isEmpty()) {
-            return configuredPublicUrl.trim().replaceAll("/+$", "");
-        }
-
-        // 1. Check PUBLIC_URL environment variable (set during deployment or tunnel)
+        // Check PUBLIC_URL environment variable (set during deployment or tunnel)
         String envPublic = System.getenv("PUBLIC_URL");
         if (envPublic != null && !envPublic.trim().isEmpty()) {
             return envPublic.trim().replaceAll("/+$", "");
         }
 
-        // 2. Check standard reverse proxy headers (Cloudflare, Render, Railway, ngrok)
+        // Check standard reverse proxy headers (Cloudflare, Render, Railway, ngrok)
         String forwardedHost = request.getHeader("X-Forwarded-Host");
         if (forwardedHost != null && !forwardedHost.trim().isEmpty()) {
             String proto = request.getHeader("X-Forwarded-Proto");
@@ -346,7 +338,7 @@ public class QueueController {
             return proto + "://" + forwardedHost.split(",")[0].trim();
         }
 
-        // 3. Check Host header if it is not localhost
+        // Check Host header if it is not localhost
         String host = request.getHeader("Host");
         if (host != null && !host.startsWith("localhost") && !host.startsWith("127.0.0.1")) {
             String proto = request.getHeader("X-Forwarded-Proto");
@@ -356,7 +348,7 @@ public class QueueController {
             return proto + "://" + host;
         }
 
-        // 4. Default to local Wi-Fi IP address
+        // Default to local Wi-Fi IP address
         String ip = getLocalIpAddress();
         int port = request.getServerPort();
         return "http://" + ip + ":" + port;
