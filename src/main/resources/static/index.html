@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,6 +24,7 @@
 html {
     -webkit-text-size-adjust: 100%;
     overscroll-behavior-y: none;
+    background: var(--black);
 }
 
 body {
@@ -151,6 +151,7 @@ header {
     gap: 35px;
     position: relative;
     isolation: isolate;
+    overflow: hidden; /* clips the light sweep so it can't cause overflow */
     background:
         radial-gradient(ellipse at 72% 45%, #82571b30, transparent 42%),
         radial-gradient(ellipse at 20% 10%, #33271670, transparent 50%);
@@ -160,19 +161,21 @@ header {
     content: "";
     position: absolute;
     top: 17%;
-    left: -60%;
+    left: 0;
     width: 65%;
     height: 1px;
     background: linear-gradient(90deg, transparent, #fff0c7, #d9a84d, transparent);
     box-shadow: 0 0 18px #e6c78f;
+    transform: translateX(-100%);
     animation: lightSweep 7s ease-in-out 1.5s infinite;
     pointer-events: none;
+    will-change: transform;
 }
 
 @keyframes lightSweep {
-    0%, 15% { left: -60%; opacity: 0; }
+    0%, 15% { transform: translateX(-100%); opacity: 0; }
     35% { opacity: .9; }
-    65%, 100% { left: 120%; opacity: 0; }
+    65%, 100% { transform: translateX(200%); opacity: 0; }
 }
 
 .hero-copy {
@@ -554,6 +557,29 @@ footer {
     .nav-center {
         gap: 16px;
     }
+
+    /* Stop constant repaints on mobile (smoother fast scrolling) */
+    .gold-text,
+    .button::after,
+    .hero::before,
+    .orbit,
+    .phone,
+    .status-icon,
+    .feature-icon {
+        animation: none;
+    }
+
+    .hero::before {
+        display: none;
+    }
+
+    .gold-text {
+        background-position: 0 center;
+    }
+
+    .orbit {
+        opacity: .6;
+    }
 }
 
 @media (max-width: 520px) {
@@ -601,6 +627,15 @@ footer {
     }
 
     .phone-screen { min-height: 360px; }
+}
+
+/* Don't leave hover lift stuck on touch screens */
+@media (hover: none) {
+    .feature:hover {
+        transform: translateY(0);
+        box-shadow: none;
+        border-color: #8b6b3855;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
