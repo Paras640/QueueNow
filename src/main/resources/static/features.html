@@ -2,22 +2,73 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Features | QueueNow</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#080807">
+<title>QueueNow | Your Time. Your Priority.</title>
+
 <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 :root {
     --gold: #e6c78f;
     --gold-light: #fff0c7;
-    --gold-dark: #b58b4e;
+    --gold-dark: #a67b37;
     --black: #080807;
     --muted: #aaa49a;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-    font-family: "Segoe UI", Arial, sans-serif;
-    background: #080808;
-    color: #fffaf0;
+
+html {
+    -webkit-text-size-adjust: 100%;
+    background: var(--black);
 }
+
+body {
+    min-height: 100vh;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: var(--black);
+    color: #fffaf0;
+    overflow-x: clip;
+    -webkit-tap-highlight-color: transparent;
+}
+
+a {
+    color: inherit;
+}
+
+#particles {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.particle {
+    position: absolute;
+    bottom: -15px;
+    border-radius: 50%;
+    background: var(--gold-light);
+    box-shadow: 0 0 12px 2px #e6c78f80;
+    animation: rise linear forwards;
+}
+
+@keyframes rise {
+    0% {
+        transform: translateY(0) translateX(0);
+        opacity: 0;
+    }
+    15% { opacity: .85; }
+    100% {
+        transform: translateY(-110vh) translateX(60px);
+        opacity: 0;
+    }
+}
+
+/* Navigation */
 header {
     min-height: 82px;
     padding: 20px 8%;
@@ -31,10 +82,12 @@ header {
     z-index: 5;
     animation: navEnter 1s ease both;
 }
+
 @keyframes navEnter {
     from { opacity: 0; transform: translateY(-25px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
 .logo {
     font-size: 29px;
     font-weight: 900;
@@ -43,6 +96,7 @@ header {
     text-decoration: none;
     flex: 1;
 }
+
 .nav-center {
     display: flex;
     align-items: center;
@@ -50,6 +104,7 @@ header {
     gap: 32px;
     flex: 2;
 }
+
 .nav-center a {
     text-decoration: none;
     color: #d9d0c0;
@@ -57,94 +112,175 @@ header {
     font-weight: 500;
     transition: color .3s;
 }
-.nav-center a:hover,
-.nav-center a.active {
+
+.nav-center a:hover {
     color: var(--gold-light);
 }
+
 .nav-right {
     display: flex;
+    gap: 12px;
     justify-content: flex-end;
     align-items: center;
-    gap: 16px;
     flex: 1;
 }
-.nav-cta {
-    border: 1px solid var(--gold-dark);
-    padding: 12px 20px;
-    border-radius: 30px;
-    color: var(--gold-light);
-    text-decoration: none;
-    font-size: 14px;
-    white-space: nowrap;
-    transition: all .3s;
-}
-.nav-cta:hover {
-    background: rgba(230, 199, 143, 0.15);
-    border-color: var(--gold);
-}
+
+/* Nav buttons — shared base */
+.nav-cta,
 .nav-admin {
     min-height: 44px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 10px 16px;
-    border: 1px solid #ffffff30;
+    padding: 10px 20px;
     border-radius: 30px;
-    color: #d9d0c0;
     text-decoration: none;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 700;
     white-space: nowrap;
     transition: all .3s;
 }
-.nav-admin:hover {
-    color: var(--gold-light);
-    border-color: var(--gold);
-    background: rgba(230, 199, 143, 0.08);
-}
-main {
-    max-width: 1050px;
-    margin: auto;
-    padding: 85px 24px;
-    text-align: center;
-    animation: appear .8s ease both;
-}
-.tag {
-    color: #e5c58a;
-    letter-spacing: 3px;
-    font-size: 12px;
-}
-h1 { font-size: clamp(38px, 7vw, 65px); }
-h1 span { color: #e5c58a; }
-.intro {
-    color: #aaa49a;
-    line-height: 1.8;
-    max-width: 650px;
-    margin: 0 auto 45px;
-}
-.grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-}
-.card {
-    text-align: left;
-    padding: 28px;
-    background: linear-gradient(145deg,#191714,#0e0e0d);
-    border: 1px solid #493b27;
-    border-radius: 16px;
-    transition: .3s;
-}
-.card:hover {
-    transform: translateY(-8px);
-    border-color: #e5c58a;
-    box-shadow: 0 12px 35px #c6a56a20;
-}
-.icon { font-size: 32px; }
-h2 { color: #e5c58a; font-size: 19px; }
-.card p { color: #aaa49a; line-height: 1.8; font-size: 14px; }
 
-/* Button — identical to Home and About */
+/* Primary: filled gold */
+.nav-cta {
+    background: linear-gradient(110deg, #fff0c7, #d4a650, #b58b4e);
+    color: #17110a;
+    border: 1px solid transparent;
+    box-shadow: 0 0 18px #d6ae5b22;
+}
+
+.nav-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 28px #e6c78f55;
+}
+
+/* Secondary: outline */
+.nav-admin {
+    color: var(--gold-light);
+    border: 1px solid var(--gold-dark);
+    background: transparent;
+}
+
+.nav-admin:hover {
+    border-color: var(--gold);
+    background: #e6c78f1a;
+}
+
+/* Hero */
+.hero {
+    min-height: 660px;
+    padding: 95px 9% 80px;
+    display: grid;
+    grid-template-columns: 1.05fr .95fr;
+    align-items: center;
+    gap: 35px;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden; /* clips the light sweep so it can't cause overflow */
+    background:
+        radial-gradient(ellipse at 72% 45%, #82571b30, transparent 42%),
+        radial-gradient(ellipse at 20% 10%, #33271670, transparent 50%);
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    top: 17%;
+    left: 0;
+    width: 65%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #fff0c7, #d9a84d, transparent);
+    box-shadow: 0 0 18px #e6c78f;
+    transform: translateX(-100%);
+    animation: lightSweep 7s ease-in-out 1.5s infinite;
+    pointer-events: none;
+    will-change: transform;
+}
+
+@keyframes lightSweep {
+    0%, 15% { transform: translateX(-100%); opacity: 0; }
+    35% { opacity: .9; }
+    65%, 100% { transform: translateX(200%); opacity: 0; }
+}
+
+.hero-copy {
+    position: relative;
+    z-index: 1;
+}
+
+.tag, .hero h1, .description, .hero-actions, .trust-row {
+    opacity: 0;
+    animation: cinematicIn .9s ease forwards;
+}
+
+.tag { animation-delay: .25s; }
+.hero h1 { animation-delay: .55s; }
+.description { animation-delay: .85s; }
+.hero-actions { animation-delay: 1.1s; }
+.trust-row { animation-delay: 1.35s; }
+
+@keyframes cinematicIn {
+    from {
+        opacity: 0;
+        transform: translateY(28px);
+        filter: blur(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
+.tag {
+    display: inline-block;
+    color: var(--gold);
+    border: 1px solid #8c6a35;
+    background: #33261580;
+    border-radius: 30px;
+    padding: 11px 16px;
+    margin-bottom: 27px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+h1 {
+    font-size: clamp(46px, 5.6vw, 78px);
+    line-height: 1.03;
+    letter-spacing: -3px;
+    margin-bottom: 25px;
+}
+
+.gold-text {
+    display: inline-block;
+    background: linear-gradient(100deg, #bd9557, #fff0c7, #d4a650, #fff0c7);
+    background-size: 250% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: goldShimmer 5s linear infinite;
+}
+
+@keyframes goldShimmer {
+    to { background-position: 250% center; }
+}
+
+.description {
+    max-width: 540px;
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.9;
+    margin-bottom: 30px;
+}
+
+.hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
 .button {
     position: relative;
     overflow: hidden;
@@ -153,7 +289,6 @@ h2 { color: #e5c58a; font-size: 19px; }
     align-items: center;
     justify-content: center;
     gap: 12px;
-    margin-top: 38px;
     text-decoration: none;
     padding: 17px 26px;
     border-radius: 40px;
@@ -163,6 +298,7 @@ h2 { color: #e5c58a; font-size: 19px; }
     box-shadow: 0 0 25px #d6ae5b22;
     transition: transform .3s, box-shadow .3s;
 }
+
 .button::after {
     content: "";
     position: absolute;
@@ -175,36 +311,314 @@ h2 { color: #e5c58a; font-size: 19px; }
     animation: buttonShine 4s ease-in-out infinite;
     pointer-events: none;
 }
+
 @keyframes buttonShine {
     0%, 65% { left: -100%; }
     100% { left: 150%; }
 }
+
 .button:hover {
     transform: translateY(-4px) scale(1.025);
     box-shadow: 0 0 35px #e6c78f55;
 }
+
 .button .arrow {
     font-size: 20px;
     transition: transform .3s;
 }
+
 .button:hover .arrow {
     transform: translateX(5px);
 }
-@keyframes appear {
-    from { opacity: 0; transform: translateY(25px); }
-    to { opacity: 1; transform: translateY(0); }
+
+.trust-row {
+    display: flex;
+    gap: 23px;
+    flex-wrap: wrap;
+    margin-top: 30px;
+    color: #d8c9a9;
+    font-size: 13px;
 }
-@media(max-width:850px) {
-    .grid { grid-template-columns: 1fr; }
-    .nav-center { gap: 16px; }
+
+.trust-row span {
+    display: flex;
+    gap: 8px;
+    align-items: center;
 }
-@media(max-width:520px) {
+
+/* Animated phone mockup */
+.visual {
+    min-height: 450px;
+    display: grid;
+    place-items: center;
+    position: relative;
+    perspective: 1000px;
+}
+
+.orbit {
+    position: absolute;
+    width: 330px;
+    height: 330px;
+    border: 1px solid #d5a44855;
+    border-radius: 50%;
+    box-shadow: 0 0 45px #c9983720, inset 0 0 45px #c9983710;
+    animation: orbitPulse 5s ease-in-out infinite;
+}
+
+.orbit.two {
+    width: 390px;
+    height: 250px;
+    transform: rotate(-25deg);
+    border-color: #e6c78f35;
+    animation-delay: 1s;
+}
+
+@keyframes orbitPulse {
+    0%, 100% { opacity: .35; scale: .94; }
+    50% { opacity: .9; scale: 1.04; }
+}
+
+.phone {
+    width: 245px;
+    min-height: 410px;
+    padding: 13px;
+    border: 1px solid #c49a52;
+    border-radius: 37px;
+    background: linear-gradient(140deg, #49351b, #0a0907 28%, #17120b);
+    box-shadow: 0 0 35px #c99a4525, 0 35px 80px #000;
+    transform: rotateY(-10deg) rotateX(3deg);
+    animation: phoneFloat 5s ease-in-out infinite;
+    position: relative;
+    z-index: 1;
+}
+
+@keyframes phoneFloat {
+    0%, 100% { transform: translateY(0) rotateY(-10deg) rotateX(3deg); }
+    50% { transform: translateY(-15px) rotateY(-5deg) rotateX(1deg); }
+}
+
+.phone-screen {
+    height: 100%;
+    min-height: 380px;
+    border-radius: 27px;
+    background: radial-gradient(ellipse at top, #49351b55, #0c0b09 55%);
+    border: 1px solid #9b783b40;
+    padding: 24px 15px;
+    text-align: center;
+}
+
+.phone-brand {
+    color: var(--gold);
+    font-weight: 800;
+    margin: 5px 0 28px;
+}
+
+.status-icon {
+    width: 55px;
+    height: 55px;
+    margin: 0 auto 15px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    color: var(--gold-light);
+    font-size: 26px;
+    box-shadow: 0 0 22px #c99a4530;
+    animation: statusGlow 3s ease-in-out infinite;
+}
+
+@keyframes statusGlow {
+    0%, 100% { box-shadow: 0 0 10px #c99a4520; }
+    50% { box-shadow: 0 0 28px #c99a4560; }
+}
+
+.phone-label {
+    color: #d8c9a9;
+    font-size: 13px;
+}
+
+.queue-number {
+    font-size: 46px;
+    font-weight: 800;
+    color: var(--gold-light);
+    margin: 7px 0;
+    letter-spacing: -2px;
+}
+
+.wait-label {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.7;
+}
+
+.phone-note {
+    margin-top: 24px;
+    border: 1px solid #98733380;
+    border-radius: 15px;
+    padding: 13px 8px;
+    color: var(--gold);
+    font-size: 11px;
+    line-height: 1.8;
+    background: #d4a6500a;
+}
+
+/* Feature cards */
+.features {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 7% 75px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+    position: relative;
+    z-index: 3;
+}
+
+.feature {
+    padding: 27px 24px;
+    border: 1px solid #8b6b3855;
+    border-radius: 20px;
+    background: linear-gradient(145deg, #17140fdd, #090908f5);
+    transition: transform .35s, border-color .35s, box-shadow .35s;
+    opacity: 0;
+    transform: translateY(24px);
+}
+
+.feature.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.feature:hover {
+    transform: translateY(-8px);
+    border-color: var(--gold);
+    box-shadow: 0 15px 40px #c6a56a20;
+}
+
+.feature-icon {
+    width: 55px;
+    height: 55px;
+    display: grid;
+    place-items: center;
+    border: 1px solid #b58b4e;
+    border-radius: 50%;
+    color: var(--gold-light);
+    font-size: 25px;
+    margin-bottom: 19px;
+    box-shadow: 0 0 20px #c6a56a15;
+    animation: iconFloat 3s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+.feature h2 {
+    font-size: 18px;
+    color: var(--gold);
+    margin-bottom: 10px;
+}
+
+.feature p {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+/* Lower call-to-action */
+.closing {
+    text-align: center;
+    padding: 65px 20px 85px;
+    border-top: 1px solid #6f512b40;
+    background: radial-gradient(ellipse at center, #39271340, transparent 70%);
+}
+
+.closing h2 {
+    font-size: clamp(28px, 4vw, 42px);
+    margin-bottom: 15px;
+}
+
+.closing p {
+    color: var(--muted);
+    margin-bottom: 25px;
+    line-height: 1.8;
+}
+
+footer {
+    border-top: 1px solid #6f512b40;
+    padding: 24px;
+    text-align: center;
+    color: #827b70;
+    font-size: 13px;
+}
+
+/* Responsive */
+@media (max-width: 850px) {
+    .hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding-top: 75px;
+    }
+
+    .description {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .hero-actions, .trust-row {
+        justify-content: center;
+    }
+
+    .visual {
+        min-height: 450px;
+    }
+
+    .features {
+        grid-template-columns: 1fr;
+        max-width: 520px;
+    }
+
+    .nav-center {
+        gap: 16px;
+    }
+
+    /* Stop constant repaints on mobile (smoother fast scrolling) */
+    .gold-text,
+    .button::after,
+    .hero::before,
+    .orbit,
+    .phone,
+    .status-icon,
+    .feature-icon {
+        animation: none;
+    }
+
+    .hero::before {
+        display: none;
+    }
+
+    .gold-text {
+        background-position: 0 center;
+    }
+
+    .orbit {
+        opacity: .6;
+    }
+}
+
+@media (max-width: 520px) {
+    /* Header + nav buttons — matches the Features page on mobile */
     header {
         padding: 16px 5%;
         flex-wrap: wrap;
         gap: 12px;
     }
-    .logo { font-size: 24px; }
+
+    .logo {
+        font-size: 24px;
+    }
+
     .nav-center {
         gap: 14px;
         order: 3;
@@ -212,22 +626,82 @@ h2 { color: #e5c58a; font-size: 19px; }
         justify-content: center;
         margin-top: 8px;
     }
+
     .nav-center a { font-size: 13px; }
-    .nav-cta { min-height: 44px; padding: 8px 12px; font-size: 13px; }
-    .nav-admin { min-height: 44px; padding: 8px 12px; font-size: 13px; }
+
+    .nav-cta,
+    .nav-admin {
+        min-height: 44px;
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+
+    .hero {
+        padding: 65px 6% 55px;
+    }
+
+    h1 {
+        letter-spacing: -1.5px;
+    }
+
+    .visual {
+        min-height: 420px;
+    }
+
+    .orbit { width: 270px; height: 270px; }
+    .orbit.two { width: 310px; height: 200px; }
+
+    .phone {
+        width: 225px;
+        min-height: 390px;
+    }
+
+    .phone-screen { min-height: 360px; }
 }
-@media(prefers-reduced-motion:reduce) {
-    *,*::before,*::after { animation:none!important; transition:none!important; }
+
+/* Don't leave hover lift stuck on touch screens */
+@media (hover: none) {
+    .feature:hover {
+        transform: translateY(0);
+        box-shadow: none;
+        border-color: #8b6b3855;
+    }
+
+    .nav-cta:hover {
+        transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+    }
+
+    .tag, .hero h1, .description, .hero-actions, .trust-row {
+        opacity: 1;
+        transform: none;
+        filter: none;
+    }
+
+    .feature {
+        opacity: 1;
+        transform: none;
+    }
 }
 </style>
 </head>
+
 <body>
+<div id="particles" aria-hidden="true"></div>
+
 <header>
     <a class="logo" href="/">QueueNow.</a>
 
     <nav class="nav-center" aria-label="Main navigation">
         <a href="/">Home</a>
-        <a href="/features.html" class="active">Features</a>
+        <a href="/features.html">Features</a>
         <a href="/about.html">About</a>
     </nav>
 
@@ -236,43 +710,151 @@ h2 { color: #e5c58a; font-size: 19px; }
         <a href="/join.html" class="nav-cta">Join Queue →</a>
     </div>
 </header>
+
 <main>
-    <div class="tag">BUILT FOR BETTER WAITING</div>
-    <h1>Powerful Features.<br><span>Simpler Waiting.</span></h1>
-    <p class="intro">QueueNow brings digital queue access and QR-based tokens together to make the waiting experience more convenient.</p>
-    <section class="grid">
-        <article class="card">
-            <div class="icon">✦</div>
-            <h2>Easy Queue Joining</h2>
-            <p>Enter your name through the customer portal to join the queue digitally.</p>
+    <section class="hero" id="about">
+        <div class="hero-copy">
+            <div class="tag">✦ &nbsp; A BETTER WAY TO WAIT</div>
+
+            <h1>Your Time.<br>
+                <span class="gold-text">Your Priority.</span>
+            </h1>
+
+            <p class="description">
+                Say goodbye to long queues and wasted time.
+                Join the queue digitally and enjoy a smarter,
+                smoother waiting experience with QueueNow.
+            </p>
+
+            <div class="hero-actions">
+                <a href="/join.html" class="button">
+                    <span class="arrow">➜</span>
+                    Join the Queue
+                </a>
+            </div>
+
+            <div class="trust-row">
+                <span>ϟ &nbsp; Fast</span>
+                <span>♢ &nbsp; Simple</span>
+                <span>✦ &nbsp; Convenient</span>
+            </div>
+        </div>
+
+        <div class="visual" aria-label="Live Queue Entry Kiosk">
+            <div class="orbit"></div>
+            <div class="orbit two"></div>
+
+            <div class="phone" style="min-height: 440px;">
+                <div class="phone-screen" style="min-height: 410px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+                    <div class="phone-brand">QueueNow · Store Kiosk</div>
+
+                    <p class="phone-label" style="margin-top: 8px; font-weight: 700; color: var(--gold); letter-spacing: 1.5px; font-size: 12px;">✦ SCAN TO TAKE TOKEN</p>
+
+                    <div style="background: #ffffff; padding: 10px; border-radius: 14px; margin: 12px 0; box-shadow: 0 0 25px rgba(230,199,143,0.35);">
+                        <img id="kioskQr" src="/api/queue/join-qr" alt="Scan QR to Join Queue" style="width: 155px; height: 155px; display: block; border-radius: 6px;" />
+                    </div>
+
+                    <p class="wait-label" style="font-size: 11px; line-height: 1.6;">
+                        Point your phone camera here<br>
+                        <span style="color: var(--gold-light); font-weight: 600;">Scan to join the queue. Your tracking QR appears after you get a token.</span>
+                    </p>
+
+                    <a id="kioskDirectLink" href="/join.html" style="margin-top: 12px; font-size: 11px; color: var(--gold-light); text-decoration: underline; opacity: 0.9;">
+                        Or open the join page directly →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <article class="feature">
+            <div class="feature-icon">ϟ</div>
+            <h2>Quick & Easy</h2>
+            <p>Join the queue in just a few simple steps.</p>
         </article>
-        <article class="card">
-            <div class="icon">▦</div>
-            <h2>QR Code Generation</h2>
-            <p>Generate a QR code associated with queue information for convenient access.</p>
+
+        <article class="feature">
+            <div class="feature-icon">◷</div>
+            <h2>Save Your Time</h2>
+            <p>Make waiting simpler and more convenient.</p>
         </article>
-        <article class="card">
-            <div class="icon">#</div>
-            <h2>Digital Token</h2>
-            <p>Receive a token number after joining, making your queue position easier to identify.</p>
-        </article>
-        <article class="card">
-            <div class="icon">◷</div>
-            <h2>Less Waiting Hassle</h2>
-            <p>Make queue access more convenient without relying entirely on a physical line.</p>
-        </article>
-        <article class="card">
-            <div class="icon">◇</div>
-            <h2>Simple Interface</h2>
-            <p>A clean, responsive website designed for a straightforward customer experience.</p>
-        </article>
-        <article class="card">
-            <div class="icon">↗</div>
-            <h2>Connected Backend</h2>
-            <p>Spring Boot handles backend requests, with QR generation provided by the integrated service.</p>
+
+        <article class="feature">
+            <div class="feature-icon">◇</div>
+            <h2>Smart Experience</h2>
+            <p>A modern digital approach to queue management.</p>
         </article>
     </section>
-    <a class="button" href="/join.html">Join the Queue <span class="arrow">→</span></a>
+
+    <section class="closing">
+        <h2>Less waiting. <span class="gold-text">More living.</span></h2>
+        <p>Your time matters. Let QueueNow make every minute count.</p>
+        <a href="/join.html" class="button">
+            Get Started <span class="arrow">→</span>
+        </a>
+    </section>
 </main>
+
+<footer>
+    © 2026 QueueNow. Designed for a smarter waiting experience.
+</footer>
+
+<script>
+const reducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+).matches;
+
+const isMobile = window.matchMedia("(max-width: 850px)").matches;
+
+if (!reducedMotion && !isMobile) {
+    // Floating golden particles
+    const particleArea = document.getElementById("particles");
+
+    function createParticle() {
+        if (particleArea.childElementCount >= 24) return;
+
+        const particle = document.createElement("span");
+        particle.className = "particle";
+        particle.style.left = Math.random() * 100 + "%";
+
+        const size = 2 + Math.random() * 3;
+        particle.style.width = size + "px";
+        particle.style.height = size + "px";
+        particle.style.animationDuration =
+            (7 + Math.random() * 6) + "s";
+
+        particleArea.appendChild(particle);
+        particle.addEventListener("animationend", () => particle.remove());
+    }
+
+    setInterval(createParticle, 400);
+
+    // Reveal feature cards on scroll
+    const features = document.querySelectorAll(".feature");
+
+    if ("IntersectionObserver" in window) {
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("visible");
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+
+        features.forEach(feature => observer.observe(feature));
+    } else {
+        features.forEach(feature => feature.classList.add("visible"));
+    }
+}
+
+if (isMobile) {
+    document.querySelectorAll(".feature").forEach(feature => {
+        feature.classList.add("visible");
+    });
+}
+
+</script>
 </body>
 </html>
