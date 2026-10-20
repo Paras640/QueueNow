@@ -21,14 +21,14 @@
     --muted: #aaa49a;
 }
 
-html { scroll-behavior: smooth; overscroll-behavior: none; }
+html { -webkit-text-size-adjust: 100%; }
 
 body {
     font-family: "Segoe UI", Arial, sans-serif;
     background: var(--black);
     color: #fffaf0;
-    overflow-x: hidden;
-    overscroll-behavior: none;
+    overflow-x: clip;
+    touch-action: pan-y;
 }
 
 a { color: inherit; }
@@ -586,7 +586,9 @@ const reducedMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)"
 ).matches;
 
-if (!reducedMotion) {
+const isMobile = window.matchMedia("(max-width: 850px)").matches;
+
+if (!reducedMotion && !isMobile) {
     // Floating golden particles
     const particleArea = document.getElementById("particles");
 
@@ -629,6 +631,12 @@ if (!reducedMotion) {
     } else {
         cards.forEach(card => card.classList.add("visible"));
     }
+}
+
+if (isMobile) {
+    document.querySelectorAll(".story-card").forEach(card => {
+        card.classList.add("visible");
+    });
 }
 </script>
 

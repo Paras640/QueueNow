@@ -23,9 +23,7 @@
 }
 
 html {
-    scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
-    overscroll-behavior: none;
 }
 
 body {
@@ -34,10 +32,9 @@ body {
     font-family: "Segoe UI", Arial, sans-serif;
     background: var(--black);
     color: #fffaf0;
-    overflow-x: hidden;
+    overflow-x: clip;
     -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
-    overscroll-behavior: none;
+    touch-action: pan-y;
 }
 
 a {
@@ -738,7 +735,9 @@ const reducedMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)"
 ).matches;
 
-if (!reducedMotion) {
+const isMobile = window.matchMedia("(max-width: 850px)").matches;
+
+if (!reducedMotion && !isMobile) {
     // Floating golden particles
     const particleArea = document.getElementById("particles");
 
@@ -778,6 +777,12 @@ if (!reducedMotion) {
     } else {
         features.forEach(feature => feature.classList.add("visible"));
     }
+}
+
+if (isMobile) {
+    document.querySelectorAll(".feature").forEach(feature => {
+        feature.classList.add("visible");
+    });
 }
 
 // Fetch network IP info to show for mobile users
