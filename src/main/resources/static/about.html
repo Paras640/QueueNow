@@ -21,14 +21,17 @@
     --muted: #aaa49a;
 }
 
-html { -webkit-text-size-adjust: 100%; }
+html {
+    -webkit-text-size-adjust: 100%;
+    overscroll-behavior-y: none;
+}
 
 body {
     font-family: "Segoe UI", Arial, sans-serif;
     background: var(--black);
     color: #fffaf0;
     overflow-x: clip;
-    touch-action: pan-y;
+    overscroll-behavior-y: none;
 }
 
 a { color: inherit; }

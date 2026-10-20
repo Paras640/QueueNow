@@ -127,15 +127,43 @@ h1 span { color: #e5c58a; }
 .icon { font-size: 32px; }
 h2 { color: #e5c58a; font-size: 19px; }
 .card p { color: #aaa49a; line-height: 1.8; font-size: 14px; }
-.back {
-    display: inline-block;
+.button {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     margin-top: 38px;
-    padding: 14px 24px;
-    border-radius: 8px;
-    background: linear-gradient(110deg,#e8cf9c,#b58b4e);
+    gap: 12px;
+    padding: 17px 26px;
+    border-radius: 40px;
+    background: linear-gradient(110deg, #fff0c7, #d4a650, #b58b4e);
     color: #17110a;
+    font-weight: 800;
     text-decoration: none;
-    font-weight: bold;
+    box-shadow: 0 0 25px #d6ae5b22;
+    transition: transform .3s, box-shadow .3s;
+}
+.button::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -100%;
+    width: 45%;
+    height: 200%;
+    transform: skewX(-25deg);
+    background: linear-gradient(90deg, transparent, #ffffffbb, transparent);
+    animation: buttonShine 4s ease-in-out infinite;
+    pointer-events: none;
+}
+@keyframes buttonShine {
+    0%, 65% { left: -100%; }
+    100% { left: 150%; }
+}
+.button:hover {
+    transform: translateY(-4px) scale(1.025);
+    box-shadow: 0 0 35px #e6c78f55;
 }
 @keyframes appear {
     from { opacity: 0; transform: translateY(25px); }
@@ -216,7 +244,7 @@ h2 { color: #e5c58a; font-size: 19px; }
             <p>Spring Boot handles backend requests, with QR generation provided by the integrated service.</p>
         </article>
     </section>
-    <a class="back" href="/join.html">Join the Queue →</a>
+    <a class="button" href="/join.html">Join the Queue →</a>
 </main>
 </body>
 </html>
