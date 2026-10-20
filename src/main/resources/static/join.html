@@ -1,140 +1,124 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#080806">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>QueueNow | Join Queue</title>
+
 <style>
 :root {
   --gold: #e8c47f;
   --gold-light: #fff0c8;
   --bg: #080806;
+  --panel: rgba(22, 18, 13, 0.94);
   --muted: #aaa49a;
-  --panel: rgba(22, 18, 12, .88);
+  --border: rgba(232, 196, 127, 0.25);
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html {
-  -webkit-text-size-adjust: 100%;
-  overscroll-behavior: none;
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
   min-height: 100vh;
-  min-height: -webkit-fill-available;
-  padding: max(24px, env(safe-area-inset-top, 24px)) max(14px, env(safe-area-inset-right, 14px)) max(24px, env(safe-area-inset-bottom, 24px)) max(14px, env(safe-area-inset-left, 14px));
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 28px 16px;
   overflow-x: hidden;
+  font-family: Arial, Helvetica, sans-serif;
   color: #fffaf0;
-  font-family: Inter, "Segoe UI", Arial, sans-serif;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-  overscroll-behavior: none;
   background:
-    radial-gradient(ellipse at 10% 15%, #73501c35, transparent 38%),
-    radial-gradient(ellipse at 90% 85%, #a4772920, transparent 35%),
+    radial-gradient(ellipse at 15% 15%, #62451f38, transparent 42%),
+    radial-gradient(ellipse at 90% 80%, #9a70201b, transparent 38%),
     var(--bg);
 }
 
-body::before, body::after {
+/* Background animation */
+body::before,
+body::after {
   content: "";
   position: fixed;
-  width: 420px;
-  height: 420px;
-  border: 1px solid #d5a74d19;
+  width: 360px;
+  height: 360px;
+  border: 1px solid #e8c47f18;
   border-radius: 50%;
   pointer-events: none;
-  animation: orbit 18s linear infinite;
-}
-body::before { left: -260px; top: 20%; }
-body::after {
-  right: -300px;
-  bottom: -100px;
-  width: 540px;
-  height: 540px;
-  animation-direction: reverse;
+  animation: float 12s ease-in-out infinite alternate;
 }
 
-.ambient {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  overflow: hidden;
+body::before {
+  top: 8%;
+  left: -240px;
 }
-.particle {
-  position: absolute;
-  bottom: -20px;
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: var(--gold-light);
-  box-shadow: 0 0 12px 3px #dcae5540;
-  animation: floatUp linear infinite;
+
+body::after {
+  right: -250px;
+  bottom: 5%;
+  animation-delay: -5s;
 }
-.particle:nth-child(1) { left: 12%; animation-duration: 13s; }
-.particle:nth-child(2) { left: 27%; animation-duration: 17s; animation-delay: 3s; }
-.particle:nth-child(3) { left: 74%; animation-duration: 15s; animation-delay: 1s; }
-.particle:nth-child(4) { left: 88%; animation-duration: 19s; animation-delay: 5s; }
-.particle:nth-child(5) { left: 53%; animation-duration: 16s; animation-delay: 7s; }
 
 .card {
   position: relative;
-  z-index: 1;
   width: 100%;
-  max-width: 470px;
-  padding: 35px 30px 25px;
-  border: 1px solid #d8ae604e;
-  border-radius: 25px;
+  max-width: 520px;
+  padding: 38px 32px;
+  overflow: hidden;
   background: var(--panel);
-  backdrop-filter: blur(18px);
-  box-shadow: 0 25px 90px #0009, 0 0 40px #bd8b2b0b,
-              inset 0 1px #fff1;
-  animation: enter .8s cubic-bezier(.2,.8,.2,1) both;
+  border: 1px solid var(--border);
+  border-radius: 26px;
+  box-shadow: 0 25px 80px #0009;
+  animation: appear 0.75s ease both;
 }
 
 .card::before {
   content: "";
   position: absolute;
-  top: -1px;
-  left: 18%;
-  right: 18%;
+  top: 0;
+  left: -100%;
+  width: 70%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, #ffe4a0, transparent);
-  box-shadow: 0 0 18px #e7bb68;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  animation: shine 5s ease-in-out infinite;
 }
 
 .logo {
   text-align: center;
-  font-size: clamp(30px, 7vw, 38px);
+  font-size: 36px;
   font-weight: 900;
-  letter-spacing: -1.7px;
+  letter-spacing: -1.5px;
   color: var(--gold);
-  text-shadow: 0 0 28px #e8c47f25;
+  text-shadow: 0 0 30px #e8c47f25;
 }
-.logo span { color: var(--gold-light); }
+
+.logo span {
+  color: var(--gold-light);
+}
 
 .tagline {
-  margin-top: 8px;
+  margin-top: 10px;
   text-align: center;
-  font-size: 10px;
+  color: var(--muted);
+  font-size: 11px;
   letter-spacing: 3px;
-  color: #a9a092;
 }
 
 h1 {
   margin-top: 32px;
   text-align: center;
-  font-size: 25px;
-  letter-spacing: -.5px;
+  font-size: 28px;
+  letter-spacing: -0.7px;
 }
+
 .intro {
-  max-width: 330px;
-  margin: 11px auto 28px;
-  text-align: center;
+  max-width: 350px;
+  margin: 12px auto 30px;
   color: var(--muted);
-  font-size: 14px;
+  text-align: center;
+  font-size: 15px;
   line-height: 1.7;
 }
 
@@ -142,368 +126,439 @@ label {
   display: block;
   margin-bottom: 10px;
   color: var(--gold);
-  font-size: 11px;
-  font-weight: 800;
+  font-size: 12px;
+  font-weight: bold;
   letter-spacing: 1.8px;
 }
-.input-wrap { position: relative; }
-.input-wrap span {
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--gold);
-  font-size: 18px;
-  pointer-events: none;
-}
+
 input {
   width: 100%;
-  padding: 16px 16px 16px 45px;
-  border: 1px solid #a783473f;
-  border-radius: 13px;
+  padding: 16px;
   outline: none;
-  background: #0c0b08;
-  color: white;
-  font-size: 16px; /* Prevents iOS Safari auto-zoom */
-  -webkit-appearance: none;
-  transition: border-color .25s, box-shadow .25s, background .25s;
+  color: #fffaf0;
+  background: #0b0a08;
+  border: 1px solid #554127;
+  border-radius: 13px;
+  font-size: 16px;
+  transition: border-color 0.25s, box-shadow 0.25s;
 }
-input::placeholder { color: #777167; }
+
 input:focus {
   border-color: var(--gold);
-  background: #12100b;
-  box-shadow: 0 0 0 4px #e8c47f12, 0 0 25px #d9a84810;
+  box-shadow: 0 0 0 4px #e8c47f12;
 }
 
 button {
-  font: inherit;
+  font-family: inherit;
 }
+
 .join-btn {
-  position: relative;
-  overflow: hidden;
   width: 100%;
-  min-height: 52px;
-  margin-top: 18px;
-  padding: 15px;
-  border: 1px solid #ffe2a0;
+  padding: 17px;
+  margin-top: 20px;
+  border: 1px solid #ffe1a2;
   border-radius: 13px;
-  background: linear-gradient(110deg, #b58b4e, #ffe1a0 48%, #bd914c);
   color: #171109;
-  font-weight: 800;
+  background: linear-gradient(110deg, #b88d4e, #ffdfa0, #c39a58);
   font-size: 16px;
+  font-weight: 800;
   cursor: pointer;
-  touch-action: manipulation;
-  box-shadow: 0 8px 25px #c99a4930;
-  transition: transform .25s, box-shadow .25s, filter .25s;
+  box-shadow: 0 8px 28px #d5a64d20;
+  transition: transform 0.25s, box-shadow 0.25s;
 }
-.join-btn::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 60%;
-  height: 100%;
-  transform: skewX(-22deg);
-  background: linear-gradient(90deg, transparent, #ffffff75, transparent);
-  transition: left .65s;
-}
-.join-btn:hover::before { left: 150%; }
+
 .join-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 35px #d5a64d40;
-  filter: brightness(1.05);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px #d5a64d35;
 }
-.join-btn:active { transform: scale(.985); }
-.join-btn:disabled { opacity: .65; cursor: wait; transform: none; }
+
+.join-btn:disabled {
+  cursor: wait;
+  opacity: 0.7;
+  transform: none;
+}
 
 #message {
-  min-height: 18px;
-  margin-top: 12px;
+  min-height: 20px;
+  margin-top: 14px;
   text-align: center;
   color: var(--gold);
   font-size: 13px;
   line-height: 1.5;
 }
-#message.error { color: #ff8585; }
 
-.divider {
+/* QR toggle button */
+.qr-toggle {
   display: flex;
   align-items: center;
-  gap: 14px;
-  margin: 22px 0;
-  color: #8c8373;
-  font-size: 11px;
-  letter-spacing: 2px;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 17px;
+  margin-top: 28px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  color: var(--gold-light);
+  background: linear-gradient(135deg, #211a10, #15120e);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
 }
-.divider::before, .divider::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, #92703c75);
-}
-.divider::after { background: linear-gradient(90deg, #92703c75, transparent); }
 
-.qr-section {
-  padding: 20px 16px;
-  border: 1px solid #b98c3b42;
-  border-radius: 17px;
-  background: linear-gradient(145deg, #ffffff04, #d8a74408);
-  text-align: center;
-  transition: border-color .3s, background .3s;
+.qr-toggle:hover {
+  border-color: var(--gold);
+  background: #2a2114;
+  transform: translateY(-2px);
 }
-.qr-section:hover {
-  border-color: #e8c47f85;
-  background: #d8a7440b;
-}
+
 .qr-icon {
-  display: inline-grid;
+  display: grid;
   place-items: center;
-  width: 42px;
-  height: 42px;
-  margin-bottom: 11px;
-  border: 1px solid #e8c47f50;
-  border-radius: 50%;
-  color: var(--gold);
-  background: #e8c47f0c;
+  width: 34px;
+  height: 34px;
+  border: 1px solid #e8c47f55;
+  border-radius: 10px;
   font-size: 19px;
 }
-.qr-section h2 {
-  margin-bottom: 8px;
+
+.qr-section {
+  display: none;
+  margin-top: 18px;
+  padding: 24px 16px;
+  text-align: center;
+  background: #100e0b;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+}
+
+.qr-section.visible {
+  display: block;
+  animation: appear 0.4s ease both;
+}
+
+.qr-title {
   color: var(--gold);
-  font-size: 12px;
+  font-size: 13px;
+  font-weight: bold;
   letter-spacing: 2px;
 }
-.qr-section p {
-  max-width: 275px;
-  margin: 0 auto 17px;
+
+.qr-description {
+  max-width: 320px;
+  margin: 12px auto 20px;
   color: var(--muted);
-  font-size: 12px;
-  line-height: 1.6;
+  font-size: 13px;
+  line-height: 1.7;
 }
+
 .qr-frame {
   display: inline-flex;
-  padding: 8px;
-  border: 1px solid #e8c47f85;
-  border-radius: 13px;
-  background: white;
-  box-shadow: 0 0 0 4px #e8c47f0b, 0 8px 25px #0005;
-  transition: transform .3s, box-shadow .3s;
+  align-items: center;
+  justify-content: center;
+  min-width: 180px;
+  min-height: 180px;
+  padding: 12px;
+  background: #fff;
+  border: 1px solid #e8c47f66;
+  border-radius: 17px;
+  box-shadow: 0 0 35px #e8c47f12;
 }
-.qr-frame:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 0 0 5px #e8c47f14, 0 12px 35px #d5a64d25;
-}
+
 .qr-frame img {
   display: block;
-  width: 132px;
-  height: 132px;
+  width: 155px;
+  height: 155px;
   object-fit: contain;
 }
-.qr-error { margin-top: 10px; color: #ff8585; font-size: 12px; }
+
+.qr-error {
+  display: none;
+  margin-top: 14px;
+  color: #ff8585;
+  font-size: 12px;
+  line-height: 1.5;
+}
 
 .footer {
-  margin-top: 23px;
-  padding-top: 18px;
+  margin-top: 28px;
+  padding-top: 20px;
   border-top: 1px solid #ffffff10;
   color: #777166;
   text-align: center;
   font-size: 11px;
-  letter-spacing: .3px;
+  line-height: 1.8;
 }
-.footer strong { color: #bca16c; font-weight: 500; }
 
-@keyframes enter {
-  from { opacity: 0; transform: translateY(22px) scale(.985); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+.footer strong {
+  color: var(--gold);
+  font-weight: 600;
 }
-@keyframes floatUp {
-  from { transform: translateY(0); opacity: 0; }
-  15% { opacity: .8; }
-  85% { opacity: .4; }
-  to { transform: translateY(-110vh); opacity: 0; }
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
-@keyframes orbit { to { transform: rotate(360deg); } }
+
+@keyframes float {
+  from { transform: translateY(0) rotate(0deg); }
+  to { transform: translateY(-35px) rotate(12deg); }
+}
+
+@keyframes shine {
+  0%, 65% { left: -100%; }
+  100% { left: 150%; }
+}
 
 @media (max-width: 480px) {
-  body { padding: max(16px, env(safe-area-inset-top, 16px)) 12px max(20px, env(safe-area-inset-bottom, 20px)); }
-  .card { padding: 26px 18px 20px; border-radius: 20px; max-width: 100%; }
-  .logo { font-size: 30px; }
-  .tagline { font-size: 9px; letter-spacing: 2px; }
-  h1 { margin-top: 22px; font-size: 22px; }
-  .intro { margin-bottom: 20px; font-size: 13px; line-height: 1.5; }
-  .qr-section { padding: 16px 10px; border-radius: 14px; }
-  .qr-frame img { width: 120px; height: 120px; }
+  .card {
+    padding: 30px 21px;
+    border-radius: 21px;
+  }
+
+  .logo {
+    font-size: 31px;
+  }
+
+  h1 {
+    font-size: 25px;
+  }
+
+  .intro {
+    font-size: 14px;
+  }
 }
 
-@media (max-width: 360px) {
-  .card { padding: 20px 14px 16px; border-radius: 16px; }
-  .logo { font-size: 26px; }
-  h1 { font-size: 20px; }
-  .join-btn { font-size: 15px; min-height: 48px; }
-}
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
-    animation-duration: .01ms !important;
+    animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    scroll-behavior: auto !important;
-    transition-duration: .01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }
 </style>
 </head>
-<body>
-<div class="ambient" aria-hidden="true">
-  <i class="particle"></i><i class="particle"></i>
-  <i class="particle"></i><i class="particle"></i><i class="particle"></i>
-</div>
 
+<body>
 <main class="card">
+
   <div class="logo">QueueNow<span>.</span></div>
   <div class="tagline">SMART QUEUE · LESS WAIT · MORE TIME</div>
 
   <h1>Join the Queue</h1>
-  <p class="intro">Enter your name to receive your token and track your turn live.</p>
+  <p class="intro">
+    Enter your name to receive your token and track your turn live.
+  </p>
 
   <form id="joinForm">
     <label for="customerName">YOUR NAME</label>
-    <div class="input-wrap">
-      <span aria-hidden="true">♙</span>
-      <input id="customerName" name="name" maxlength="80"
-        placeholder="Enter your name" autocomplete="name" required>
-    </div>
+    <input
+      id="customerName"
+      name="customerName"
+      type="text"
+      maxlength="80"
+      placeholder="Enter your name"
+      autocomplete="name"
+      required
+    >
     <button class="join-btn" id="joinBtn" type="submit">
-      <span id="btnText">Join Queue&nbsp; →</span>
+      Join Queue <span aria-hidden="true">→</span>
     </button>
   </form>
 
   <div id="message" role="status" aria-live="polite"></div>
 
-  <div class="divider">OR</div>
+  <!-- QR stays hidden until the user clicks -->
+  <button
+    class="qr-toggle"
+    id="qrToggle"
+    type="button"
+    aria-expanded="false"
+    aria-controls="qrSection"
+  >
+    <span class="qr-icon" aria-hidden="true">▦</span>
+    <span id="qrToggleText">Show QR Code</span>
+    <span aria-hidden="true">↗</span>
+  </button>
 
-  <section class="qr-section">
-    <div class="qr-icon" aria-hidden="true">▦</div>
-    <h2>SCAN TO JOIN</h2>
-    <p>Open your phone camera, scan the code, and open the QueueNow join page.</p>
+  <section class="qr-section" id="qrSection" aria-label="Join queue QR code">
+    <div class="qr-title">SCAN TO JOIN</div>
+    <p class="qr-description">
+      Scan this code with your phone camera to open the QueueNow join page.
+    </p>
+
     <div class="qr-frame">
-      <img id="joinQr" alt="QueueNow Join Queue QR Code" hidden>
+      <img id="qrImage" alt="QR code to open the QueueNow join page">
     </div>
-    <div id="qrError" class="qr-error" role="status"></div>
+
+    <div class="qr-error" id="qrError" role="status"></div>
   </section>
 
   <footer class="footer">
-    <strong>♢ Secure</strong>&nbsp;&nbsp; · &nbsp;&nbsp;Simple&nbsp;&nbsp; · &nbsp;&nbsp;QueueNow
+    © 2026 <strong>QueueNow</strong> · Smart Queue Management
   </footer>
+
 </main>
 
 <script>
 const form = document.getElementById("joinForm");
-const btn = document.getElementById("joinBtn");
-const btnText = document.getElementById("btnText");
+const joinBtn = document.getElementById("joinBtn");
 const message = document.getElementById("message");
-const joinQr = document.getElementById("joinQr");
+const nameInput = document.getElementById("customerName");
+
+const qrToggle = document.getElementById("qrToggle");
+const qrToggleText = document.getElementById("qrToggleText");
+const qrSection = document.getElementById("qrSection");
+const qrImage = document.getElementById("qrImage");
 const qrError = document.getElementById("qrError");
 
-async function loadJoinQr() {
-  try {
-    const response = await fetch("/api/queue/join-qr");
-    if (!response.ok) throw new Error("QR endpoint returned " + response.status);
+let qrLoaded = false;
+let qrLoading = false;
 
-    const contentType = response.headers.get("content-type") || "";
+qrToggle.addEventListener("click", async () => {
+  const shouldShow = !qrSection.classList.contains("visible");
 
-    if (contentType.startsWith("image/")) {
-      joinQr.src = URL.createObjectURL(await response.blob());
-      joinQr.hidden = false;
-      return;
-    }
-
-    const data = await response.json();
-    const qrUrl = data.qrUrl || data.qrCodeUrl || data.imageUrl || data.url;
-
-    if (!qrUrl) throw new Error("QR image URL missing from response");
-
-    joinQr.src = qrUrl;
-    joinQr.hidden = false;
-  } catch (error) {
-    qrError.textContent = "QR code couldn't load. Please use the form above.";
-    console.error("Join QR error:", error);
-  }
-}
-
-joinQr.addEventListener("load", () => {
-  joinQr.hidden = false;
-  qrError.textContent = "";
-});
-joinQr.addEventListener("error", () => {
-  joinQr.hidden = true;
-  qrError.textContent = "QR image couldn't load.";
-});
-
-function resetForm() {
-  btn.disabled = false;
-  btnText.innerHTML = "Join Queue&nbsp; →";
-  message.className = "";
-  message.textContent = "";
-  const nameField = document.getElementById("customerName");
-  if (nameField) nameField.value = "";
-}
-
-// Reset whenever user navigates back (via browser back button or bfcache)
-window.addEventListener("pageshow", function(event) {
-  resetForm();
-});
-
-form.addEventListener("submit", async event => {
-  event.preventDefault();
-
-  const nameInput = document.getElementById("customerName");
-  const name = nameInput.value.trim();
-  if (!name) {
-    message.className = "error";
-    message.textContent = "Please enter your name.";
+  if (!shouldShow) {
+    qrSection.classList.remove("visible");
+    qrToggle.setAttribute("aria-expanded", "false");
+    qrToggleText.textContent = "Show QR Code";
     return;
   }
 
-  btn.disabled = true;
-  btnText.textContent = "Joining queue...";
-  message.className = "";
+  qrSection.classList.add("visible");
+  qrToggle.setAttribute("aria-expanded", "true");
+  qrToggleText.textContent = "Hide QR Code";
+
+  if (!qrLoaded && !qrLoading) {
+    await loadQrCode();
+  }
+});
+
+async function loadQrCode() {
+  qrLoading = true;
+  qrError.style.display = "none";
+  qrError.textContent = "";
+
+  try {
+    // Ask the backend to create a QR code for the join page.
+    const response = await fetch("/api/queue/join-qr", {
+      cache: "no-store"
+    });
+
+    if (!response.ok) {
+      throw new Error("QR endpoint returned HTTP " + response.status);
+    }
+
+    const data = await response.json();
+
+    // Support common response formats from the backend.
+    const qrUrl =
+      data.qrCode ||
+      data.qrUrl ||
+      data.imageUrl ||
+      data.url;
+
+    if (qrUrl) {
+      qrImage.src = qrUrl;
+    } else {
+      // If the endpoint returns a URL to encode, use the QR image endpoint.
+      const joinUrl = data.joinUrl || data.text;
+      if (!joinUrl) {
+        throw new Error("QR response did not contain a QR image or join URL.");
+      }
+
+      qrImage.src =
+        "/api/queue/qr?text=" + encodeURIComponent(joinUrl);
+    }
+
+    await new Promise((resolve, reject) => {
+      if (qrImage.complete && qrImage.naturalWidth > 0) {
+        resolve();
+        return;
+      }
+
+      qrImage.onload = resolve;
+      qrImage.onerror = () => reject(new Error("QR image could not load."));
+    });
+
+    qrLoaded = true;
+  } catch (error) {
+    console.error("QR loading failed:", error);
+    qrError.textContent =
+      "QR code load nahi hua. Backend QR endpoint check karo, phir dobara try karo.";
+    qrError.style.display = "block";
+  } finally {
+    qrLoading = false;
+  }
+}
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const name = nameInput.value.trim();
+
+  if (!name) {
+    message.textContent = "Please enter your name.";
+    nameInput.focus();
+    return;
+  }
+
+  joinBtn.disabled = true;
+  joinBtn.textContent = "Joining...";
   message.textContent = "";
 
   try {
     const response = await fetch("/api/queue/join", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({ name })
     });
 
     const data = await response.json();
-    if (!response.ok) throw new Error(data.message || "Unable to join queue.");
 
-    localStorage.setItem("myTokenNumber", String(data.tokenNumber));
-    localStorage.setItem("myCustomerName", data.customerName || name);
+    if (!response.ok) {
+      throw new Error(data.message || "Unable to join queue.");
+    }
+
+    if (data.tokenNumber == null) {
+      throw new Error("Server did not return a token number.");
+    }
+
+    const customerName = data.customerName || name;
+
+    localStorage.setItem(
+      "myTokenNumber",
+      String(data.tokenNumber)
+    );
+
+    localStorage.setItem(
+      "myCustomerName",
+      customerName
+    );
 
     const params = new URLSearchParams({
       token: String(data.tokenNumber),
-      name: data.customerName || name
+      name: customerName
     });
 
-    message.textContent = "Token created! Opening your tracker...";
-
-    // Ensure form is fresh if user hits browser Back button
-    setTimeout(() => {
-      resetForm();
-    }, 400);
-
     window.location.href = "/track.html?" + params.toString();
+
   } catch (error) {
-    message.className = "error";
-    message.textContent = error.message || "Server error. Please try again.";
-    btn.disabled = false;
-    btnText.innerHTML = "Join Queue&nbsp; →";
+    message.textContent =
+      error.message || "Server error. Please try again.";
+
+    joinBtn.disabled = false;
+    joinBtn.innerHTML = 'Join Queue <span aria-hidden="true">→</span>';
   }
 });
-
-loadJoinQr();
-resetForm();
 </script>
 </body>
 </html>
