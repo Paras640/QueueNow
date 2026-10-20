@@ -348,6 +348,105 @@ button {
     transition-duration: .01ms !important;
   }
 }
+.qr-toggle {
+  width: 100%;
+  margin-top: 34px;
+  padding: 20px;
+  border: 1px solid #73552a;
+  border-radius: 17px;
+  background: rgba(230, 199, 143, 0.06);
+  color: #fff0c7;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .25s ease;
+}
+
+.qr-toggle:hover {
+  background: rgba(230, 199, 143, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px #e6c78f20;
+}
+
+.qr-panel {
+  margin-top: 20px;
+  padding: 28px 20px;
+  text-align: center;
+  border: 1px solid #73552a80;
+  border-radius: 20px;
+  background: #0e0c09;
+  animation: qrAppear .35s ease;
+}
+
+.qr-panel[hidden] {
+  display: none;
+}
+
+.qr-panel h3 {
+  color: #e6c78f;
+  letter-spacing: 3px;
+  font-size: 15px;
+  margin-bottom: 15px;
+}
+
+.qr-panel p {
+  color: #aaa49a;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.qr-frame {
+  width: 220px;
+  min-height: 220px;
+  margin: 0 auto;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  background: white;
+  overflow: hidden;
+}
+
+#qrImage {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+#qrImage[hidden] {
+  display: none;
+}
+
+#qrLoading {
+  color: #302719;
+  font-size: 14px;
+}
+
+.qr-error {
+  color: #ff8585 !important;
+  margin-top: 15px !important;
+  overflow-wrap: anywhere;
+}
+
+@keyframes qrAppear {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qr-panel,
+  .qr-toggle {
+    animation: none;
+    transition: none;
+  }
+}
 </style>
 </head>
 
@@ -376,7 +475,7 @@ button {
     >
 
     <button class="join-btn" id="joinBtn" type="submit">
-      Join Queue <span aria-hidden="true">→</span>
+      Generate Token <span aria-hidden="true">→</span>
     </button>
   </form>
 
