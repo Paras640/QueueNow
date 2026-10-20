@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080806">
 <title>QueueNow | Join Queue</title>
 <style>
 :root {
@@ -13,16 +14,22 @@
   --panel: rgba(22, 18, 12, .88);
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
+html {
+  -webkit-text-size-adjust: 100%;
+}
 
 body {
   min-height: 100vh;
-  padding: 36px 18px;
+  min-height: -webkit-fill-available;
+  padding: max(24px, env(safe-area-inset-top, 24px)) max(14px, env(safe-area-inset-right, 14px)) max(24px, env(safe-area-inset-bottom, 24px)) max(14px, env(safe-area-inset-left, 14px));
   display: flex;
   align-items: center;
   justify-content: center;
   overflow-x: hidden;
   color: #fffaf0;
   font-family: Inter, "Segoe UI", Arial, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
   background:
     radial-gradient(ellipse at 10% 15%, #73501c35, transparent 38%),
     radial-gradient(ellipse at 90% 85%, #a4772920, transparent 35%),
@@ -155,7 +162,8 @@ input {
   outline: none;
   background: #0c0b08;
   color: white;
-  font-size: 15px;
+  font-size: 16px; /* Prevents iOS Safari auto-zoom */
+  -webkit-appearance: none;
   transition: border-color .25s, box-shadow .25s, background .25s;
 }
 input::placeholder { color: #777167; }
@@ -172,15 +180,17 @@ button {
   position: relative;
   overflow: hidden;
   width: 100%;
+  min-height: 52px;
   margin-top: 18px;
-  padding: 16px;
+  padding: 15px;
   border: 1px solid #ffe2a0;
   border-radius: 13px;
   background: linear-gradient(110deg, #b58b4e, #ffe1a0 48%, #bd914c);
   color: #171109;
   font-weight: 800;
-  font-size: 15px;
+  font-size: 16px;
   cursor: pointer;
+  touch-action: manipulation;
   box-shadow: 0 8px 25px #c99a4930;
   transition: transform .25s, box-shadow .25s, filter .25s;
 }
@@ -313,11 +323,21 @@ button {
 @keyframes orbit { to { transform: rotate(360deg); } }
 
 @media (max-width: 480px) {
-  body { padding: 20px 13px; }
-  .card { padding: 29px 21px 22px; border-radius: 21px; }
-  h1 { margin-top: 27px; }
-  .intro { margin-bottom: 24px; }
-  .qr-section { padding: 18px 12px; }
+  body { padding: max(16px, env(safe-area-inset-top, 16px)) 12px max(20px, env(safe-area-inset-bottom, 20px)); }
+  .card { padding: 26px 18px 20px; border-radius: 20px; max-width: 100%; }
+  .logo { font-size: 30px; }
+  .tagline { font-size: 9px; letter-spacing: 2px; }
+  h1 { margin-top: 22px; font-size: 22px; }
+  .intro { margin-bottom: 20px; font-size: 13px; line-height: 1.5; }
+  .qr-section { padding: 16px 10px; border-radius: 14px; }
+  .qr-frame img { width: 120px; height: 120px; }
+}
+
+@media (max-width: 360px) {
+  .card { padding: 20px 14px 16px; border-radius: 16px; }
+  .logo { font-size: 26px; }
+  h1 { font-size: 20px; }
+  .join-btn { font-size: 15px; min-height: 48px; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

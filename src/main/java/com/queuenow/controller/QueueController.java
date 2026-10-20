@@ -210,6 +210,16 @@ public class QueueController {
     }
 
     /**
+     * Inspects live MongoDB status and returns collections contents.
+     *
+     * <p>Endpoint: {@code GET /api/queue/mongo-status}</p>
+     */
+    @GetMapping("/mongo-status")
+    public Map<String, Object> getMongoStatus() {
+        return queueService.getMongoStatus();
+    }
+
+    /**
      * Generates a QR code image specifically for queue interaction.
      *
      * <p>Endpoint: {@code GET /api/queue/qr?text=...}</p>
@@ -311,7 +321,15 @@ public class QueueController {
                 .body(qrCode);
     }
 
+    @org.springframework.beans.factory.annotation.Value("${public.url:}")
+    private String configuredPublicUrl;
+
     private String resolveBaseUrl(HttpServletRequest request) {
+        // 0. Check configured public.url from application.properties or system property
+        if (configuredPublicUrl != null && !configuredPublicUrl.trim().isEmpty()) {
+            return configuredPublicUrl.trim().replaceAll("/+$", "");
+        }
+
         // 1. Check PUBLIC_URL environment variable (set during deployment or tunnel)
         String envPublic = System.getenv("PUBLIC_URL");
         if (envPublic != null && !envPublic.trim().isEmpty()) {
@@ -331,7 +349,10 @@ public class QueueController {
         // 3. Check Host header if it is not localhost
         String host = request.getHeader("Host");
         if (host != null && !host.startsWith("localhost") && !host.startsWith("127.0.0.1")) {
-            String proto = request.isSecure() ? "https" : "http";
+            String proto = request.getHeader("X-Forwarded-Proto");
+            if (proto == null || proto.trim().isEmpty()) {
+                proto = (host.contains("trycloudflare.com") || host.contains("ngrok") || request.isSecure()) ? "https" : "http";
+            }
             return proto + "://" + host;
         }
 

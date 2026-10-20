@@ -3,7 +3,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#080807">
 <title>QueueNow | Your Time. Your Priority.</title>
 
 <style>
@@ -23,13 +24,18 @@
 
 html {
     scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
 }
 
 body {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
     font-family: "Segoe UI", Arial, sans-serif;
     background: var(--black);
     color: #fffaf0;
     overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 a {

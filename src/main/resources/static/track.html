@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>QueueNow | Live Turn Tracking</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,6 +14,10 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
 }
 
 :root {
@@ -34,17 +38,20 @@
 
 body {
     min-height: 100vh;
+    min-height: -webkit-fill-available;
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background:
         radial-gradient(ellipse at 50% 0%, #4a341a 0%, transparent 60%),
         radial-gradient(ellipse at 80% 80%, #2b1c0b 0%, transparent 50%),
         var(--black);
     color: #fffaf0;
-    padding: 20px 16px 40px;
+    padding: max(16px, env(safe-area-inset-top, 16px)) max(14px, env(safe-area-inset-right, 14px)) max(30px, env(safe-area-inset-bottom, 30px)) max(14px, env(safe-area-inset-left, 14px));
     display: flex;
     flex-direction: column;
     align-items: center;
     overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 /* Background animated subtle glow */
@@ -160,7 +167,7 @@ main {
 
 .token-hero {
     font-family: 'Outfit', sans-serif;
-    font-size: 80px;
+    font-size: clamp(54px, 16vw, 80px);
     font-weight: 900;
     line-height: 1.05;
     color: var(--gold-light);
@@ -470,11 +477,18 @@ main {
 }
 
 .star {
-    font-size: 36px;
+    font-size: 38px;
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     color: #4a4439;
     cursor: pointer;
+    touch-action: manipulation;
     transition: color 0.15s, transform 0.15s;
     user-select: none;
+    -webkit-user-select: none;
 }
 
 .star.active {
@@ -494,9 +508,10 @@ textarea {
     color: #fffaf0;
     border: 1px solid rgba(230, 199, 143, 0.25);
     border-radius: 12px;
-    font-size: 13px;
+    font-size: 16px; /* Prevents iOS Safari auto-zoom */
     resize: none;
     outline: none;
+    -webkit-appearance: none;
     transition: border-color 0.2s;
 }
 
@@ -522,6 +537,30 @@ footer {
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(8px); }
     to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 480px) {
+    header { padding: 4px 0 14px; }
+    .logo { font-size: 22px; }
+    .live-pill { padding: 5px 11px; font-size: 10px; }
+    .tracker-card { padding: 24px 16px; border-radius: 20px; }
+    .customer-tag { font-size: 16px; margin-bottom: 12px; }
+    .status-badge { font-size: 13px; padding: 9px 18px; }
+    .metric-val { font-size: 26px; }
+    .metric-label { font-size: 10px; }
+    .steps-bar { margin: 16px 2px; }
+    .step-circle { width: 30px; height: 30px; font-size: 13px; }
+    .step-title { font-size: 10px; }
+    .instruction-text { font-size: 12px; line-height: 1.5; }
+    .btn-primary { min-height: 50px; font-size: 16px; }
+}
+
+@media (max-width: 360px) {
+    .tracker-card { padding: 18px 12px; }
+    .step-title { font-size: 9px; }
+    .step-circle { width: 26px; height: 26px; font-size: 11px; }
+    .metric-val { font-size: 22px; }
+    .star { font-size: 32px; min-width: 36px; min-height: 36px; }
 }
 </style>
 </head>
